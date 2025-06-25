@@ -1,0 +1,212 @@
+package com.stano.schema.gensql.impl.common;
+
+import com.stano.schema.model.BooleanMode;
+import com.stano.schema.model.Column;
+import com.stano.schema.model.ColumnType;
+import com.stano.schema.model.EnumType;
+import com.stano.schema.model.EnumValue;
+import com.stano.schema.model.Schema;
+import com.stano.schema.model.Table;
+
+public abstract class ColumnTypeGenerator extends BaseGenerator {
+  protected ColumnTypeGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
+
+  public String getColumnTypeSql(Table table, Column column) {
+    ColumnType columnType = column.getType();
+
+    if (columnType == ColumnType.SEQUENCE) {
+      return getSequenceSql();
+    }
+
+    if (columnType == ColumnType.LONGSEQUENCE) {
+      return getLongSequenceSql();
+    }
+
+    if (columnType == ColumnType.BYTE) {
+      return getByteSql();
+    }
+
+    if (columnType == ColumnType.SHORT) {
+      return getShortSql();
+    }
+
+    if (columnType == ColumnType.INT) {
+      return getIntSql();
+    }
+
+    if (columnType == ColumnType.LONG) {
+      return getLongSql();
+    }
+
+    if (columnType == ColumnType.FLOAT) {
+      return getFloatSql();
+    }
+
+    if (columnType == ColumnType.DOUBLE) {
+      return getDoubleSql();
+    }
+
+    if (columnType == ColumnType.DECIMAL) {
+      return getDecimalSql(column);
+    }
+
+    if (columnType == ColumnType.BOOLEAN) {
+      return getBooleanSql();
+    }
+
+    if (columnType == ColumnType.DATE) {
+      return getDateSql();
+    }
+
+    if (columnType == ColumnType.DATETIME || columnType == ColumnType.TIMESTAMP) {
+      return getDateTimeSql();
+    }
+
+    if (columnType == ColumnType.TIME) {
+      return getTimeSql();
+    }
+
+    if (columnType == ColumnType.CHAR) {
+      return getCharSql(column);
+    }
+
+    if (columnType == ColumnType.VARCHAR) {
+      return getVarcharSql(column);
+    }
+
+    if (columnType == ColumnType.TEXT) {
+      return getTextSql();
+    }
+
+    if (columnType == ColumnType.BLOB) {
+      return getBlobSql();
+    }
+
+    if (columnType == ColumnType.UUID) {
+      return getUUIDSql(column);
+    }
+
+    if (columnType == ColumnType.JSON) {
+      return getJsonSql();
+    }
+
+    if (columnType == ColumnType.ENUM) {
+      return getEnumSql(column);
+    }
+
+    if (columnType == ColumnType.ARRAY) {
+      return getArraySql(column);
+    }
+
+    return String.format("ERROR: Invalid type '%s' for table '%s' and column '%s'",
+                         columnType,
+                         getFullyQualifiedTableName(table),
+                         column.getName());
+  }
+
+  protected abstract String getSequenceSql();
+
+  protected abstract String getLongSequenceSql();
+
+  protected abstract String getTextSql();
+
+  protected abstract String getBlobSql();
+
+  protected abstract String getUUIDDefaultValueSql(Schema schema);
+
+  protected abstract String getArraySql(Column column);
+
+  protected String getByteSql() {
+    return "tinyint";
+  }
+
+  protected String getShortSql() {
+    return "smallint";
+  }
+
+  protected String getIntSql() {
+    return "integer";
+  }
+
+  protected String getLongSql() {
+    return "bigint";
+  }
+
+  protected String getFloatSql() {
+    return "real";
+  }
+
+  protected String getDoubleSql() {
+    return "double precision";
+  }
+
+  protected String getDecimalSql(Column column) {
+    return "decimal(" + column.getLength() + "," + column.getScale() + ")";
+  }
+
+  protected String getBooleanSql() {
+    if (booleanMode == BooleanMode.YES_NO) {
+      return "varchar(3)";
+    }
+
+    if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
+      return "char(1)";
+    }
+
+    return getNativeBooleanSql();
+  }
+
+  protected String getDateSql() {
+    return "date";
+  }
+
+  protected String getDateTimeSql() {
+    return "timestamp";
+  }
+
+  protected String getTimeSql() {
+    return "time";
+  }
+
+  protected String getCharSql(Column column) {
+    return "char(" + column.getLength() + ")";
+  }
+
+  protected String getVarcharSql(Column column) {
+    return "varchar(" + column.getLength() + ")";
+  }
+
+  protected String getUUIDSql(Column column) {
+    return "varchar(36)";
+  }
+
+  protected String getJsonSql() {
+    return getTextSql();
+  }
+
+  protected String getEnumSql(Column column) {
+    EnumType enumType = schema.getEnumType(column.getEnumType());
+
+    int minLength = Integer.MAX_VALUE;
+    int maxLength = 0;
+
+    for (EnumValue enumValue : enumType.getValues()) {
+      String code = enumValue.getCode();
+
+      minLength = Math.min(minLength, code.length());
+      maxLength = Math.max(maxLength, code.length());
+    }
+
+    if (minLength != maxLength) {
+      return "varchar(" + maxLength + ")";
+    }
+
+    return "char(" + maxLength + ")";
+  }
+
+  protected String getNativeBooleanSql() {
+    return "boolean";
+  }
+}

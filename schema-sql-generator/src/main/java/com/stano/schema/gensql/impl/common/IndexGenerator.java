@@ -1,0 +1,71 @@
+package com.stano.schema.gensql.impl.common;
+
+import com.stano.schema.model.Key;
+import com.stano.schema.model.KeyType;
+import com.stano.schema.model.Table;
+
+public class IndexGenerator extends BaseGenerator {
+
+   private static final String IX_PREFIX = "ix_";
+
+   protected IndexGenerator(SQLGenerator sqlGenerator) {
+
+      super(sqlGenerator);
+   }
+
+   public void outputIndexes() {
+
+      schema.getTables().forEach(this::outputIndexes);
+   }
+
+   public void outputIndexes(Table table) {
+
+      if (!table.getIndexes().isEmpty()) {
+         for (int keyIndex = 0; keyIndex < table.getIndexes().size(); keyIndex++) {
+            Key key = table.getIndexes().get(keyIndex);
+
+            if (key.getType() != KeyType.INDEX) {
+               continue;
+            }
+
+            String keyName = IX_PREFIX + table.getName() + (keyIndex + 1);
+
+            if (keyName.length() > maxKeyNameLength) {
+               keyName = IX_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + (keyIndex + 1);
+            }
+
+            outputIndex(table, keyName.toLowerCase(), key);
+         }
+
+         sqlWriter.println();
+      }
+   }
+
+   private void outputIndex(Table table, String keyName, Key key) {
+
+      if (key.getType() == KeyType.INDEX) {
+         String indexOptions = getIndexOptions(key);
+
+         if (indexOptions == null) {
+            sqlWriter.println(String.format("create index %s on %s (%s)%s",
+                                          keyName.toLowerCase(),
+                                          getFullyQualifiedTableName(table),
+                                          key.getColumnsAsString(),
+                                          statementSeparator));
+         }
+         else {
+            sqlWriter.println(String.format("create index %s on %s (%s) %s%s",
+                                          keyName.toLowerCase(),
+                                          getFullyQualifiedTableName(table),
+                                          key.getColumnsAsString(),
+                                          indexOptions,
+                                          statementSeparator));
+         }
+      }
+   }
+
+   protected String getIndexOptions(Key key) {
+
+      return null;
+   }
+}
