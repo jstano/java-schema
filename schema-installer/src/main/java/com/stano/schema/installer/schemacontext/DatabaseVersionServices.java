@@ -1,7 +1,7 @@
 package com.stano.schema.installer.schemacontext;
 
-import com.stano.jdbctools.datasource.DriverType;
-import com.stano.jdbctools.utils.TransactionalExecutor;
+import com.stano.jdbcutils.datasource.DriverType;
+import com.stano.jdbcutils.utils.TransactionalExecutor;
 import com.stano.schema.migrations.TableExistsMigration;
 import com.stano.schema.model.Version;
 

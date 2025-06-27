@@ -1,6 +1,6 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbctools.utils.StatementWrapper;
+import com.stano.jdbcutils.utils.StatementWrapper;
 
 import java.sql.Connection;
 import java.sql.SQLException;

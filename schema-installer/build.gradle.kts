@@ -12,7 +12,7 @@ dependencies {
   implementation(project(":schema-sql-generator"))
 
   implementation("com.stano:java-utils")
-  implementation("com.stano:jdbc-tools")
+  implementation("com.stano:jdbc-utils")
   implementation("commons-cli:commons-cli")
   implementation("org.apache.commons:commons-lang3")
   implementation("org.apache.commons:commons-collections4")
@@ -60,18 +60,9 @@ publishing {
       }
     }
   }
-
   repositories {
     maven {
-      name = "sonatype"
-      val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
-      val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-      url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
-
-      credentials {
-        username = findProperty("ossrhUsername") as String?
-        password = findProperty("ossrhPassword") as String?
-      }
+      url = uri(layout.buildDirectory.dir("staging-deploy").get().toString())
     }
   }
 }

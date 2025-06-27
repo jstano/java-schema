@@ -1,6 +1,6 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbctools.utils.ExecuteWithStatement;
+import com.stano.jdbcutils.utils.ExecuteWithStatement;
 
 import java.sql.SQLException;
 import java.sql.Statement;

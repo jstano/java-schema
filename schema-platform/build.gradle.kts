@@ -4,8 +4,8 @@ plugins {
 
 dependencies {
   constraints {
-    api("com.stano:jdbc-tools:1.0.0-SNAPSHOT")
     api("com.stano:java-utils:1.0.0-SNAPSHOT")
+    api("com.stano:jdbc-utils:1.0.0-SNAPSHOT")
     api("commons-cli:commons-cli:1.9.0")
     api("commons-io:commons-io:2.19.0")
     api("net.bytebuddy:byte-buddy:1.17.6")

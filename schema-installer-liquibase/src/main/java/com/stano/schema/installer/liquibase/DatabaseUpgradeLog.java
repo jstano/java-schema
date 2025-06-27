@@ -1,7 +1,7 @@
 package com.stano.schema.installer.liquibase;
 
-import com.stano.jdbctools.utils.SqlUtils;
-import com.stano.jdbctools.utils.TransactionalExecutor;
+import com.stano.jdbcutils.utils.SqlUtils;
+import com.stano.jdbcutils.utils.TransactionalExecutor;
 import com.stano.schema.migrations.MigrationServices;
 import liquibase.database.Database;
 

@@ -1,7 +1,7 @@
 package com.stano.schema.installer;
 
 import com.stano.files.FileServices;
-import com.stano.jdbctools.datasource.DriverType;
+import com.stano.jdbcutils.datasource.DriverType;
 import com.stano.resourcelocator.ResourceLocator;
 import com.stano.resourcelocator.ResourceLocatorService;
 import com.stano.schema.gensql.GenSQL;

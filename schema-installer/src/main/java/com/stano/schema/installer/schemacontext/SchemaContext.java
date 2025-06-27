@@ -1,6 +1,6 @@
 package com.stano.schema.installer.schemacontext;
 
-import com.stano.jdbctools.datasource.DataSourceProperties;
+import com.stano.jdbcutils.datasource.DataSourceProperties;
 import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
