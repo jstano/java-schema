@@ -20,9 +20,9 @@ public class SchemaWriter {
   public void outputSchema(Schema schema) {
     out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     out.println("""
-                  <database xmlns="http://r365.com/database"
+                  <database xmlns="http://stano.com/database"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xsi:schemaLocation="http://r365.com/database http://r365.com/database"
+                            xsi:schemaLocation="http://stano.com/database http://stano.com/database"
                             version="1.0">""");
 
     for (int i = 0; i < schema.getTables().size(); i++) {

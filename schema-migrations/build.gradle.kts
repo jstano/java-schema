@@ -4,20 +4,15 @@ plugins {
 }
 
 dependencies {
-  api(platform(project(":schema-platform")))
+  compileOnly(platform(project(":gradle-platform-dependencies")))
 
-  implementation("com.stano:jdbc-utils")
-  implementation("org.apache.commons:commons-lang3")
-  implementation("org.apache.commons:commons-collections4")
-  implementation("org.slf4j:slf4j-api")
-  implementation("org.postgresql:postgresql")
+  implementation("com.stano:jdbc-utils:1.0.1")
+  implementation("org.apache.commons:commons-lang3:3.17.0")
+  implementation("org.apache.commons:commons-collections4:4.5.0")
+  implementation("org.slf4j:slf4j-api:2.0.17")
+  implementation("org.postgresql:postgresql:42.7.7")
 
-  testImplementation("org.apache.groovy:groovy-all")
-  testImplementation("net.bytebuddy:byte-buddy")
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.junit.platform:junit-platform-launcher")
-  testImplementation("org.mockito:mockito-junit-jupiter")
-  testImplementation("org.spockframework:spock-core")
+  testImplementation(project(":test-platform-dependencies"))
 }
 
 publishing {
@@ -26,13 +21,13 @@ publishing {
       from(components["java"])
 
       pom {
-        name.set("Schema Importer")
-        description.set("Creates schema xml files from relational database schemas.")
+        name.set("Schema Migrations")
+        description.set("Migration helper classes")
         url.set("https://github.com/jstano/java-schema")
 
         licenses {
           license {
-            name.set("The MIT License")
+            name.set("MIT License")
             url.set("https://opensource.org/license/mit")
           }
         }
@@ -61,10 +56,13 @@ publishing {
 }
 
 signing {
-  useInMemoryPgpKeys(
-    findProperty("signing.keyId") as String?,
-    findProperty("signing.key") as String?,
-    findProperty("signing.password") as String?
-  )
   sign(publishing.publications["mavenJava"])
+}
+
+tasks.register<Zip>("zipStagingDeploy") {
+  archiveFileName.set("staging-deploy.zip")
+  destinationDirectory.set(layout.buildDirectory.dir("tmp"))
+  from("build/staging-deploy") {
+    include("**/*")
+  }
 }
