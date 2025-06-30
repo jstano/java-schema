@@ -69,7 +69,11 @@ public class PGSQLColumnTypeGenerator extends ColumnTypeGenerator {
       case ColumnType.CHAR -> getCharSql(column) + "[]";
       case ColumnType.TEXT -> getTextSql() + "[]";
       case ColumnType.DECIMAL -> getDecimalSql(column) + "[]";
-      default -> elementType.name() + "[]";
+      case ColumnType.BYTE -> getByteSql() + "[]";
+      case ColumnType.SHORT -> getShortSql() + "[]";
+      case ColumnType.INT -> getIntSql() + "[]";
+      case ColumnType.LONG -> getLongSql() + "[]";
+      default -> throw new IllegalArgumentException("Unsupported array type: " + elementType);
     };
   }
 }

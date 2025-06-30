@@ -1,6 +1,7 @@
 package com.stano.schema.parser.xmlparser;
 
 import com.stano.schema.model.Key;
+import com.stano.schema.model.KeyColumn;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
@@ -18,7 +19,7 @@ public class KeyContentHandler extends AbstractContentHandler {
   private boolean cluster;
   private boolean compress;
   private String include;
-  private List<String> columns = new ArrayList<>();
+  private List<KeyColumn> columns = new ArrayList<>();
 
   protected KeyContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
@@ -37,7 +38,7 @@ public class KeyContentHandler extends AbstractContentHandler {
       columns.clear();
     }
     else if (localName.equals("column")) {
-      columns.add(atts.getValue("name"));
+      columns.add(new KeyColumn(atts.getValue("name"), atts.getValue("expression")));
     }
   }
 

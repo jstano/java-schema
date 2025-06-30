@@ -46,16 +46,9 @@
         <column name="DateValue"/>
       </index>
       <index>
-        <column name="CharValue"/>
+        <column name="CharValue" expression="lower(CharValue)"/>
       </index>
     </keys>
-    <rls>
-      <policySql databaseType="pgsql">
-        <![CDATA[
-            create or replace view rls_view as select ID from TestTable
-            ]]>
-      </policySql>
-    </rls>
   </table>
 
   <table name="ChildTable">

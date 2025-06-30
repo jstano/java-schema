@@ -3,6 +3,7 @@ package com.stano.schema.importer;
 import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
 import com.stano.schema.model.Key;
+import com.stano.schema.model.KeyColumn;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Relation;
 import com.stano.schema.model.RelationType;
@@ -91,16 +92,17 @@ public class SchemaReader {
         int keySequence = resultSet.getInt("KEY_SEQ");
 
         primaryKeyData.putIfAbsent(tableName, new ArrayList<>());
-        primaryKeyData.get(tableName).add(new PrimaryKeyData(tableName, columnName, keySequence));
+        primaryKeyData.get(tableName).add(new PrimaryKeyData(tableName, columnName, null, keySequence));
       }
     }
 
     for (String tableName : primaryKeyData.keySet()) {
       schema.getOptionalTable(tableName).ifPresent(table -> {
         table.getKeys().add(new Key(KeyType.PRIMARY,
-                                    primaryKeyData.get(tableName).stream()
+                                    primaryKeyData.get(tableName)
+                                                  .stream()
                                                   .sorted()
-                                                  .map(PrimaryKeyData::columnName)
+                                                  .map(it -> new KeyColumn(it.columnName(), it.expression()))
                                                   .toList()));
       });
     }
@@ -123,15 +125,31 @@ public class SchemaReader {
 
       keys.forEach((indexName, columns) -> {
         if (indexName.contains(":::true")) {
-          table.getKeys().add(new Key(KeyType.INDEX, columns.stream().sorted().map(it -> it.split(":::")[1]).toList()));
+          table.getKeys().add(new Key(KeyType.INDEX, columns.stream()
+                                                            .sorted()
+                                                            .map(name -> name.split(":::")[1])
+                                                            .map(name -> {
+                                                              if (name.matches("lower(.*)")) {
+                                                                return new KeyColumn(name, name);
+                                                              }
+                                                              else {
+                                                                return new KeyColumn(name);
+                                                              }
+                                                            })
+                                                            .toList()));
         }
-        else {
-          table.getKeys().add(new Key(KeyType.UNIQUE, columns.stream().sorted().map(it -> it.split(":::")[1]).toList()));
+        else if (!indexName.contains("_pk")) {
+          table.getKeys().add(new Key(KeyType.UNIQUE, columns.stream()
+                                                             .sorted()
+                                                             .map(it -> it.split(":::")[1])
+                                                             .map(it -> new KeyColumn(it, null))
+                                                             .toList()));
         }
       });
 
-      if (table.getPrimaryKey() == null && table.getKeys().size() > 1) {
+      if (table.getPrimaryKey() == null) {
         var uniqueKeys = table.getKeys().stream().filter(it -> it.getType() == KeyType.UNIQUE).toList();
+
         if (uniqueKeys.size() == 1) {
           table.getKeys().removeIf(it -> it.getType() == KeyType.UNIQUE);
           table.getKeys().add(new Key(KeyType.PRIMARY, uniqueKeys.getFirst().getColumns()));

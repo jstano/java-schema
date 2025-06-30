@@ -1,6 +1,7 @@
 package com.stano.schema.importer;
 
 import com.stano.schema.model.Column;
+import com.stano.schema.model.ColumnType;
 import com.stano.schema.model.Key;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Relation;
@@ -22,7 +23,7 @@ public class SchemaWriter {
     out.println("""
                   <database xmlns="http://stano.com/database"
                             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xsi:schemaLocation="http://stano.com/database http://stano.com/database"
+                            xsi:schemaLocation="http://stano.com/database https://raw.githubusercontent.com/jstano/java-schema/refs/heads/main/schema-model/src/resources/schema.xsd"
                             version="1.0">""");
 
     for (int i = 0; i < schema.getTables().size(); i++) {
@@ -73,17 +74,33 @@ public class SchemaWriter {
     var length = column.getLength();
     var scale = column.getScale();
 
-    if (column.isRequired()) {
-      out.printf("      <column name=\"%s\" type=\"%s\"%s required=\"true\"/>\n",
-                 name,
-                 columnType.toString().toLowerCase(),
-                 lengthScale(length, scale));
+    if (columnType == ColumnType.ARRAY) {
+      if (column.isRequired()) {
+        out.printf("      <column name=\"%s\" type=\"%s\" elementType=\"%s\" required=\"true\"/>\n",
+                   name,
+                   columnType.toString().toLowerCase(),
+                   column.getElementType().toString().toLowerCase());
+      }
+      else {
+        out.printf("      <column name=\"%s\" type=\"%s\" elementType=\"%s\"/>\n",
+                   name,
+                   columnType.toString().toLowerCase(),
+                   column.getElementType().toString().toLowerCase());
+      }
     }
     else {
-      out.printf("      <column name=\"%s\" type=\"%s\"%s/>\n",
-                 name,
-                 columnType.toString().toLowerCase(),
-                 lengthScale(length, scale));
+      if (column.isRequired()) {
+        out.printf("      <column name=\"%s\" type=\"%s\"%s required=\"true\"/>\n",
+                   name,
+                   columnType.toString().toLowerCase(),
+                   lengthScale(length, scale));
+      }
+      else {
+        out.printf("      <column name=\"%s\" type=\"%s\"%s/>\n",
+                   name,
+                   columnType.toString().toLowerCase(),
+                   lengthScale(length, scale));
+      }
     }
   }
 
@@ -134,8 +151,13 @@ public class SchemaWriter {
   }
 
   private void outputKeyColumns(Key key) {
-    key.getColumns().forEach(columnName -> {
-      out.printf("        <column name=\"%s\"/>\n", columnName);
+    key.getColumns().forEach(keyColumn -> {
+      if (keyColumn.getExpression() != null) {
+        out.printf("        <column name=\"%s\" expression=\"%s\"/>\n", keyColumn.getName(), keyColumn.getExpression());
+      }
+      else {
+        out.printf("        <column name=\"%s\"/>\n", keyColumn.getName());
+      }
     });
   }
 }

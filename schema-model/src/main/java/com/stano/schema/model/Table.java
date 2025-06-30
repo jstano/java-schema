@@ -133,7 +133,7 @@ public class Table {
   public List<String> getPrimaryKeyColumns() {
     for (Key key : keys) {
       if (key.getType() == KeyType.PRIMARY) {
-        return key.getColumns();
+        return key.getColumns().stream().map(KeyColumn::getName).toList();
       }
     }
 

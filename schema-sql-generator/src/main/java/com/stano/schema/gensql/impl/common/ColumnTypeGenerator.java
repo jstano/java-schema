@@ -143,7 +143,18 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
   }
 
   protected String getDecimalSql(Column column) {
-    return "decimal(" + column.getLength() + "," + column.getScale() + ")";
+    int length = column.getLength();
+    int scale = column.getScale();
+
+    if (length == 0 && scale == 0) {
+      return "decimal";
+    }
+
+    if (scale == 0) {
+      return "decimal(" + length + ")";
+    }
+
+    return "decimal(" + length + "," + scale + ")";
   }
 
   protected String getBooleanSql() {

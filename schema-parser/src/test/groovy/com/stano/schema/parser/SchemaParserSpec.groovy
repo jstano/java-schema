@@ -207,25 +207,25 @@ class SchemaParserSpec extends Specification {
     assert !parentTable.keys.get(0).cluster
     assert !parentTable.keys.get(0).compress
     assert parentTable.keys.get(0).columns.size() == 1
-    assert parentTable.keys.get(0).columns.get(0) == 'ID'
+    assert parentTable.keys.get(0).columns.get(0).name == 'ID'
     assert parentTable.keys.get(1).type == KeyType.UNIQUE
     assert parentTable.keys.get(1).cluster
     assert !parentTable.keys.get(1).compress
     assert parentTable.keys.get(1).columns.size() == 2
-    assert parentTable.keys.get(1).columns.get(0) == 'Name'
-    assert parentTable.keys.get(1).columns.get(1) == 'Extra'
+    assert parentTable.keys.get(1).columns.get(0).name == 'Name'
+    assert parentTable.keys.get(1).columns.get(1).name == 'Extra'
     assert parentTable.indexes.size() == 2
     assert parentTable.indexes.get(0).type == KeyType.INDEX
     assert !parentTable.indexes.get(0).cluster
     assert parentTable.indexes.get(0).compress
     assert parentTable.indexes.get(0).columns.size() == 2
-    assert parentTable.indexes.get(0).columns.get(0) == 'Extra'
-    assert parentTable.indexes.get(0).columns.get(1) == 'Name'
+    assert parentTable.indexes.get(0).columns.get(0).name == 'Extra'
+    assert parentTable.indexes.get(0).columns.get(1).name == 'Name'
     assert parentTable.indexes.get(1).type == KeyType.INDEX
     assert parentTable.indexes.get(1).columns.size() == 3
-    assert parentTable.indexes.get(1).columns.get(0) == 'ID'
-    assert parentTable.indexes.get(1).columns.get(1) == 'Name'
-    assert parentTable.indexes.get(1).columns.get(2) == 'Extra'
+    assert parentTable.indexes.get(1).columns.get(0).name == 'ID'
+    assert parentTable.indexes.get(1).columns.get(1).name == 'Name'
+    assert parentTable.indexes.get(1).columns.get(2).name == 'Extra'
 
     assert parentTable.relations.empty
 

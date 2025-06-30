@@ -63,7 +63,7 @@ public class DatabaseUpgradeLog {
         }
         else if (databaseShortName.equalsIgnoreCase("postgresql")) { //NON-NLS
           statement.executeUpdate(
-            "create table databaseupgradelog (ID serial not null,StartDateTime timestamp not null,EndDateTime timestamp,ChangeLogName citext,Error citext,constraint pk_databaseupgradelog primary key (ID))");//NON-NLS
+            "create table databaseupgradelog (ID serial not null,StartDateTime timestamp not null,EndDateTime timestamp,ChangeLogName text,Error text,constraint pk_databaseupgradelog primary key (ID))");//NON-NLS
         }
         else if (databaseShortName.equalsIgnoreCase("h2")) { //NON-NLS
           statement.executeUpdate(

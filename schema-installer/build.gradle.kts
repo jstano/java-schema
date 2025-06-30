@@ -6,13 +6,14 @@ plugins {
 dependencies {
   compileOnly(platform(project(":gradle-platform-dependencies")))
 
+  api("com.stano:java-utils:1.0.0")
+  api("com.stano:jdbc-utils:1.0.1")
+
   implementation(project(":schema-migrations"))
   implementation(project(":schema-model"))
   implementation(project(":schema-parser"))
   implementation(project(":schema-sql-generator"))
 
-  implementation("com.stano:java-utils:1.0.0")
-  implementation("com.stano:jdbc-utils:1.0.1")
   implementation("commons-cli:commons-cli:1.9.0")
   implementation("org.apache.commons:commons-lang3:3.17.0")
   implementation("org.apache.commons:commons-collections4:4.5.0")
@@ -63,6 +64,7 @@ publishing {
 }
 
 signing {
+  isRequired = gradle.taskGraph.hasTask("publish")
   sign(publishing.publications["mavenJava"])
 }
 

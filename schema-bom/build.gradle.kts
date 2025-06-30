@@ -55,11 +55,7 @@ publishing {
 }
 
 signing {
-//  useInMemoryPgpKeys(
-//    findProperty("signing.keyId") as String?,
-//    findProperty("signing.key") as String?,
-//    findProperty("signing.password") as String?
-//  )
+  isRequired = gradle.taskGraph.hasTask("publish")
   sign(publishing.publications["mavenJava"])
 }
 

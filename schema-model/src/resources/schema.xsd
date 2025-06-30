@@ -103,6 +103,7 @@
                   <element name="column">
                     <complexType>
                       <attribute name="name"/>
+                      <attribute name="expression"/>
                     </complexType>
                   </element>
                 </sequence>
@@ -116,6 +117,7 @@
                   <element name="column">
                     <complexType>
                       <attribute name="name"/>
+                      <attribute name="expression"/>
                     </complexType>
                   </element>
                 </sequence>

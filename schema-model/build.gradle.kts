@@ -54,6 +54,7 @@ publishing {
 }
 
 signing {
+  isRequired = gradle.taskGraph.hasTask("publish")
   sign(publishing.publications["mavenJava"])
 }
 
