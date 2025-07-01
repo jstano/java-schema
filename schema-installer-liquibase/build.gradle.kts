@@ -1,78 +1,31 @@
+import com.stano.buildlogic.configurePublishing
+import com.stano.buildlogic.getFullDependency
+
 plugins {
-  id("maven-publish")
-  id("signing")
+  id("com.stano.java-library-convention")
 }
 
-dependencies {
-  compileOnly(platform(project(":gradle-platform-dependencies")))
+configurePublishing(
+  name = "schema-installer-liquibase",
+  description = "Liquibase schema installer",
+  url = "https://github.com/jstano/java-schema"
+)
 
+dependencies {
   implementation(project(":schema-installer"))
   implementation(project(":schema-migrations"))
   implementation(project(":schema-model"))
   implementation(project(":schema-parser"))
   implementation(project(":schema-sql-generator"))
 
-  implementation("com.stano:java-utils:1.0.0")
-  implementation("com.stano:jdbc-utils:1.0.1")
-  implementation("commons-cli:commons-cli:1.9.0")
-  implementation("org.apache.commons:commons-lang3:3.17.0")
-  implementation("org.apache.commons:commons-collections4:4.5.0")
-  implementation("org.slf4j:slf4j-api:2.0.17")
-  implementation("org.postgresql:postgresql:42.7.7")
-  implementation("org.liquibase:liquibase-core:4.32.0")
+  implementation(getFullDependency("com.stano:java-utils"))
+  implementation(getFullDependency("com.stano:jdbc-utils"))
+  implementation(getFullDependency("commons-cli:commons-cli"))
+  implementation(getFullDependency("org.apache.commons:commons-lang3"))
+  implementation(getFullDependency("org.apache.commons:commons-collections4"))
+  implementation(getFullDependency("org.slf4j:slf4j-api"))
+  implementation(getFullDependency("org.postgresql:postgresql"))
+  implementation(getFullDependency("org.liquibase:liquibase-core"))
 
   testImplementation(project(":test-platform-dependencies"))
-}
-
-publishing {
-  publications {
-    create<MavenPublication>("mavenJava") {
-      from(components["java"])
-
-      pom {
-        name.set("Schema Installer Liquibase")
-        description.set("Liquibase schema installer")
-        url.set("https://github.com/jstano/java-schema")
-
-        licenses {
-          license {
-            name.set("MIT License")
-            url.set("https://opensource.org/license/mit")
-          }
-        }
-
-        developers {
-          developer {
-            id.set("jstano")
-            name.set("Jeff Stano")
-            email.set("jeff@stano.com")
-          }
-        }
-
-        scm {
-          connection.set("scm:git:https://github.com/jstano/java-schema.git")
-          developerConnection.set("scm:git:ssh://git@github.com:jstano/java-schema.git")
-          url.set("https://github.com/jstano/java-schema")
-        }
-      }
-    }
-  }
-  repositories {
-    maven {
-      url = uri(layout.buildDirectory.dir("staging-deploy").get().toString())
-    }
-  }
-}
-
-signing {
-  isRequired = gradle.taskGraph.hasTask("publish")
-  sign(publishing.publications["mavenJava"])
-}
-
-tasks.register<Zip>("zipStagingDeploy") {
-  archiveFileName.set("staging-deploy.zip")
-  destinationDirectory.set(layout.buildDirectory.dir("tmp"))
-  from("build/staging-deploy") {
-    include("**/*")
-  }
 }

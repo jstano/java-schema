@@ -77,11 +77,11 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
     }
 
     if (columnType == ColumnType.TEXT) {
-      return getTextSql();
+      return getTextSql(column);
     }
 
-    if (columnType == ColumnType.BLOB) {
-      return getBlobSql();
+    if (columnType == ColumnType.BINARY) {
+      return getBinarySql();
     }
 
     if (columnType == ColumnType.UUID) {
@@ -110,9 +110,9 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
 
   protected abstract String getLongSequenceSql();
 
-  protected abstract String getTextSql();
+  protected abstract String getTextSql(Column column);
 
-  protected abstract String getBlobSql();
+  protected abstract String getBinarySql();
 
   protected abstract String getUUIDDefaultValueSql(Schema schema);
 
@@ -162,7 +162,7 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
       return "varchar(3)";
     }
 
-    if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
+    if (booleanMode == BooleanMode.YN) {
       return "char(1)";
     }
 
@@ -194,7 +194,7 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
   }
 
   protected String getJsonSql() {
-    return getTextSql();
+    return getTextSql(null);
   }
 
   protected String getEnumSql(Column column) {

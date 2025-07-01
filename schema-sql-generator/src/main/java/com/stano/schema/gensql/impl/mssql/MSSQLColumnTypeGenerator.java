@@ -54,12 +54,16 @@ class MSSQLColumnTypeGenerator extends ColumnTypeGenerator {
   }
 
   @Override
-  protected String getTextSql() {
-    return "nvarchar(max)";
+  protected String getTextSql(Column column) {
+    if (column.isUnicode()) {
+      return "nvarchar(max)";
+    }
+
+    return "varchar(max)";
   }
 
   @Override
-  protected String getBlobSql() {
+  protected String getBinarySql() {
     return "varbinary(max)";
   }
 
@@ -74,7 +78,7 @@ class MSSQLColumnTypeGenerator extends ColumnTypeGenerator {
       return "nvarchar(3)";
     }
 
-    if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
+    if (booleanMode == BooleanMode.YN) {
       return "nchar(1)";
     }
 

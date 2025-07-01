@@ -59,7 +59,7 @@ public class LiquibaseChangeLogExecutor {
         databaseUpgradeLog.finish(database, connection, databaseChangeLogId, null);
       }
       finally {
-        liquibaseFactory.getExecutorService().clearExecutor(database);
+        liquibaseFactory.getExecutorService().clearExecutor("jdbc", database);
       }
     }
     catch (LiquibaseException x) {

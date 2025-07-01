@@ -6,18 +6,15 @@ import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
 
 class PGSQLColumnConstraintGenerator extends ColumnConstraintGenerator {
+  PGSQLColumnConstraintGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
 
-   PGSQLColumnConstraintGenerator(SQLGenerator sqlGenerator) {
+  protected String getCheckConstraintSQL(Column column) {
+    if (column.getType() == ColumnType.VARCHAR) {
+      return String.format("check(length(%s) <= %d)", column.getName(), column.getLength());
+    }
 
-      super(sqlGenerator);
-   }
-
-   protected String getCheckConstraintSQL(Column column) {
-
-      if (column.getType() == ColumnType.VARCHAR) {
-         return String.format("check(length(%s) <= %d)", column.getName(), column.getLength());
-      }
-
-      return super.getCheckConstraintSQL(column);
-   }
+    return super.getCheckConstraintSQL(column);
+  }
 }

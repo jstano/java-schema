@@ -2,6 +2,7 @@ package com.stano.schema.importer;
 
 import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
+import com.stano.schema.model.Constraint;
 import com.stano.schema.model.Key;
 import com.stano.schema.model.KeyColumn;
 import com.stano.schema.model.KeyType;
@@ -9,10 +10,13 @@ import com.stano.schema.model.Relation;
 import com.stano.schema.model.RelationType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +32,7 @@ public class SchemaReader {
       populateTables(schema, metaData);
       populateColumns(schema, metaData);
       populatePrimaryKeys(schema, metaData);
+      populateConstraints(schema, connection);
       populateKeys(schema, metaData);
       populateImportedKeys(schema, metaData);
 
@@ -71,12 +76,14 @@ public class SchemaReader {
                                getDecimalDigits(columnType, decimalDigits),
                                nullable.equals("NO"),
                                null,
-                               columnDef,
+                               generatedColumn.equals("YES") ? null : columnDef,
+                               generatedColumn.equals("YES") ? "generated always as " + columnDef + " stored" : null,
                                null,
                                null,
                                null,
                                getElementType(dataType, typeName, columnSize),
-                               true));
+                               true,
+                               false));
         });
       }
     }
@@ -102,16 +109,40 @@ public class SchemaReader {
                                     primaryKeyData.get(tableName)
                                                   .stream()
                                                   .sorted()
-                                                  .map(it -> new KeyColumn(it.columnName(), it.expression()))
+                                                  .map(it -> new KeyColumn(it.columnName()))
                                                   .toList()));
       });
+    }
+  }
+
+  private void populateConstraints(Schema schema, Connection connection) throws SQLException {
+    try (Statement statement = connection.createStatement()) {
+      try (ResultSet rs = statement.executeQuery(
+        "SELECT conrelid::regclass AS tablename, conname, contype, pg_get_constraintdef(oid) AS definition FROM pg_constraint;")) { //WHERE conrelid = 'classificationrulecriteriaconfig'::regclass
+        while (rs.next()) {
+          String tableName = rs.getString("tablename");
+          String constraintName = rs.getString("conname");
+          String constraintType = rs.getString("contype");
+          String definition = rs.getString("definition");
+
+          if (constraintType.equals("p")) {
+          }
+          else if (constraintType.equals("u")) {
+          }
+          else if (constraintType.equals("x") || constraintType.equals("c")) {
+            schema.getOptionalTable(tableName).ifPresent(table -> {
+              table.getConstraints().add(new Constraint(constraintName, definition, null));
+            });
+          }
+        }
+      }
     }
   }
 
   private void populateKeys(Schema schema, DatabaseMetaData metaData) throws SQLException {
     for (Table table : schema.getTables()) {
       var primaryKeysResultSet = metaData.getIndexInfo(null, null, table.getName(), false, false);
-      var keys = new LinkedHashMap<String, List<String>>();
+      var keys = new LinkedHashMap<String, List<KeyDataColumn>>();
 
       while (primaryKeysResultSet.next()) {
         String indexName = primaryKeysResultSet.getString("INDEX_NAME");
@@ -120,30 +151,25 @@ public class SchemaReader {
         int ordinalPosition = primaryKeysResultSet.getInt("ORDINAL_POSITION");
 
         keys.putIfAbsent(indexName + ":::" + nonUnique, new ArrayList<>());
-        keys.get(indexName + ":::" + nonUnique).add(ordinalPosition + ":::" + columnName);
+        keys.get(indexName + ":::" + nonUnique).add(new KeyDataColumn(columnName, ordinalPosition));
       }
 
       keys.forEach((indexName, columns) -> {
         if (indexName.contains(":::true")) {
           table.getKeys().add(new Key(KeyType.INDEX, columns.stream()
                                                             .sorted()
-                                                            .map(name -> name.split(":::")[1])
-                                                            .map(name -> {
-                                                              if (name.matches("lower(.*)")) {
-                                                                return new KeyColumn(name, name);
-                                                              }
-                                                              else {
-                                                                return new KeyColumn(name);
-                                                              }
-                                                            })
+                                                            .map(it -> escapeColumnName(it.columnName()))
+                                                            .map(KeyColumn::new)
                                                             .toList()));
         }
-        else if (!indexName.contains("_pk")) {
-          table.getKeys().add(new Key(KeyType.UNIQUE, columns.stream()
-                                                             .sorted()
-                                                             .map(it -> it.split(":::")[1])
-                                                             .map(it -> new KeyColumn(it, null))
-                                                             .toList()));
+        else {
+          if (showIncludeKey(table, indexName, columns)) {
+            table.getKeys().add(new Key(KeyType.UNIQUE, columns.stream()
+                                                               .sorted()
+                                                               .map(it -> escapeColumnName(it.columnName()))
+                                                               .map(KeyColumn::new)
+                                                               .toList()));
+          }
         }
       });
 
@@ -156,6 +182,25 @@ public class SchemaReader {
         }
       }
     }
+  }
+
+  private String escapeColumnName(String columnName) {
+    return StringEscapeUtils.escapeXml11(columnName.replace("\n", ""));
+  }
+
+  private boolean showIncludeKey(Table table, String indexName, List<KeyDataColumn> columns) {
+    if (table.getConstraints().stream().anyMatch(it -> it.getName().equals(indexName))) {
+      return false;
+    }
+
+    if (table.getPrimaryKey() != null) {
+      List<String> pkColumnNames = table.getPrimaryKey().getColumns().stream().map(KeyColumn::getName).toList();
+      List<String> keyColumnNames = columns.stream().sorted().map(KeyDataColumn::columnName).toList();
+
+      return !pkColumnNames.equals(keyColumnNames);
+    }
+
+    return true;
   }
 
   private void populateImportedKeys(Schema schema, DatabaseMetaData metaData) throws SQLException {
@@ -241,7 +286,7 @@ public class SchemaReader {
       return ColumnType.TEXT;
     }
     if (dataType == Types.BINARY || dataType == Types.VARBINARY || dataType == Types.LONGVARBINARY) {
-      return ColumnType.BLOB;
+      return ColumnType.BINARY;
     }
     if (dataType == Types.DATE) {
       return ColumnType.DATE;

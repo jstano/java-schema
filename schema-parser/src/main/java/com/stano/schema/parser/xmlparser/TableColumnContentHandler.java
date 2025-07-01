@@ -18,8 +18,10 @@ public class TableColumnContentHandler extends AbstractContentHandler {
   private String scale;
   private boolean required;
   private String unicode;
+  private boolean ignoreCase;
   private String defaultConstraint;
   private String checkConstraint;
+  private String generated;
   private String enumType;
   private ColumnType elementType;
   private String minValue;
@@ -41,7 +43,9 @@ public class TableColumnContentHandler extends AbstractContentHandler {
       scale = atts.getValue("scale");
       required = Boolean.parseBoolean(atts.getValue("required"));
       unicode = atts.getValue("unicode");
+      ignoreCase = Boolean.parseBoolean(atts.getValue("ignoreCase"));
       defaultConstraint = atts.getValue("default");
+      generated = atts.getValue("generated");
       enumType = atts.getValue("enumType");
       elementType = atts.getValue("elementType") != null ? ColumnType.getColumnType(atts.getValue("elementType")) : null;
       minValue = atts.getValue("minValue");
@@ -63,11 +67,13 @@ public class TableColumnContentHandler extends AbstractContentHandler {
                                                          required,
                                                          checkConstraint,
                                                          defaultConstraint,
+                                                         generated,
                                                          minValue,
                                                          maxValue,
                                                          enumType,
                                                          elementType,
-                                                         parseUnicode(unicode)));
+                                                         parseUnicode(unicode),
+                                                         ignoreCase));
       case "check" -> {
         String content = getContent();
 

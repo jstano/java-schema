@@ -306,7 +306,7 @@ class SchemaParserSpec extends Specification {
     assert columnTesterTable.options.get(0) == TableOption.NO_EXPORT
     assert columnTesterTable.options.get(1) == TableOption.COMPRESS
     assert columnTesterTable.options.get(2) == TableOption.DATA
-    assert columnTesterTable.columns.size() == 23
+    assert columnTesterTable.columns.size() == 22
     assert columnTesterTable.columns.get(0).name == 'sequence'
     assert columnTesterTable.columns.get(0).type == ColumnType.SEQUENCE
     assert columnTesterTable.columns.get(1).name == 'longsequence'
@@ -356,14 +356,12 @@ class SchemaParserSpec extends Specification {
     assert columnTesterTable.columns.get(17).enumType == 'TestEnumType'
     assert columnTesterTable.columns.get(18).name == 'text'
     assert columnTesterTable.columns.get(18).type == ColumnType.TEXT
-    assert columnTesterTable.columns.get(19).name == 'memo'
-    assert columnTesterTable.columns.get(19).type == ColumnType.TEXT
-    assert columnTesterTable.columns.get(20).name == 'blob'
-    assert columnTesterTable.columns.get(20).type == ColumnType.BLOB
-    assert columnTesterTable.columns.get(21).name == 'uuid'
-    assert columnTesterTable.columns.get(21).type == ColumnType.UUID
-    assert columnTesterTable.columns.get(22).name == 'json'
-    assert columnTesterTable.columns.get(22).type == ColumnType.JSON
+    assert columnTesterTable.columns.get(19).name == 'binary'
+    assert columnTesterTable.columns.get(19).type == ColumnType.BINARY
+    assert columnTesterTable.columns.get(20).name == 'uuid'
+    assert columnTesterTable.columns.get(20).type == ColumnType.UUID
+    assert columnTesterTable.columns.get(21).name == 'json'
+    assert columnTesterTable.columns.get(21).type == ColumnType.JSON
     assert columnTesterTable.options.size() == 3
     assert columnTesterTable.hasOption(TableOption.COMPRESS)
     assert columnTesterTable.hasOption(TableOption.DATA)

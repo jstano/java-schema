@@ -46,6 +46,10 @@ public class TableContentHandler extends AbstractContentHandler {
         contentHandler = new RelationContentHandler(schema, table, this);
         contentHandler.startElement(namespaceURI, localName, qName, atts);
       }
+      case "constraints" -> {
+        contentHandler = new ConstraintContentHandler(schema, table, this);
+        contentHandler.startElement(namespaceURI, localName, qName, atts);
+      }
       case "initialData" -> {
         contentHandler = new InitialDataContentHandler(schema, table, this);
         contentHandler.startElement(namespaceURI, localName, qName, atts);

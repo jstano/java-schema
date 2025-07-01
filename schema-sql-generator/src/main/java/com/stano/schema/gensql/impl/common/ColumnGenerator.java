@@ -10,127 +10,123 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class ColumnGenerator extends BaseGenerator {
+  private static final String DF_PREFIX = "df_";
 
-   private static final String DF_PREFIX = "df_";
+  protected ColumnGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
 
-   protected ColumnGenerator(SQLGenerator sqlGenerator) {
+  public List<String> getColumnDefinitions(Table table) {
+    return table.getColumns()
+                .stream()
+                .map(column -> getColumnSql(table, column))
+                .collect(Collectors.toList());
+  }
 
-      super(sqlGenerator);
-   }
+  protected abstract ColumnTypeGenerator getColumnTypeGenerator();
 
-   public List<String> getColumnDefinitions(Table table) {
+  protected String getColumnSql(Table table, Column column) {
+    String columnOptions = getColumnOptions(table, column);
 
-      return table.getColumns()
-                  .stream()
-                  .map(column -> getColumnSql(table, column))
-                  .collect(Collectors.toList());
-   }
+    if (StringUtils.isNotBlank(columnOptions)) {
+      return String.format("   %s %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column), columnOptions);
+    }
 
-   protected abstract ColumnTypeGenerator getColumnTypeGenerator();
+    return String.format("   %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column));
+  }
 
-   protected String getColumnSql(Table table, Column column) {
+  protected String getColumnOptions(Table table, Column column) {
+    StringBuilder columnOptions = new StringBuilder();
 
-      String columnOptions = getColumnOptions(table, column);
-
-      if (StringUtils.isNotBlank(columnOptions)) {
-         return String.format("   %s %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column), columnOptions);
+    if (column.isRequired()) {
+      if (columnOptions.length() > 0) {
+        columnOptions.append(' ');
       }
 
-      return String.format("   %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column));
-   }
+      columnOptions.append("not null");
+    }
 
-   protected String getColumnOptions(Table table, Column column) {
+    String defaultValue = getDefaultValue(table, column);
 
-      StringBuilder columnOptions = new StringBuilder();
-
-      if (column.isRequired()) {
-         if (columnOptions.length() > 0) {
-            columnOptions.append(' ');
-         }
-
-         columnOptions.append("not null");
+    if (defaultValue != null) {
+      if (!columnOptions.isEmpty()) {
+        columnOptions.append(' ');
       }
 
-      String defaultValue = getDefaultValue(table, column);
+      columnOptions.append(createDefaultConstraint(table, column, defaultValue));
 
+      if (column.getGenerated() != null) {
+        columnOptions.append(" ");
+        columnOptions.append(column.getGenerated());
+      }
+    }
+
+    return columnOptions.toString().trim();
+  }
+
+  protected String getDefaultValue(Table table, Column column) {
+    String defaultValue = column.getDefaultConstraint();
+
+    if (column.getType() == ColumnType.BOOLEAN) {
       if (defaultValue != null) {
-         if (columnOptions.length() > 0) {
-            columnOptions.append(' ');
-         }
-
-         columnOptions.append(createDefaultConstraint(table, column, defaultValue));
+        if (defaultValue.equalsIgnoreCase("null")) {
+          defaultValue = null;
+        }
+        else {
+          defaultValue = convertBooleanDefaultConstraint(Boolean.parseBoolean(defaultValue));
+        }
       }
-
-      return columnOptions.toString().trim();
-   }
-
-   protected String getDefaultValue(Table table, Column column) {
-
-      String defaultValue = column.getDefaultConstraint();
-
-      if (column.getType() == ColumnType.BOOLEAN) {
-         if (defaultValue != null) {
-            if (defaultValue.equalsIgnoreCase("null")) {
-               defaultValue = null;
-            }
-            else {
-               defaultValue = convertBooleanDefaultConstraint(Boolean.parseBoolean(defaultValue));
-            }
-         }
-         else {
-            defaultValue = convertBooleanDefaultConstraint(false);
-         }
+      else {
+        defaultValue = convertBooleanDefaultConstraint(false);
       }
-      else if (column.getType() == ColumnType.UUID) {
-         List<String> primaryKeyColumns = table.getPrimaryKeyColumns();
+    }
+    else if (column.getType() == ColumnType.UUID) {
+      List<String> primaryKeyColumns = table.getPrimaryKeyColumns();
 
-         if (column.isRequired() && primaryKeyColumns.size() == 1 && primaryKeyColumns.contains(column.getName()) && table.getColumnRelation(column) == null) {
-            return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
-         }
-         else if (defaultValue != null && defaultValue.equalsIgnoreCase("generate_uuid()")) {
-            return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
-         }
+      if (column.isRequired() && primaryKeyColumns.size() == 1 && primaryKeyColumns.contains(column.getName()) && table.getColumnRelation(column) == null) {
+        return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
       }
-
-      return defaultValue;
-   }
-
-   protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
-
-      return String.format("constraint %s default %s",
-                           buildDefaultConstraintName(table.getName(), column.getName()),
-                           defaultValue);
-   }
-
-   protected String convertBooleanDefaultConstraint(boolean defaultValue) {
-
-      if (booleanMode == BooleanMode.YES_NO) {
-         return defaultValue ? "'Yes'" : "'No'";
+      else if (defaultValue != null && defaultValue.equalsIgnoreCase("generate_uuid()")) {
+        return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
       }
+    }
 
-      if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
-         return defaultValue ? "'Y'" : "'N'";
-      }
+    return defaultValue;
+  }
 
-      return defaultValue ? "true" : "false";
-   }
+  protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
+    return String.format("constraint %s default %s",
+                         buildDefaultConstraintName(table.getName(), column.getName()),
+                         defaultValue);
+  }
 
-   private String buildDefaultConstraintName(String tableName, String columnName) {
+  protected String convertBooleanDefaultConstraint(boolean defaultValue) {
+    if (booleanMode == BooleanMode.YES_NO) {
+      return defaultValue ? "'Yes'" : "'No'";
+    }
 
-      tableName = tableName.toLowerCase();
-      columnName = columnName.toLowerCase();
+    if (booleanMode == BooleanMode.YN) {
+      return defaultValue ? "'Y'" : "'N'";
+    }
 
-      String name = tableName + "_" + columnName;
-      String hashCode = Integer.toHexString(name.hashCode()).toUpperCase();
+    return defaultValue ? "true" : "false";
+  }
 
-      if (tableName.length() > 9) {
-         tableName = tableName.substring(0, 9);
-      }
+  private String buildDefaultConstraintName(String tableName, String columnName) {
+    tableName = tableName.toLowerCase();
+    columnName = columnName.toLowerCase();
 
-      if (columnName.length() > 9) {
-         columnName = columnName.substring(0, 9);
-      }
+    String name = tableName + "_" + columnName;
+    String hashCode = Integer.toHexString(name.hashCode()).toUpperCase();
 
-      return DF_PREFIX + tableName + "_" + columnName + "_" + hashCode;
-   }
+    if (tableName.length() > 9) {
+      tableName = tableName.substring(0, 9);
+    }
+
+    if (columnName.length() > 9) {
+      columnName = columnName.substring(0, 9);
+    }
+
+    return DF_PREFIX + tableName + "_" + columnName + "_" + hashCode;
+  }
 }

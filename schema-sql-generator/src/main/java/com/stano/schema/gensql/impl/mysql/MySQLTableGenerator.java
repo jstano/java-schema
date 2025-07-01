@@ -5,46 +5,48 @@ import com.stano.schema.gensql.impl.common.ColumnGenerator;
 import com.stano.schema.gensql.impl.common.IndexGenerator;
 import com.stano.schema.gensql.impl.common.KeyGenerator;
 import com.stano.schema.gensql.impl.common.SQLGenerator;
+import com.stano.schema.gensql.impl.common.TableConstraintGenerator;
 import com.stano.schema.gensql.impl.common.TableGenerator;
 
 class MySQLTableGenerator extends TableGenerator {
+  private final ColumnGenerator columnGenerator;
+  private final KeyGenerator keyGenerator;
+  private final ColumnConstraintGenerator columnConstraintGenerator;
+  private final TableConstraintGenerator tableConstraintGenerator;
+  private final IndexGenerator indexGenerator;
 
-   private final ColumnGenerator columnGenerator;
-   private final KeyGenerator keyGenerator;
-   private final ColumnConstraintGenerator columnConstraintGenerator;
-   private final IndexGenerator indexGenerator;
+  MySQLTableGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
 
-   MySQLTableGenerator(SQLGenerator sqlGenerator) {
+    this.columnGenerator = new MySQLColumnGenerator(sqlGenerator);
+    this.keyGenerator = new MySQLKeyGenerator(sqlGenerator);
+    this.columnConstraintGenerator = new MySQLColumnConstraintGenerator(sqlGenerator);
+    this.tableConstraintGenerator = new MySQLTableConstraintGenerator(sqlGenerator);
+    this.indexGenerator = new MySQLIndexGenerator(sqlGenerator);
+  }
 
-      super(sqlGenerator);
+  @Override
+  protected ColumnGenerator getColumnGenerator() {
+    return columnGenerator;
+  }
 
-      this.columnGenerator = new MySQLColumnGenerator(sqlGenerator);
-      this.keyGenerator = new MySQLKeyGenerator(sqlGenerator);
-      this.columnConstraintGenerator = new MySQLColumnConstraintGenerator(sqlGenerator);
-      this.indexGenerator = new MySQLIndexGenerator(sqlGenerator);
-   }
+  @Override
+  protected KeyGenerator getKeyGenerator() {
+    return keyGenerator;
+  }
 
-   @Override
-   protected ColumnGenerator getColumnGenerator() {
+  @Override
+  protected ColumnConstraintGenerator getColumnConstraintGenerator() {
+    return columnConstraintGenerator;
+  }
 
-      return columnGenerator;
-   }
+  @Override
+  protected TableConstraintGenerator getTableConstraintGenerator() {
+    return tableConstraintGenerator;
+  }
 
-   @Override
-   protected KeyGenerator getKeyGenerator() {
-
-      return keyGenerator;
-   }
-
-   @Override
-   protected ColumnConstraintGenerator getColumnConstraintGenerator() {
-
-      return columnConstraintGenerator;
-   }
-
-   @Override
-   protected IndexGenerator getIndexGenerator() {
-
-      return indexGenerator;
-   }
+  @Override
+  protected IndexGenerator getIndexGenerator() {
+    return indexGenerator;
+  }
 }

@@ -70,7 +70,9 @@
                 <attribute name="scale" type="integer"/>
                 <attribute name="required" type="boolean"/>
                 <attribute name="unicode" type="boolean"/>
+                <attribute name="ignoreCase" type="boolean"/>
                 <attribute name="default" type="string"/>
+                <attribute name="generated" type="string"/>
                 <attribute name="enumType" type="string"/>
                 <attribute name="elementType" type="database:columnEnum"/>
                 <attribute name="minValue" type="double"/>
@@ -103,7 +105,6 @@
                   <element name="column">
                     <complexType>
                       <attribute name="name"/>
-                      <attribute name="expression"/>
                     </complexType>
                   </element>
                 </sequence>
@@ -117,7 +118,6 @@
                   <element name="column">
                     <complexType>
                       <attribute name="name"/>
-                      <attribute name="expression"/>
                     </complexType>
                   </element>
                 </sequence>
@@ -152,6 +152,23 @@
               <element name="update" type="database:triggerType" minOccurs="0" maxOccurs="unbounded"/>
               <element name="delete" type="database:triggerType" minOccurs="0" maxOccurs="unbounded"/>
             </choice>
+          </sequence>
+        </complexType>
+      </element>
+
+      <element name="constraints" minOccurs="0" maxOccurs="1">
+        <complexType>
+          <sequence>
+            <element name="constraint" minOccurs="1" maxOccurs="unbounded">
+              <complexType>
+                <simpleContent>
+                  <extension base="string">
+                    <attribute name="name" type="string" use="required"/>
+                    <attribute name="databaseType" type="database:databaseTypeEnum"/>
+                  </extension>
+                </simpleContent>
+              </complexType>
+            </element>
           </sequence>
         </complexType>
       </element>
@@ -367,7 +384,7 @@
       <enumeration value="varchar"/>
       <enumeration value="enum"/>
       <enumeration value="text"/>
-      <enumeration value="blob"/>
+      <enumeration value="binary"/>
       <enumeration value="uuid"/>
       <enumeration value="json"/>
       <enumeration value="array"/>

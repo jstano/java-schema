@@ -10,136 +10,127 @@ import java.util.List;
 import java.util.Set;
 
 public class KeyGenerator extends BaseGenerator {
+  private static final String PK_PREFIX = "pk_";
+  private static final String AK_PREFIX = "ak_";
 
-   private static final String PK_PREFIX = "pk_";
-   private static final String AK_PREFIX = "ak_";
+  protected KeyGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
 
-   protected KeyGenerator(SQLGenerator sqlGenerator) {
+  public List<String> getKeyConstraints(Table table) {
+    boolean disallowDuplicateUniqueKeys = !disallowDuplicateUniqueKeyConstraints();
+    Set<String> keysAlreadyGenerated = new HashSet<>();
+    int nextUniqueKeyNo = 1;
 
-      super(sqlGenerator);
-   }
+    List<String> keyConstraints = new ArrayList<>();
 
-   public List<String> getKeyConstraints(Table table) {
+    for (int keyIndex = 0; keyIndex < table.getKeys().size(); keyIndex++) {
+      Key key = table.getKeys().get(keyIndex);
 
-      boolean disallowDuplicateUniqueKeys = !disallowDuplicateUniqueKeyConstraints();
-      Set<String> keysAlreadyGenerated = new HashSet<>();
-      int nextUniqueKeyNo = 1;
-
-      List<String> keyConstraints = new ArrayList<>();
-
-      for (int keyIndex = 0; keyIndex < table.getKeys().size(); keyIndex++) {
-         Key key = table.getKeys().get(keyIndex);
-
-         if (disallowDuplicateUniqueKeys && keysAlreadyGenerated.contains(key.getColumnsAsString())) {
-            continue;
-         }
-
-         keysAlreadyGenerated.add(key.getColumnsAsString());
-
-         String keyName = null;
-
-         if (key.getType() == KeyType.PRIMARY) {
-            keyName = PK_PREFIX + table.getName();
-
-            if (keyName.length() > maxKeyNameLength) {
-               keyName = keyName.substring(0, maxKeyNameLength);
-            }
-         }
-         else if (key.getType() == KeyType.UNIQUE) {
-            keyName = AK_PREFIX + table.getName() + nextUniqueKeyNo;
-
-            if (keyName.length() > maxKeyNameLength) {
-               keyName = AK_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + nextUniqueKeyNo;
-            }
-
-            nextUniqueKeyNo++;
-         }
-
-         keyConstraints.add(generateKey(keyName, key));
+      if (disallowDuplicateUniqueKeys && keysAlreadyGenerated.contains(key.getColumnsAsString())) {
+        continue;
       }
 
-      return keyConstraints;
-   }
+      keysAlreadyGenerated.add(key.getColumnsAsString());
 
-   protected boolean disallowDuplicateUniqueKeyConstraints() {
-
-      return false;
-   }
-
-   protected String generateKey(String keyName, Key key) {
+      String keyName = null;
 
       if (key.getType() == KeyType.PRIMARY) {
-         return generatePrimaryKey(key, keyName);
+        keyName = PK_PREFIX + table.getName();
+
+        if (keyName.length() > maxKeyNameLength) {
+          keyName = keyName.substring(0, maxKeyNameLength);
+        }
+      }
+      else if (key.getType() == KeyType.UNIQUE) {
+        keyName = AK_PREFIX + table.getName() + nextUniqueKeyNo;
+
+        if (keyName.length() > maxKeyNameLength) {
+          keyName = AK_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + nextUniqueKeyNo;
+        }
+
+        nextUniqueKeyNo++;
       }
 
-      if (key.getType() == KeyType.UNIQUE) {
-         return generateUniqueKey(key, keyName);
-      }
+      keyConstraints.add(generateKey(keyName, key));
+    }
 
-      return null;
-   }
+    return keyConstraints;
+  }
 
-   private String generatePrimaryKey(Key key, String keyName) {
+  protected boolean disallowDuplicateUniqueKeyConstraints() {
+    return false;
+  }
 
-      String keyClusterSql = getKeyClusterSql(key);
-      String keyCompressionSql = getKeyCompressSql(key);
+  protected String generateKey(String keyName, Key key) {
+    if (key.getType() == KeyType.PRIMARY) {
+      return generatePrimaryKey(key, keyName);
+    }
 
-      if (keyClusterSql != null && keyCompressionSql != null) {
-         return String.format("   constraint %s primary key %s (%s) %s",
-                              keyName.toLowerCase(),
-                              keyClusterSql,
-                              key.getColumnsAsString(),
-                              keyCompressionSql);
-      }
+    if (key.getType() == KeyType.UNIQUE) {
+      return generateUniqueKey(key, keyName);
+    }
 
-      if (keyClusterSql != null) {
-         return String.format("   constraint %s primary key %s (%s)", keyName.toLowerCase(), keyClusterSql, key.getColumnsAsString());
-      }
+    return null;
+  }
 
-      if (keyCompressionSql != null) {
-         return String.format("   constraint %s primary key (%s) %s",
-                              keyName.toLowerCase(),
-                              key.getColumnsAsString(),
-                              keyCompressionSql);
-      }
+  private String generatePrimaryKey(Key key, String keyName) {
+    String keyClusterSql = getKeyClusterSql(key);
+    String keyCompressionSql = getKeyCompressSql(key);
 
-      return String.format("   constraint %s primary key (%s)", keyName.toLowerCase(), key.getColumnsAsString());
-   }
+    if (keyClusterSql != null && keyCompressionSql != null) {
+      return String.format("   constraint %s primary key %s (%s) %s",
+                           keyName.toLowerCase(),
+                           keyClusterSql,
+                           key.getColumnsAsString(),
+                           keyCompressionSql);
+    }
 
-   private String generateUniqueKey(Key key, String keyName) {
+    if (keyClusterSql != null) {
+      return String.format("   constraint %s primary key %s (%s)", keyName.toLowerCase(), keyClusterSql, key.getColumnsAsString());
+    }
 
-      String keyClusterSql = getKeyClusterSql(key);
-      String keyCompressionSql = getKeyCompressSql(key);
+    if (keyCompressionSql != null) {
+      return String.format("   constraint %s primary key (%s) %s",
+                           keyName.toLowerCase(),
+                           key.getColumnsAsString(),
+                           keyCompressionSql);
+    }
 
-      if (keyClusterSql != null && keyCompressionSql != null) {
-         return String.format("   constraint %s unique %s (%s) %s",
-                              keyName.toLowerCase(),
-                              keyClusterSql,
-                              key.getColumnsAsString(),
-                              keyCompressionSql);
-      }
+    return String.format("   constraint %s primary key (%s)", keyName.toLowerCase(), key.getColumnsAsString());
+  }
 
-      if (keyClusterSql != null) {
-         return String.format("   constraint %s unique %s (%s)", keyName.toLowerCase(), keyClusterSql, key.getColumnsAsString());
-      }
+  private String generateUniqueKey(Key key, String keyName) {
+    String keyClusterSql = getKeyClusterSql(key);
+    String keyCompressionSql = getKeyCompressSql(key);
 
-      if (keyCompressionSql != null) {
-         return String.format("   constraint %s unique (%s) %s",
-                              keyName.toLowerCase(),
-                              key.getColumnsAsString(),
-                              keyCompressionSql);
-      }
+    if (keyClusterSql != null && keyCompressionSql != null) {
+      return String.format("   constraint %s unique %s (%s) %s",
+                           keyName.toLowerCase(),
+                           keyClusterSql,
+                           key.getColumnsAsString(),
+                           keyCompressionSql);
+    }
 
-      return String.format("   constraint %s unique (%s)", keyName.toLowerCase(), key.getColumnsAsString());
-   }
+    if (keyClusterSql != null) {
+      return String.format("   constraint %s unique %s (%s)", keyName.toLowerCase(), keyClusterSql, key.getColumnsAsString());
+    }
 
-   protected String getKeyClusterSql(Key key) {
+    if (keyCompressionSql != null) {
+      return String.format("   constraint %s unique (%s) %s",
+                           keyName.toLowerCase(),
+                           key.getColumnsAsString(),
+                           keyCompressionSql);
+    }
 
-      return null;
-   }
+    return String.format("   constraint %s unique (%s)", keyName.toLowerCase(), key.getColumnsAsString());
+  }
 
-   protected String getKeyCompressSql(Key key) {
+  protected String getKeyClusterSql(Key key) {
+    return null;
+  }
 
-      return null;
-   }
+  protected String getKeyCompressSql(Key key) {
+    return null;
+  }
 }

@@ -103,8 +103,7 @@
       </column>
       <column name="enum" type="enum" enumType="TestEnumType"/>
       <column name="text" type="text"/>
-      <column name="memo" type="text"/>
-      <column name="blob" type="blob"/>
+      <column name="binary" type="binary"/>
       <column name="uuid" type="uuid"/>
       <column name="json" type="json"/>
     </columns>

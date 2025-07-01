@@ -1,5 +1,6 @@
 package com.stano.schema.gensql.impl.common;
 
+import com.stano.schema.model.Constraint;
 import com.stano.schema.model.InitialData;
 import com.stano.schema.model.Table;
 import org.slf4j.Logger;
@@ -11,94 +12,84 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public abstract class TableGenerator extends BaseGenerator {
+  private static final Logger LOGGER = LoggerFactory.getLogger(TableGenerator.class);
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(TableGenerator.class);
+  protected TableGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
 
-   protected TableGenerator(SQLGenerator sqlGenerator) {
+  public void outputTables() {
+    schema.getTables().forEach(this::outputTable);
+  }
 
-      super(sqlGenerator);
-   }
+  protected abstract ColumnGenerator getColumnGenerator();
 
-   public void outputTables() {
+  protected abstract KeyGenerator getKeyGenerator();
 
-      schema.getTables().forEach(this::outputTable);
-   }
+  protected abstract ColumnConstraintGenerator getColumnConstraintGenerator();
 
-   protected abstract ColumnGenerator getColumnGenerator();
+  protected abstract TableConstraintGenerator getTableConstraintGenerator();
 
-   protected abstract KeyGenerator getKeyGenerator();
+  protected abstract IndexGenerator getIndexGenerator();
 
-   protected abstract ColumnConstraintGenerator getColumnConstraintGenerator();
+  protected void outputTable(Table table) {
+    LOGGER.debug("Generating SQL for table " + getFullyQualifiedTableName(table));
 
-   protected abstract IndexGenerator getIndexGenerator();
+    outputTableHeader(table);
+    outputTableDefinition(table);
+    outputTableFooter(table);
+    outputIndexes(table);
+    outputInitialData(table);
+  }
 
-   protected void outputTable(Table table) {
+  protected void outputTableHeader(Table table) {
+    sqlWriter.println(String.format("/* %s */", getFullyQualifiedTableName(table)));
+    sqlWriter.println("create table " + getFullyQualifiedTableName(table));
+    sqlWriter.println("(");
+  }
 
-      LOGGER.debug("Generating SQL for table " + getFullyQualifiedTableName(table));
+  protected void outputTableDefinition(Table table) {
+    List<String> tableDefinitions = Stream.of(getColumnGenerator().getColumnDefinitions(table),
+                                              getKeyGenerator().getKeyConstraints(table),
+                                              getColumnConstraintGenerator().getColumnCheckConstraints(table),
+                                              getTableConstraintGenerator().getTableCheckConstraints(table))
+                                          .flatMap(Collection::stream)
+                                          .toList();
 
-      outputTableHeader(table);
+    for (int i = 0; i < tableDefinitions.size(); i++) {
+      String sql = tableDefinitions.get(i);
 
-      outputTableDefinition(table);
+      sqlWriter.print(sql);
 
-      outputTableFooter(table);
-
-      outputIndexes(table);
-
-      outputInitialData(table);
-   }
-
-   protected void outputTableHeader(Table table) {
-
-      sqlWriter.println(String.format("/* %s */", getFullyQualifiedTableName(table)));
-      sqlWriter.println("create table " + getFullyQualifiedTableName(table));
-      sqlWriter.println("(");
-   }
-
-   protected void outputTableDefinition(Table table) {
-
-      List<String> tableDefinitions = Stream.of(getColumnGenerator().getColumnDefinitions(table),
-                                                getKeyGenerator().getKeyConstraints(table),
-                                                getColumnConstraintGenerator().getColumnCheckConstraints(table))
-                                            .flatMap(Collection::stream)
-                                            .collect(Collectors.toList());
-
-      for (int i = 0; i < tableDefinitions.size(); i++) {
-         String sql = tableDefinitions.get(i);
-
-         sqlWriter.print(sql);
-
-         if (i < tableDefinitions.size() - 1) {
-            sqlWriter.print(",");
-         }
-
-         sqlWriter.println();
+      if (i < tableDefinitions.size() - 1) {
+        sqlWriter.print(",");
       }
-   }
 
-   protected void outputTableFooter(Table table) {
-
-      sqlWriter.println(")" + statementSeparator);
       sqlWriter.println();
-   }
+    }
+  }
 
-   protected void outputIndexes(Table table) {
+  protected void outputTableFooter(Table table) {
+    sqlWriter.println(")" + statementSeparator);
+    sqlWriter.println();
+  }
 
-      getIndexGenerator().outputIndexes(table);
-   }
+  protected void outputIndexes(Table table) {
+    getIndexGenerator().outputIndexes(table);
+  }
 
-   protected void outputInitialData(Table table) {
+  protected void outputInitialData(Table table) {
+    List<InitialData> initialDataList = table.getInitialData()
+                                             .stream()
+                                             .filter(it -> it.getDatabaseType() == null || it.getDatabaseType() == databaseType)
+                                             .toList();
 
-      List<InitialData> initialDataList = table.getInitialData()
-                                               .stream()
-                                               .filter(it -> it.getDatabaseType() == null || it.getDatabaseType() == databaseType)
-                                               .collect(Collectors.toList());
+    if (!initialDataList.isEmpty()) {
+      initialDataList.forEach(initialData -> {
+        sqlWriter.println(initialData.getSql() + statementSeparator);
+      });
 
-      if (!initialDataList.isEmpty()) {
-         initialDataList.forEach(initialData -> {
-            sqlWriter.println(initialData.getSql() + statementSeparator);
-         });
-
-         sqlWriter.println();
-      }
-   }
+      sqlWriter.println();
+    }
+  }
 }

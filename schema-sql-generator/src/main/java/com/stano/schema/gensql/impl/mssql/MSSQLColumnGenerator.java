@@ -29,7 +29,7 @@ class MSSQLColumnGenerator extends ColumnGenerator {
          return defaultValue ? "'Yes'" : "'No'";
       }
 
-      if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
+      if (booleanMode == BooleanMode.YN) {
          return defaultValue ? "'Y'" : "'N'";
       }
 

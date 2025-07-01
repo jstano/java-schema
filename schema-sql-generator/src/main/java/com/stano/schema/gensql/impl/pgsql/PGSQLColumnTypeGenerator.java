@@ -33,16 +33,20 @@ public class PGSQLColumnTypeGenerator extends ColumnTypeGenerator {
 
   @Override
   protected String getVarcharSql(Column column) {
-    return "citext";
+    return "text";
   }
 
   @Override
-  protected String getTextSql() {
-    return "citext";
+  protected String getTextSql(Column column) {
+    if (column != null && column.isIgnoreCase()) {
+      return "citext";
+    }
+
+    return "text";
   }
 
   @Override
-  protected String getBlobSql() {
+  protected String getBinarySql() {
     return "bytea";
   }
 
@@ -67,7 +71,7 @@ public class PGSQLColumnTypeGenerator extends ColumnTypeGenerator {
     return switch (elementType) {
       case ColumnType.VARCHAR -> getVarcharSql(column) + "[]";
       case ColumnType.CHAR -> getCharSql(column) + "[]";
-      case ColumnType.TEXT -> getTextSql() + "[]";
+      case ColumnType.TEXT -> getTextSql(column) + "[]";
       case ColumnType.DECIMAL -> getDecimalSql(column) + "[]";
       case ColumnType.BYTE -> getByteSql() + "[]";
       case ColumnType.SHORT -> getShortSql() + "[]";

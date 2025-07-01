@@ -7,25 +7,21 @@ import com.stano.schema.model.Column;
 import com.stano.schema.model.Table;
 
 class PGSQLColumnGenerator extends ColumnGenerator {
+  private final ColumnTypeGenerator columnTypeGenerator;
 
-   private final ColumnTypeGenerator columnTypeGenerator;
+  PGSQLColumnGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
 
-   PGSQLColumnGenerator(SQLGenerator sqlGenerator) {
+    this.columnTypeGenerator = new PGSQLColumnTypeGenerator(sqlGenerator);
+  }
 
-      super(sqlGenerator);
+  @Override
+  protected ColumnTypeGenerator getColumnTypeGenerator() {
+    return columnTypeGenerator;
+  }
 
-      this.columnTypeGenerator = new PGSQLColumnTypeGenerator(sqlGenerator);
-   }
-
-   @Override
-   protected ColumnTypeGenerator getColumnTypeGenerator() {
-
-      return columnTypeGenerator;
-   }
-
-   @Override
-   protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
-
-      return String.format("default %s", defaultValue);
-   }
+  @Override
+  protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
+    return String.format("default %s", defaultValue);
+  }
 }

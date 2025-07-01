@@ -1,71 +1,68 @@
 package com.stano.schema.gensql.impl.common;
 
 import com.stano.schema.model.Key;
+import com.stano.schema.model.KeyColumn;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Table;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class IndexGenerator extends BaseGenerator {
+  private static final String IX_PREFIX = "ix_";
 
-   private static final String IX_PREFIX = "ix_";
+  protected IndexGenerator(SQLGenerator sqlGenerator) {
+    super(sqlGenerator);
+  }
 
-   protected IndexGenerator(SQLGenerator sqlGenerator) {
+  public void outputIndexes() {
+    schema.getTables().forEach(this::outputIndexes);
+  }
 
-      super(sqlGenerator);
-   }
+  public void outputIndexes(Table table) {
+    if (!table.getIndexes().isEmpty()) {
+      for (int keyIndex = 0; keyIndex < table.getIndexes().size(); keyIndex++) {
+        Key key = table.getIndexes().get(keyIndex);
 
-   public void outputIndexes() {
+        if (key.getType() != KeyType.INDEX) {
+          continue;
+        }
 
-      schema.getTables().forEach(this::outputIndexes);
-   }
+        String keyName = IX_PREFIX + table.getName() + (keyIndex + 1);
 
-   public void outputIndexes(Table table) {
+        if (keyName.length() > maxKeyNameLength) {
+          keyName = IX_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + (keyIndex + 1);
+        }
 
-      if (!table.getIndexes().isEmpty()) {
-         for (int keyIndex = 0; keyIndex < table.getIndexes().size(); keyIndex++) {
-            Key key = table.getIndexes().get(keyIndex);
-
-            if (key.getType() != KeyType.INDEX) {
-               continue;
-            }
-
-            String keyName = IX_PREFIX + table.getName() + (keyIndex + 1);
-
-            if (keyName.length() > maxKeyNameLength) {
-               keyName = IX_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + (keyIndex + 1);
-            }
-
-            outputIndex(table, keyName.toLowerCase(), key);
-         }
-
-         sqlWriter.println();
+        outputIndex(table, keyName.toLowerCase(), key);
       }
-   }
 
-   private void outputIndex(Table table, String keyName, Key key) {
+      sqlWriter.println();
+    }
+  }
 
-      if (key.getType() == KeyType.INDEX) {
-         String indexOptions = getIndexOptions(key);
+  private void outputIndex(Table table, String keyName, Key key) {
+    if (key.getType() == KeyType.INDEX) {
+      String indexOptions = getIndexOptions(key);
+      String indexColumns = String.join(",", key.getColumns().stream().map(it -> StringEscapeUtils.unescapeXml(it.getName())).toArray(String[]::new));
 
-         if (indexOptions == null) {
-            sqlWriter.println(String.format("create index %s on %s (%s)%s",
-                                          keyName.toLowerCase(),
-                                          getFullyQualifiedTableName(table),
-                                          key.getColumnsAsString(),
-                                          statementSeparator));
-         }
-         else {
-            sqlWriter.println(String.format("create index %s on %s (%s) %s%s",
-                                          keyName.toLowerCase(),
-                                          getFullyQualifiedTableName(table),
-                                          key.getColumnsAsString(),
-                                          indexOptions,
-                                          statementSeparator));
-         }
+      if (indexOptions == null) {
+        sqlWriter.println(String.format("create index %s on %s (%s)%s",
+                                        keyName.toLowerCase(),
+                                        getFullyQualifiedTableName(table),
+                                        indexColumns,
+                                        statementSeparator));
       }
-   }
+      else {
+        sqlWriter.println(String.format("create index %s on %s (%s) %s%s",
+                                        keyName.toLowerCase(),
+                                        getFullyQualifiedTableName(table),
+                                        indexColumns,
+                                        indexOptions,
+                                        statementSeparator));
+      }
+    }
+  }
 
-   protected String getIndexOptions(Key key) {
-
-      return null;
-   }
+  protected String getIndexOptions(Key key) {
+    return null;
+  }
 }

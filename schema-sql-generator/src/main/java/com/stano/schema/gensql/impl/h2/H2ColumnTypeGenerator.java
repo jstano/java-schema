@@ -22,12 +22,12 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
   }
 
   @Override
-  protected String getTextSql() {
+  protected String getTextSql(Column column) {
     return "character large object";
   }
 
   @Override
-  protected String getBlobSql() {
+  protected String getBinarySql() {
     return "binary large object";
   }
 
@@ -48,7 +48,7 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
     return switch (elementType) {
       case ColumnType.VARCHAR -> getVarcharSql(column) + " array";
       case ColumnType.CHAR -> getCharSql(column) + " array";
-      case ColumnType.TEXT -> getTextSql() + " array";
+      case ColumnType.TEXT -> getTextSql(column) + " array";
       case ColumnType.DECIMAL -> getDecimalSql(column) + " array";
       default -> elementType.name() + " array";
     };

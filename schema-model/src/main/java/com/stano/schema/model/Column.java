@@ -8,11 +8,13 @@ public class Column {
   private final boolean required;
   private final String checkConstraint;
   private final String defaultConstraint;
+  private final String generated;
   private final String minValue;
   private final String maxValue;
   private final String enumType;
   private final ColumnType elementType;
   private final boolean unicode;
+  private final boolean ignoreCase;
 
   public Column(String name,
                 ColumnType type,
@@ -25,11 +27,13 @@ public class Column {
     this.required = required;
     this.checkConstraint = null;
     this.defaultConstraint = null;
+    this.generated = null;
     this.minValue = null;
     this.maxValue = null;
     this.enumType = null;
     this.elementType = null;
     this.unicode = true;
+    this.ignoreCase = false;
   }
 
   public Column(String name,
@@ -44,11 +48,13 @@ public class Column {
     this.required = required;
     this.checkConstraint = checkConstraint;
     this.defaultConstraint = null;
+    this.generated = null;
     this.minValue = null;
     this.maxValue = null;
     this.enumType = null;
     this.elementType = null;
     this.unicode = true;
+    this.ignoreCase = false;
   }
 
   public Column(String name,
@@ -58,11 +64,13 @@ public class Column {
                 boolean required,
                 String checkConstraint,
                 String defaultConstraint,
+                String generated,
                 String minValue,
                 String maxValue,
                 String enumType,
                 ColumnType elementType,
-                boolean unicode) {
+                boolean unicode,
+                boolean ignoreCase) {
     this.name = name;
     this.type = type;
     this.length = length;
@@ -70,11 +78,13 @@ public class Column {
     this.required = required;
     this.checkConstraint = checkConstraint;
     this.defaultConstraint = defaultConstraint;
+    this.generated = generated;
     this.minValue = minValue;
     this.maxValue = maxValue;
     this.enumType = enumType;
     this.elementType = elementType;
     this.unicode = unicode;
+    this.ignoreCase = ignoreCase;
   }
 
   public String getName() {
@@ -105,6 +115,10 @@ public class Column {
     return defaultConstraint;
   }
 
+  public String getGenerated() {
+    return generated;
+  }
+
   public String getMinValue() {
     return minValue;
   }
@@ -123,6 +137,10 @@ public class Column {
 
   public boolean isUnicode() {
     return unicode;
+  }
+
+  public boolean isIgnoreCase() {
+    return ignoreCase;
   }
 
   public boolean needsCheckConstraints(BooleanMode booleanMode) {

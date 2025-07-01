@@ -22,12 +22,12 @@ class MySQLColumnTypeGenerator extends ColumnTypeGenerator {
   }
 
   @Override
-  protected String getTextSql() {
+  protected String getTextSql(Column column) {
     return "mediumtext";
   }
 
   @Override
-  protected String getBlobSql() {
+  protected String getBinarySql() {
     return "mediumblob";
   }
 
@@ -42,7 +42,7 @@ class MySQLColumnTypeGenerator extends ColumnTypeGenerator {
       return "enum('Yes','No')";
     }
 
-    if (booleanMode == BooleanMode.YN || booleanMode == BooleanMode.TEXT) {
+    if (booleanMode == BooleanMode.YN) {
       return "enum('Y','N')";
     }
 

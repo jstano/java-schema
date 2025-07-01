@@ -24,7 +24,7 @@ class ColumnTypeSpec extends Specification {
     ColumnType.getColumnType('varchar') == ColumnType.VARCHAR
     ColumnType.getColumnType('enum') == ColumnType.ENUM
     ColumnType.getColumnType('text') == ColumnType.TEXT
-    ColumnType.getColumnType('blob') == ColumnType.BLOB
+    ColumnType.getColumnType('binary') == ColumnType.BINARY
     ColumnType.getColumnType('uuid') == ColumnType.UUID
     ColumnType.getColumnType('json') == ColumnType.JSON
   }
@@ -57,7 +57,7 @@ class ColumnTypeSpec extends Specification {
     ColumnType.VARCHAR.text
     ColumnType.ENUM.text
     ColumnType.TEXT.text
-    !ColumnType.BLOB.text
+    !ColumnType.BINARY.text
     ColumnType.UUID.text
     ColumnType.JSON.text
   }
@@ -82,7 +82,7 @@ class ColumnTypeSpec extends Specification {
     !ColumnType.VARCHAR.numeric
     !ColumnType.ENUM.numeric
     !ColumnType.TEXT.numeric
-    !ColumnType.BLOB.numeric
+    !ColumnType.BINARY.numeric
     !ColumnType.UUID.numeric
     !ColumnType.JSON.numeric
   }

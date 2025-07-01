@@ -21,7 +21,7 @@ public enum ColumnType {
   VARCHAR,
   ENUM,
   TEXT,
-  BLOB,
+  BINARY,
   UUID,
   JSON,
   ARRAY;

@@ -38,7 +38,7 @@ public class KeyContentHandler extends AbstractContentHandler {
       columns.clear();
     }
     else if (localName.equals("column")) {
-      columns.add(new KeyColumn(atts.getValue("name"), atts.getValue("expression")));
+      columns.add(new KeyColumn(atts.getValue("name")));
     }
   }
 

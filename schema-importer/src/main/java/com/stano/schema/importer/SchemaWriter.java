@@ -2,11 +2,13 @@ package com.stano.schema.importer;
 
 import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
+import com.stano.schema.model.Constraint;
 import com.stano.schema.model.Key;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Relation;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -65,6 +67,10 @@ public class SchemaWriter {
       out.printf("    </relations>\n");
     }
 
+    if (!table.getConstraints().isEmpty()) {
+      outputConstraints(table.getConstraints());
+    }
+
     out.printf("  </table>\n");
   }
 
@@ -90,16 +96,20 @@ public class SchemaWriter {
     }
     else {
       if (column.isRequired()) {
-        out.printf("      <column name=\"%s\" type=\"%s\"%s required=\"true\"/>\n",
+        out.printf("      <column name=\"%s\" type=\"%s\"%s required=\"true\"%s%s/>\n",
                    name,
                    columnType.toString().toLowerCase(),
-                   lengthScale(length, scale));
+                   lengthScale(length, scale),
+                   defaultConstraint(column),
+                   generatedValue(column));
       }
       else {
-        out.printf("      <column name=\"%s\" type=\"%s\"%s/>\n",
+        out.printf("      <column name=\"%s\" type=\"%s\"%s%s%s/>\n",
                    name,
                    columnType.toString().toLowerCase(),
-                   lengthScale(length, scale));
+                   lengthScale(length, scale),
+                   defaultConstraint(column),
+                   generatedValue(column));
       }
     }
   }
@@ -114,6 +124,26 @@ public class SchemaWriter {
     }
 
     return String.format(" length=\"%d\" scale=\"%d\"", length, scale);
+  }
+
+  private String defaultConstraint(Column column) {
+    String defaultValue = column.getDefaultConstraint();
+
+    if (defaultValue == null || (column.getType() == ColumnType.SEQUENCE || column.getType() == ColumnType.LONGSEQUENCE)) {
+      return "";
+    }
+
+    return String.format(" default=\"%s\"", defaultValue);
+  }
+
+  private String generatedValue(Column column) {
+    String generatedValue = column.getGenerated();
+
+    if (generatedValue == null) {
+      return "";
+    }
+
+    return String.format(" generated=\"%s\"", StringEscapeUtils.escapeXml11(generatedValue.replace("\n", "")));
   }
 
   private void outputRelation(Relation relation) {
@@ -133,31 +163,40 @@ public class SchemaWriter {
   private void outputUniqueKeys(List<Key> keys) {
     var uniqueKeys = keys.stream().filter(key -> key.getType() == KeyType.UNIQUE).toList();
 
-    if (!uniqueKeys.isEmpty()) {
+    uniqueKeys.forEach(key -> {
       out.printf("      <unique>\n");
-      uniqueKeys.forEach(this::outputKeyColumns);
+      outputKeyColumns(key);
       out.printf("      </unique>\n");
-    }
+    });
   }
 
   private void outputIndexKeys(List<Key> keys) {
     var indexKeys = keys.stream().filter(key -> key.getType() == KeyType.INDEX).toList();
 
-    if (!indexKeys.isEmpty()) {
+    indexKeys.forEach(key -> {
       out.printf("      <index>\n");
-      indexKeys.forEach(this::outputKeyColumns);
+      outputKeyColumns(key);
       out.printf("      </index>\n");
-    }
+    });
+  }
+
+  private void outputConstraints(List<Constraint> constraints) {
+    out.printf("    <constraints>\n");
+    constraints.forEach(this::outputConstraint);
+    out.printf("    </constraints>\n");
+  }
+
+  private void outputConstraint(Constraint constraint) {
+    out.printf("      <constraint name=\"%s\">\n", constraint.getName());
+    out.printf("        <![CDATA[\n");
+    out.printf("        %s\n", constraint.getSql());
+    out.printf("        ]]>\n");
+    out.printf("      </constraint>\n");
   }
 
   private void outputKeyColumns(Key key) {
     key.getColumns().forEach(keyColumn -> {
-      if (keyColumn.getExpression() != null) {
-        out.printf("        <column name=\"%s\" expression=\"%s\"/>\n", keyColumn.getName(), keyColumn.getExpression());
-      }
-      else {
-        out.printf("        <column name=\"%s\"/>\n", keyColumn.getName());
-      }
+      out.printf("        <column name=\"%s\"/>\n", keyColumn.getName());
     });
   }
 }

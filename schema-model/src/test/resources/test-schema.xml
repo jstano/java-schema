@@ -49,6 +49,13 @@
         <column name="CharValue" expression="lower(CharValue)"/>
       </index>
     </keys>
+    <constraints>
+      <constraint name="test1">
+        constraint classificationrulecriteriaconfig_deferred_phasing_check
+        exclude using gist (state with =, daterange((startdate - '1 day'::interval)::date, enddate) with &&)
+        deferrable initially deferred
+      </constraint>
+    </constraints>
   </table>
 
   <table name="ChildTable">

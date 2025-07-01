@@ -1,6 +1,7 @@
 package com.stano.schema.installer.liquibase;
 
 import liquibase.Contexts;
+import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.executor.ExecutorService;
 
@@ -23,16 +24,16 @@ public class LiquibaseDatabaseUpdateChecker {
     try {
       try {
         try {
-          return !liquibase.listUnrunChangeSets(new Contexts()).isEmpty();
+          return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
         }
         catch (Exception x) {
           liquibase.clearCheckSums();
 
-          return !liquibase.listUnrunChangeSets(new Contexts()).isEmpty();
+          return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
         }
       }
       finally {
-        executorService.clearExecutor(liquibase.getDatabase());
+        executorService.clearExecutor("jdbc", liquibase.getDatabase());
       }
     }
     catch (Exception x) {

@@ -20,6 +20,7 @@ public class Table {
   private final List<Relation> relations = new ArrayList<>();
   private final List<Relation> reverseRelations = new ArrayList<>();
   private final List<Trigger> triggers = new ArrayList<>();
+  private final List<Constraint> constraints = new ArrayList<>();
   private final List<InitialData> initialData = new ArrayList<>();
   private final List<TableOption> options = new ArrayList<>();
   private final List<Aggregation> aggregations = new ArrayList<>();
@@ -76,6 +77,10 @@ public class Table {
 
   public List<Trigger> getTriggers() {
     return triggers;
+  }
+
+  public List<Constraint> getConstraints() {
+    return constraints;
   }
 
   public List<InitialData> getInitialData() {

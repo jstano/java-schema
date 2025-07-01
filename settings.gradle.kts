@@ -7,7 +7,7 @@ dependencyResolutionManagement {
   }
 }
 
-include("gradle-platform-dependencies")
+//include("gradle-platform-dependencies")
 include("schema-bom")
 include("schema-importer")
 include("schema-installer")
