@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database xmlns="http://stano.com/database"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://stano.com/database http://stano.com/database"
+          version="2.2">
+  <table name="TestTable">
+    <columns>
+      <column name="ID" type="longsequence" required="true"/>
+      <column name="Name" type="varchar" length="100" required="true"/>
+      <column name="ByteValue" type="byte"/>
+      <column name="ShortValue" type="short"/>
+      <column name="IntValue" type="int"/>
+      <column name="LongValue" type="long"/>
+      <column name="FloatValue" type="float"/>
+      <column name="DoubleValue" type="double"/>
+      <column name="DecimalValue" type="decimal" length="19" scale="2"/>
+      <column name="MoneyValue" type="decimal" length="19" scale="4"/>
+      <column name="SmallMoneyValue" type="decimal" length="9" scale="4"/>
+      <column name="NullableBooleanValue" type="boolean"/>
+      <column name="RequiredBooleanValue" type="boolean" required="true"/>
+      <column name="RequiredBooleanValueWithDefaultTrue" type="boolean" required="true" default="true"/>
+      <column name="DateValue" type="date"/>
+      <column name="TimeValue" type="time"/>
+      <column name="DateTimeValue" type="datetime"/>
+      <column name="TimestampValue" type="timestamp"/>
+      <column name="CharValue" type="char" length="20"/>
+      <column name="VarcharValue" type="varchar" length="100"/>
+      <column name="FixedLengthEnumValue" type="enum" enumType="TestFixedLengthEnum"/>
+      <column name="VariableLengthEnumValue" type="enum" enumType="TestVariableLengthEnum"/>
+      <column name="BlobValue" type="blob"/>
+      <column name="UUIDValue" type="uuid"/>
+      <column name="UUIDValueRequired" type="uuid" required="true"/>
+      <column name="TextArray" type="array" elementType="text"/>
+      <column name="IntArray" type="array" elementType="int"/>
+      <column name="DecimalArray" type="array" elementType="decimal" length="9" scale="2"/>
+      <column name="VarcharArray" type="array" elementType="varchar" length="100"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="ID"/>
+      </primary>
+      <unique>
+        <column name="Name"/>
+      </unique>
+      <index>
+        <column name="DateValue"/>
+      </index>
+      <index>
+        <column name="CharValue" expression="lower(CharValue)"/>
+      </index>
+    </keys>
+    <constraints>
+      <constraint name="test1">
+        constraint classificationrulecriteriaconfig_deferred_phasing_check
+        exclude using gist (state with =, daterange((startdate - '1 day'::interval)::date, enddate) with &&)
+        deferrable initially deferred
+      </constraint>
+    </constraints>
+  </table>
+
+  <table name="ChildTable">
+    <columns>
+      <column name="ID" type="sequence" required="true"/>
+      <column name="TestID" type="long" required="true"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="ID"/>
+      </primary>
+      <index>
+        <column name="TestID"/>
+      </index>
+    </keys>
+    <relations>
+      <relation src="TestID" table="TestTable" column="ID" type="cascade"/>
+    </relations>
+  </table>
+
+  <table name="TestTableWithCounterAsID">
+    <columns>
+      <column name="ID" type="sequence" required="true"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="ID"/>
+      </primary>
+    </keys>
+  </table>
+
+  <table name="TestTableWithCounterLAsID">
+    <columns>
+      <column name="ID" type="longsequence" required="true"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="ID"/>
+      </primary>
+    </keys>
+  </table>
+
+  <table name="TestTableWithID">
+    <columns>
+      <column name="ID" type="sequence" required="true"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="ID"/>
+      </primary>
+    </keys>
+  </table>
+
+  <table name="SimpleTable">
+    <columns>
+      <column name="Data" type="varchar" length="10" required="true"/>
+      <column name="Number" type="int" required="true" default="0"/>
+    </columns>
+    <keys>
+      <primary>
+        <column name="Data"/>
+      </primary>
+    </keys>
+  </table>
+
+  <view name="TestView" databaseType="pgsql">
+    <![CDATA[
+      select ID,Name,'PGSQL TestView' as WhichView from TestTable
+      ]]>
+  </view>
+
+  <view name="TestView">
+    <![CDATA[
+      select ID,Name,'Generic TestView' as WhichView from TestTable
+      ]]>
+  </view>
+
+  <enum name="TestFixedLengthEnum">
+    <value name="A"/>
+    <value name="B"/>
+    <value name="C"/>
+  </enum>
+
+  <enum name="TestVariableLengthEnum">
+    <value name="A"/>
+    <value name="BB"/>
+    <value name="CCC"/>
+  </enum>
+</database>
