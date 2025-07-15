@@ -44,14 +44,16 @@ public class IndexGenerator extends BaseGenerator {
       String indexColumns = String.join(",", key.getColumns().stream().map(it -> StringEscapeUtils.unescapeXml(it.getName())).toArray(String[]::new));
 
       if (indexOptions == null) {
-        sqlWriter.println(String.format("create index %s on %s (%s)%s",
+        sqlWriter.println(String.format("create %sindex %s on %s (%s)%s",
+                                        key.isUnique() ? "unique " : "",
                                         keyName.toLowerCase(),
                                         getFullyQualifiedTableName(table),
                                         indexColumns,
                                         statementSeparator));
       }
       else {
-        sqlWriter.println(String.format("create index %s on %s (%s) %s%s",
+        sqlWriter.println(String.format("create %sindex %s on %s (%s) %s%s",
+                                        key.isUnique() ? "unique " : "",
                                         keyName.toLowerCase(),
                                         getFullyQualifiedTableName(table),
                                         indexColumns,

@@ -3,10 +3,10 @@ package com.stano.schema.model
 import spock.lang.Specification
 
 class KeySpec extends Specification {
-  def key = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('c')], false, false, null)
-  def key2a = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('c')], false, false, null)
-  def key2b = new Key(KeyType.PRIMARY, [new KeyColumn('c'), new KeyColumn('b'), new KeyColumn('a')], false, false, null)
-  def key3 = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('z')], false, false, null)
+  def key = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('c')], false, false, true, null)
+  def key2a = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('c')], false, false, true, null)
+  def key2b = new Key(KeyType.PRIMARY, [new KeyColumn('c'), new KeyColumn('b'), new KeyColumn('a')], false, false, true, null)
+  def key3 = new Key(KeyType.PRIMARY, [new KeyColumn('a'), new KeyColumn('b'), new KeyColumn('z')], false, false, true, null)
 
   def "containsColumn should return true if the column is in the key"() {
     expect:

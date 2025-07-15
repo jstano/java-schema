@@ -18,6 +18,7 @@ public class KeyContentHandler extends AbstractContentHandler {
   private KeyType keyType;
   private boolean cluster;
   private boolean compress;
+  private boolean unique;
   private String include;
   private List<KeyColumn> columns = new ArrayList<>();
 
@@ -34,6 +35,7 @@ public class KeyContentHandler extends AbstractContentHandler {
       keyType = KeyType.valueOf(localName.toUpperCase());
       cluster = Boolean.parseBoolean(atts.getValue("cluster"));
       compress = Boolean.parseBoolean(atts.getValue("compress"));
+      unique = Boolean.parseBoolean(atts.getValue("unique"));
       include = atts.getValue("include");
       columns.clear();
     }
@@ -46,8 +48,8 @@ public class KeyContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
       case "keys" -> tableContentHandler.contentHandler = null;
-      case "primary", "unique" -> table.getKeys().add(new Key(keyType, columns, cluster, compress, include));
-      case "index" -> table.getIndexes().add(new Key(keyType, columns, false, compress, include));
+      case "primary", "unique" -> table.getKeys().add(new Key(keyType, columns, cluster, compress, true, include));
+      case "index" -> table.getIndexes().add(new Key(keyType, columns, false, compress, unique, include));
     }
   }
 }

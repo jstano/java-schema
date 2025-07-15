@@ -1,7 +1,6 @@
-package com.stano.schema.installer;
+package com.stano.schema.installer.liquibase;
 
-import com.stano.schema.installer.liquibase.LiquibaseChangeLogCreator;
-import com.stano.schema.installer.liquibase.LiquibaseChangeLogExecutor;
+import com.stano.schema.installer.SchemaInstaller;
 import com.stano.schema.installer.schemacontext.SchemaContext;
 import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.Version;

@@ -12,7 +12,7 @@ configurePublishing(
 )
 
 dependencies {
-  implementation(project(":schema-installer"))
+  api(project(":schema-installer"))
   implementation(project(":schema-migrations"))
   implementation(project(":schema-model"))
   implementation(project(":schema-parser"))

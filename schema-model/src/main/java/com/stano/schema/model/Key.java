@@ -7,13 +7,15 @@ public class Key {
   private final List<KeyColumn> columns;
   private final boolean cluster;
   private final boolean compress;
+  private final boolean unique;
   private final String include;
 
-  public Key(KeyType type, List<KeyColumn> columns, boolean cluster, boolean compress, String include) {
+  public Key(KeyType type, List<KeyColumn> columns, boolean cluster, boolean compress, boolean unique, String include) {
     this.type = type;
     this.columns = List.copyOf(columns);
     this.cluster = cluster;
     this.compress = compress;
+    this.unique = unique;
     this.include = include;
   }
 
@@ -22,6 +24,7 @@ public class Key {
     this.columns = List.copyOf(columns);
     this.cluster = false;
     this.compress = false;
+    this.unique = false;
     this.include = null;
   }
 
@@ -39,6 +42,10 @@ public class Key {
 
   public boolean isCompress() {
     return compress;
+  }
+
+  public boolean isUnique() {
+    return unique;
   }
 
   public String getInclude() {
