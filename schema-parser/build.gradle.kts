@@ -12,7 +12,7 @@ configurePublishing(
 )
 
 dependencies {
-  implementation(project(":schema-model"))
+  api(project(":schema-model"))
 
   implementation(getFullDependency("org.apache.commons:commons-lang3"))
   implementation(getFullDependency("org.slf4j:slf4j-api"))

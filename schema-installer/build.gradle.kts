@@ -15,10 +15,10 @@ dependencies {
   api(getFullDependency("com.stano:java-utils"))
   api(getFullDependency("com.stano:jdbc-utils"))
 
-  implementation(project(":schema-migrations"))
-  implementation(project(":schema-model"))
-  implementation(project(":schema-parser"))
-  implementation(project(":schema-sql-generator"))
+  api(project(":schema-migrations"))
+  api(project(":schema-model"))
+  api(project(":schema-parser"))
+  api(project(":schema-sql-generator"))
 
   implementation(getFullDependency("commons-cli:commons-cli"))
   implementation(getFullDependency("org.apache.commons:commons-lang3"))

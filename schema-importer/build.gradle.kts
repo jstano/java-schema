@@ -12,7 +12,7 @@ configurePublishing(
 )
 
 dependencies {
-  implementation(project(":schema-model"))
+  api(project(":schema-model"))
 
   implementation(getFullDependency("commons-cli:commons-cli"))
   implementation(getFullDependency("org.apache.commons:commons-collections4"))

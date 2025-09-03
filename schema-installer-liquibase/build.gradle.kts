@@ -13,10 +13,10 @@ configurePublishing(
 
 dependencies {
   api(project(":schema-installer"))
-  implementation(project(":schema-migrations"))
-  implementation(project(":schema-model"))
-  implementation(project(":schema-parser"))
-  implementation(project(":schema-sql-generator"))
+  api(project(":schema-migrations"))
+  api(project(":schema-model"))
+  api(project(":schema-parser"))
+  api(project(":schema-sql-generator"))
 
   implementation(getFullDependency("com.stano:java-utils"))
   implementation(getFullDependency("com.stano:jdbc-utils"))
