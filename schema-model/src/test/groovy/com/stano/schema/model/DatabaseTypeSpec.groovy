@@ -13,11 +13,11 @@ class DatabaseTypeSpec extends Specification {
     DatabaseType.getDatabaseTypes(targetDatabasesStr) == targetDatabases
 
     where:
-    targetDatabasesStr | targetDatabases
-    null               | [] as Set
-    ""                 | [] as Set
-    "mssql"            | [DatabaseType.MSSQL] as Set
-    "mssql,PGSQL"      | [DatabaseType.MSSQL, DatabaseType.PGSQL] as Set
+    targetDatabasesStr           | targetDatabases
+    null                         | [] as Set
+    ""                           | [] as Set
+    "mssql"                      | [DatabaseType.MSSQL] as Set
+    "mssql,PGSQL"                | [DatabaseType.MSSQL, DatabaseType.PGSQL] as Set
   }
 
   def "getMaxKeyNameLength should return the correct value for each type"() {
@@ -31,5 +31,39 @@ class DatabaseTypeSpec extends Specification {
     DatabaseType.MSSQL | 32
     DatabaseType.MYSQL | 64
     DatabaseType.PGSQL | 63
+  }
+
+  def "statement separator should be correct for each DB"() {
+    expect:
+    db.getStatementSeparator() == sep
+
+    where:
+    db               | sep
+    DatabaseType.H2  | ";"
+    DatabaseType.HSQL| ";"
+    DatabaseType.MSSQL | "\nGO"
+    DatabaseType.MYSQL | ";"
+    DatabaseType.PGSQL | ";"
+  }
+
+  def "supportsTriggers flag should be correct for each DB"() {
+    expect:
+    db.isSupportsTriggers() == supports
+
+    where:
+    db                 | supports
+    DatabaseType.H2    | false
+    DatabaseType.HSQL  | false
+    DatabaseType.MSSQL | true
+    DatabaseType.MYSQL | true
+    DatabaseType.PGSQL | true
+  }
+
+  def "valueOf should resolve names case-sensitively (upper) and name() round-trips"() {
+    expect:
+    DatabaseType.valueOf(name).name() == name
+
+    where:
+    name << DatabaseType.values()*.name()
   }
 }

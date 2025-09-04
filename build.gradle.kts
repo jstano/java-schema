@@ -1,5 +1,6 @@
 plugins {
   id("java-library")
+  id("org.sonarqube") version "6.2.0.5505"
 }
 
 configure(javaProjects()) {
@@ -46,6 +47,19 @@ configure(javaProjects()) {
       html.required.set(true)
       xml.required.set(true)
     }
+  }
+}
+
+sonar {
+  val sonarHost = "http://localhost:9000"
+  val sonarToken = "sqa_010b94573806de8eaf377006538b63f2b1ebba40"
+
+  properties {
+    property("sonar.host.url", sonarHost)
+    property("sonar.token", sonarToken)
+    property("sonar.projectName", "schema-java")
+    property("sonar.projectKey", "${project.group}:java-utils")
+    property("sonar.projectVersion", project.version)
   }
 }
 
