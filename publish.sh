@@ -1,5 +1,12 @@
 #!/bin/bash
 
+VERSION="$1"
+
+if [ -z "$VERSION" ]; then
+  echo "Error: VERSION is not set. Please provide it as the first argument."
+  exit 1
+fi
+
 function upload() {
   curl --request POST \
     --verbose \
@@ -8,10 +15,10 @@ function upload() {
     "https://central.sonatype.com/api/v1/publisher/upload?name=$1:$2"
 }
 
-upload "schema-importer" "0.9.8"
-upload "schema-installer" "0.9.8"
-upload "schema-installer-liquibase" "0.9.8"
-upload "schema-migrations" "0.9.8"
-upload "schema-model" "0.9.8"
-upload "schema-parser" "0.9.8"
-upload "schema-sql-generator" "0.9.8"
+upload "schema-importer" "$VERSION"
+upload "schema-installer" "$VERSION"
+upload "schema-installer-liquibase" "$VERSION"
+upload "schema-migrations" "$VERSION"
+upload "schema-model" "$VERSION"
+upload "schema-parser" "$VERSION"
+upload "schema-sql-generator" "$VERSION"
