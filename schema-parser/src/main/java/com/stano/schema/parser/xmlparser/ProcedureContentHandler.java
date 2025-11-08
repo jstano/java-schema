@@ -9,26 +9,24 @@ import org.xml.sax.SAXException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProceduresContentHandler extends AbstractContentHandler {
+public class ProcedureContentHandler extends AbstractContentHandler {
   private String name;
   private DatabaseType databaseType;
-  private List<Procedure> procedures = new ArrayList<>();
   private List<VendorSql> vendorSqlList = new ArrayList<>();
 
-  public ProceduresContentHandler(SchemaContentHandler schemaContentHandler, Schema schema) {
+  public ProcedureContentHandler(SchemaContentHandler schemaContentHandler, Schema schema) {
     super(schemaContentHandler, schema);
   }
 
   @Override
   public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
     switch (localName) {
-      case "procedures" -> procedures.clear();
       case "procedure" -> {
         name = atts.getValue("name");
         vendorSqlList.clear();
       }
       case "sql" -> {
-        databaseType = DatabaseType.valueOf(atts.getValue("databaseType").toUpperCase());
+        databaseType = DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
         initContentStorage();
       }
     }
@@ -37,9 +35,8 @@ public class ProceduresContentHandler extends AbstractContentHandler {
   @Override
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
-      case "procedures" -> schema.addProcedures(procedures);
       case "procedure" -> vendorSqlList.forEach(vendorSql -> {
-        procedures.add(new Procedure(getCurrentSchemaName(), name, vendorSql.getDatabaseType(), vendorSql.getSql()));
+        schema.addProcedure(new Procedure(getCurrentSchemaName(), name, vendorSql.getDatabaseType(), vendorSql.getSql()));
       });
       case "sql" -> vendorSqlList.add(new VendorSql(databaseType, getContent()));
     }

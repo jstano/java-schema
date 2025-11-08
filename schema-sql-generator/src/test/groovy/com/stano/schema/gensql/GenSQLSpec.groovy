@@ -28,7 +28,7 @@ class GenSQLSpec extends Specification {
       createSQLGenerator(_) >> { args ->
         def options = args[0]
 
-        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.PGSQL && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
+        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.POSTGRES && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
           return sqlGenerator
         }
 
@@ -38,7 +38,7 @@ class GenSQLSpec extends Specification {
     def genSql = new GenSQL()
     genSql.sqlGeneratorFactory = sqlGeneratorFactory
 
-    genSql.generateSQL(DatabaseType.PGSQL, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, OutputMode.ALL, ";")
+    genSql.generateSQL(DatabaseType.POSTGRES, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, OutputMode.ALL, ";")
 
     expect:
     sqlGenerated
@@ -63,7 +63,7 @@ class GenSQLSpec extends Specification {
       createSQLGenerator(_) >> { args ->
         def options = args[0]
 
-        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.PGSQL && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
+        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.POSTGRES && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
           return sqlGenerator
         }
 
@@ -73,7 +73,7 @@ class GenSQLSpec extends Specification {
     def genSql = new GenSQL()
     genSql.sqlGeneratorFactory = sqlGeneratorFactory
 
-    genSql.generateSQL(DatabaseType.PGSQL, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, ";")
+    genSql.generateSQL(DatabaseType.POSTGRES, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, ";")
 
     expect:
     sqlGenerated
@@ -98,7 +98,7 @@ class GenSQLSpec extends Specification {
       createSQLGenerator(_) >> { args ->
         def options = args[0]
 
-        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.PGSQL && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
+        if (options.schema == schema && options.sqlWriter == writer && options.databaseType == DatabaseType.POSTGRES && options.foreignKeyMode == ForeignKeyMode.RELATIONS && options.booleanMode == BooleanMode.NATIVE && options.outputMode == OutputMode.ALL && options.statementSeparator == ';') {
           return sqlGenerator
         }
 
@@ -108,7 +108,7 @@ class GenSQLSpec extends Specification {
     def genSql = new GenSQL()
     genSql.sqlGeneratorFactory = sqlGeneratorFactory
 
-    genSql.generateSQL(DatabaseType.PGSQL, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, OutputMode.ALL)
+    genSql.generateSQL(DatabaseType.POSTGRES, schema, writer, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, OutputMode.ALL)
 
     expect:
     sqlGenerated

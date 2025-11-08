@@ -18,7 +18,7 @@ public class OtherSqlContentHandler extends AbstractContentHandler {
   @Override
   public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
     if (localName.equals("otherSql")) {
-      databaseType = DatabaseType.valueOf(atts.getValue("databaseType").toUpperCase());
+      databaseType = DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
       order = OtherSqlOrder.valueOf(atts.getValue("order").toUpperCase());
 
       initContentStorage();

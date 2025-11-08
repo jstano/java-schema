@@ -54,12 +54,12 @@ class SchemaParserSpec extends Specification {
     schema.views.get(2).schemaName == 'public'
     schema.views.get(2).name == 'TestView2'
     schema.views.get(2).sql == 'select * from pgsql'
-    schema.views.get(2).databaseType == DatabaseType.PGSQL
+    schema.views.get(2).databaseType == DatabaseType.POSTGRES
 
     schema.views.get(3).schemaName == 'public'
     schema.views.get(3).name == 'TestView2'
     schema.views.get(3).sql == 'select * from mssql'
-    schema.views.get(3).databaseType == DatabaseType.MSSQL
+    schema.views.get(3).databaseType == DatabaseType.SQL_SERVER
 
     assert unitTable.schemaName == 'test'
 
@@ -77,39 +77,33 @@ class SchemaParserSpec extends Specification {
     schema.getEnumType("TestEnumType").values.get(1).name == 'TWO'
     schema.getEnumType("TestEnumType").values.get(1).code == '2'
 
-    schema.otherSql.size() == 10
-    schema.otherSql.get(0).databaseType == DatabaseType.PGSQL
+    schema.otherSql.size() == 8
+    schema.otherSql.get(0).databaseType == DatabaseType.POSTGRES
     schema.otherSql.get(0).order == OtherSqlOrder.TOP
     schema.otherSql.get(0).sql == 'other top sql for pgsql 1'
-    schema.otherSql.get(1).databaseType == DatabaseType.PGSQL
+    schema.otherSql.get(1).databaseType == DatabaseType.POSTGRES
     schema.otherSql.get(1).order == OtherSqlOrder.TOP
     schema.otherSql.get(1).sql == 'other top sql for pgsql 2'
-    schema.otherSql.get(2).databaseType == DatabaseType.PGSQL
+    schema.otherSql.get(2).databaseType == DatabaseType.POSTGRES
     schema.otherSql.get(2).order == OtherSqlOrder.BOTTOM
     schema.otherSql.get(2).sql == 'other bottom sql for pgsql 1'
-    schema.otherSql.get(3).databaseType == DatabaseType.PGSQL
+    schema.otherSql.get(3).databaseType == DatabaseType.POSTGRES
     schema.otherSql.get(3).order == OtherSqlOrder.BOTTOM
     schema.otherSql.get(3).sql == 'other bottom sql for pgsql 2'
-    schema.otherSql.get(4).databaseType == DatabaseType.MSSQL
+    schema.otherSql.get(4).databaseType == DatabaseType.SQL_SERVER
     schema.otherSql.get(4).order == OtherSqlOrder.TOP
     schema.otherSql.get(4).sql == 'other top sql for mssql 1'
-    schema.otherSql.get(5).databaseType == DatabaseType.MSSQL
+    schema.otherSql.get(5).databaseType == DatabaseType.SQL_SERVER
     schema.otherSql.get(5).order == OtherSqlOrder.TOP
     schema.otherSql.get(5).sql == 'other top sql for mssql 2'
-    schema.otherSql.get(6).databaseType == DatabaseType.MSSQL
+    schema.otherSql.get(6).databaseType == DatabaseType.SQL_SERVER
     schema.otherSql.get(6).order == OtherSqlOrder.BOTTOM
     schema.otherSql.get(6).sql == 'other bottom sql for mssql 1'
-    schema.otherSql.get(7).databaseType == DatabaseType.MSSQL
+    schema.otherSql.get(7).databaseType == DatabaseType.SQL_SERVER
     schema.otherSql.get(7).order == OtherSqlOrder.BOTTOM
     schema.otherSql.get(7).sql == 'other bottom sql for mssql 2'
-    schema.otherSql.get(8).databaseType == DatabaseType.PGSQL
-    schema.otherSql.get(8).order == OtherSqlOrder.BOTTOM
-    schema.otherSql.get(8).sql == 'customSQL other sql for pgsql'
-    schema.otherSql.get(9).databaseType == DatabaseType.MSSQL
-    schema.otherSql.get(9).order == OtherSqlOrder.BOTTOM
-    schema.otherSql.get(9).sql == 'customSQL other sql for mssql'
 
-    schema.functions.size() == 10
+    schema.functions.size() == 6
     schema.functions.get(0).schemaName == 'test'
     schema.functions.get(0).name == 'testCustomFunction1'
     schema.functions.get(0).sql == 'test custom function sql for pgsql 1'
@@ -128,20 +122,8 @@ class SchemaParserSpec extends Specification {
     schema.functions.get(5).schemaName == 'public'
     schema.functions.get(5).name == 'customFunction2'
     schema.functions.get(5).sql == 'custom function sql for mssql 2'
-    schema.functions.get(6).schemaName == 'public'
-    schema.functions.get(6).name == 'customSQLFunction1'
-    schema.functions.get(6).sql == 'customSQL function sql for pgsql 1'
-    schema.functions.get(7).schemaName == 'public'
-    schema.functions.get(7).name == 'customSQLFunction2'
-    schema.functions.get(7).sql == 'customSQL function sql for pgsql 2'
-    schema.functions.get(8).schemaName == 'public'
-    schema.functions.get(8).name == 'customSQLFunction1'
-    schema.functions.get(8).sql == 'customSQL function sql for mssql 1'
-    schema.functions.get(9).schemaName == 'public'
-    schema.functions.get(9).name == 'customSQLFunction2'
-    schema.functions.get(9).sql == 'customSQL function sql for mssql 2'
 
-    schema.procedures.size() == 10
+    schema.procedures.size() == 6
     schema.procedures.get(0).schemaName == 'test'
     schema.procedures.get(0).name == 'testCustomProcedure1'
     schema.procedures.get(0).sql == 'test custom procedure sql for pgsql 1'
@@ -160,18 +142,6 @@ class SchemaParserSpec extends Specification {
     schema.procedures.get(5).schemaName == 'public'
     schema.procedures.get(5).name == 'customProcedure2'
     schema.procedures.get(5).sql == 'custom procedure sql for mssql 2'
-    schema.procedures.get(6).schemaName == 'public'
-    schema.procedures.get(6).name == 'customSQLProcedure1'
-    schema.procedures.get(6).sql == 'customSQL procedure sql for pgsql 1'
-    schema.procedures.get(7).schemaName == 'public'
-    schema.procedures.get(7).name == 'customSQLProcedure2'
-    schema.procedures.get(7).sql == 'customSQL procedure sql for pgsql 2'
-    schema.procedures.get(8).schemaName == 'public'
-    schema.procedures.get(8).name == 'customSQLProcedure1'
-    schema.procedures.get(8).sql == 'customSQL procedure sql for mssql 1'
-    schema.procedures.get(9).schemaName == 'public'
-    schema.procedures.get(9).name == 'customSQLProcedure2'
-    schema.procedures.get(9).sql == 'customSQL procedure sql for mssql 2'
   }
 
   def "should get a RuntimeIOException if an IOException occurs"() {
@@ -236,16 +206,16 @@ class SchemaParserSpec extends Specification {
     assert parentTable.initialData.get(3).sql == "insert into ParentTable (Name,Extra,Gender) values ('MSSQL','Extra MSSQL','F')"
 
     assert parentTable.triggers.size() == 4
-    assert parentTable.triggers.get(0).databaseType == DatabaseType.PGSQL
+    assert parentTable.triggers.get(0).databaseType == DatabaseType.POSTGRES
     assert parentTable.triggers.get(0).triggerType == TriggerType.DELETE
     assert parentTable.triggers.get(0).triggerText == 'delete from pgsql'
-    assert parentTable.triggers.get(1).databaseType == DatabaseType.MSSQL
+    assert parentTable.triggers.get(1).databaseType == DatabaseType.SQL_SERVER
     assert parentTable.triggers.get(1).triggerType == TriggerType.DELETE
     assert parentTable.triggers.get(1).triggerText == 'delete from mssql'
-    assert parentTable.triggers.get(2).databaseType == DatabaseType.PGSQL
+    assert parentTable.triggers.get(2).databaseType == DatabaseType.POSTGRES
     assert parentTable.triggers.get(2).triggerType == TriggerType.UPDATE
     assert parentTable.triggers.get(2).triggerText == 'update pgsql'
-    assert parentTable.triggers.get(3).databaseType == DatabaseType.MSSQL
+    assert parentTable.triggers.get(3).databaseType == DatabaseType.SQL_SERVER
     assert parentTable.triggers.get(3).triggerType == TriggerType.UPDATE
     assert parentTable.triggers.get(3).triggerText == 'update mssql'
 

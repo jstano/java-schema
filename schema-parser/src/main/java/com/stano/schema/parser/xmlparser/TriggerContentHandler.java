@@ -26,7 +26,7 @@ public class TriggerContentHandler extends AbstractContentHandler {
   @Override
   public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
     if ((localName.equals("update") || localName.equals("delete"))) {
-      databaseType = DatabaseType.valueOf(atts.getValue("databaseType").toUpperCase());
+      databaseType = DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
       triggerType = TriggerType.valueOf(localName.toUpperCase());
 
       initContentStorage();

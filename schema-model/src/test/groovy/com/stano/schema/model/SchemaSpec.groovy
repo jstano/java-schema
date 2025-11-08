@@ -112,11 +112,11 @@ class SchemaSpec extends Specification {
     given:
     def schema = new Schema(new URL("https://example.com/schema.json"))
     schema.addView(new View("public", "A", "ga", null))
-    schema.addView(new View("public", "a", "pg", DatabaseType.PGSQL))
+    schema.addView(new View("public", "a", "pg", DatabaseType.POSTGRES))
     schema.addView(new View("public", "B", "gb", null))
 
     when:
-    def pgViews = schema.getViews(DatabaseType.PGSQL)
+    def pgViews = schema.getViews(DatabaseType.POSTGRES)
     def h2Views = schema.getViews(DatabaseType.H2)
 
     then: "order by first appearance of logical names (A,B)"
@@ -130,61 +130,16 @@ class SchemaSpec extends Specification {
     thrown(UnsupportedOperationException)
   }
 
-  def "functions/procedures/otherSql getters are unmodifiable and independent of input list mutations"() {
-    given:
-    def schema = new Schema(new URL("https://example.com/schema.json"))
-
-    and: "prepare input lists"
-    def fns = [
-      new Function("public", "f1", DatabaseType.PGSQL, "sql1"),
-      new Function("dbo", "f2", DatabaseType.MSSQL, "sql2")
-    ]
-    def procs = [
-      new Procedure("public", "p1", DatabaseType.PGSQL, "psql1"),
-      new Procedure("dbo", "p2", DatabaseType.MSSQL, "psql2")
-    ]
-
-    when: "add and then mutate inputs"
-    schema.addFunctions(fns)
-    schema.addProcedures(procs)
-    schema.addOtherSql(new OtherSql(DatabaseType.PGSQL, OtherSqlOrder.TOP, "A;"))
-    schema.addOtherSql(new OtherSql(DatabaseType.PGSQL, OtherSqlOrder.BOTTOM, "B;"))
-    fns.clear(); procs.clear()
-
-    then: "schema retains copies and returns unmodifiable lists"
-    schema.functions*.name == ["f1", "f2"]
-    schema.procedures*.name == ["p1", "p2"]
-    schema.otherSql*.sql == ["A;", "B;"]
-
-    when: "attempt to mutate returned lists"
-    schema.functions << new Function("x", "f3", DatabaseType.H2, "x")
-
-    then:
-    thrown(UnsupportedOperationException)
-
-    when:
-    schema.procedures << new Procedure("x", "p3", DatabaseType.H2, "x")
-
-    then:
-    thrown(UnsupportedOperationException)
-
-    when:
-    schema.otherSql << new OtherSql(DatabaseType.H2, OtherSqlOrder.TOP, "C;")
-
-    then:
-    thrown(UnsupportedOperationException)
-  }
-
   def "getViews prefers DB-specific over generic for same logical name"() {
     given:
     def schema = new Schema(new URL("https://example.com/schema.json"))
     schema.addView(new View("public", "sales", "generic", null))
-    schema.addView(new View("public", "sales", "pgsql", DatabaseType.PGSQL))
-    schema.addView(new View("public", "sales", "mssql", DatabaseType.MSSQL))
+    schema.addView(new View("public", "sales", "pgsql", DatabaseType.POSTGRES))
+    schema.addView(new View("public", "sales", "mssql", DatabaseType.SQL_SERVER))
 
     when:
-    def pg = schema.getViews(DatabaseType.PGSQL)
-    def ms = schema.getViews(DatabaseType.MSSQL)
+    def pg = schema.getViews(DatabaseType.POSTGRES)
+    def ms = schema.getViews(DatabaseType.SQL_SERVER)
     def h2 = schema.getViews(DatabaseType.H2)
 
     then:

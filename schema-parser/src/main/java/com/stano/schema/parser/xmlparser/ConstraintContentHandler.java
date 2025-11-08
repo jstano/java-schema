@@ -32,7 +32,7 @@ public class ConstraintContentHandler extends AbstractContentHandler {
       String databaseType = atts.getValue("databaseType");
 
       if (StringUtils.isNotBlank(databaseType)) {
-        this.databaseType = DatabaseType.valueOf(databaseType.toUpperCase());
+        this.databaseType = DatabaseType.fromString(databaseType.toUpperCase());
       }
       else {
         this.databaseType = null;

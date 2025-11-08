@@ -10,12 +10,12 @@ class SQLGeneratorOptionsSpec extends Specification {
   def "should be able to create an object using the shorter constructor and get the values out"() {
     def schema = Mock(Schema)
     def sqlWriter = Mock(PrintWriter)
-    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.PGSQL, ForeignKeyMode.RELATIONS, BooleanMode.YES_NO, OutputMode.ALL)
+    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.POSTGRES, ForeignKeyMode.RELATIONS, BooleanMode.YES_NO, OutputMode.ALL)
 
     expect:
     options.schema == schema
     options.sqlWriter == sqlWriter
-    options.databaseType == DatabaseType.PGSQL
+    options.databaseType == DatabaseType.POSTGRES
     options.foreignKeyMode == ForeignKeyMode.RELATIONS
     options.booleanMode == BooleanMode.YES_NO
     options.outputMode == OutputMode.ALL
@@ -25,12 +25,12 @@ class SQLGeneratorOptionsSpec extends Specification {
   def "should be able to create an object using the full constructor and get the values out"() {
     def schema = Mock(Schema)
     def sqlWriter = Mock(PrintWriter)
-    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.PGSQL, ForeignKeyMode.RELATIONS, BooleanMode.YES_NO, OutputMode.ALL, 'THE_SEPARATOR')
+    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.POSTGRES, ForeignKeyMode.RELATIONS, BooleanMode.YES_NO, OutputMode.ALL, 'THE_SEPARATOR')
 
     expect:
     options.schema == schema
     options.sqlWriter == sqlWriter
-    options.databaseType == DatabaseType.PGSQL
+    options.databaseType == DatabaseType.POSTGRES
     options.foreignKeyMode == ForeignKeyMode.RELATIONS
     options.booleanMode == BooleanMode.YES_NO
     options.outputMode == OutputMode.ALL
@@ -40,7 +40,7 @@ class SQLGeneratorOptionsSpec extends Specification {
   def "if the ForeignKeyMode is set to TRIGGERS and the database doesn't support triggers then the getForeignKeyMode method should return RELATIONS"() {
     def schema = Mock(Schema)
     def sqlWriter = Mock(PrintWriter)
-    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.HSQL, ForeignKeyMode.TRIGGERS, BooleanMode.YES_NO, OutputMode.ALL)
+    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.H2, ForeignKeyMode.TRIGGERS, BooleanMode.YES_NO, OutputMode.ALL)
 
     expect:
     options.foreignKeyMode == ForeignKeyMode.RELATIONS
@@ -49,7 +49,7 @@ class SQLGeneratorOptionsSpec extends Specification {
   def "if the ForeignKeyMode is set to TRIGGERS and the database supports triggers then the getForeignKeyMode method should return TRIGGERS"() {
     def schema = Mock(Schema)
     def sqlWriter = Mock(PrintWriter)
-    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.MSSQL, ForeignKeyMode.TRIGGERS, BooleanMode.YES_NO, OutputMode.ALL)
+    def options = new SQLGeneratorOptions(schema, sqlWriter, DatabaseType.SQL_SERVER, ForeignKeyMode.TRIGGERS, BooleanMode.YES_NO, OutputMode.ALL)
 
     expect:
     options.foreignKeyMode == ForeignKeyMode.TRIGGERS

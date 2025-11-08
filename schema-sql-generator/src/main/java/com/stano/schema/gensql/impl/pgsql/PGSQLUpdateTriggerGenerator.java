@@ -107,7 +107,7 @@ public class PGSQLUpdateTriggerGenerator extends BaseGenerator {
 
       if (!table.getTriggers().isEmpty()) {
          for (Trigger trigger : table.getTriggers()) {
-            if (trigger.getDatabaseType() == DatabaseType.PGSQL && trigger.getTriggerType() == TriggerType.UPDATE) {
+            if (trigger.getDatabaseType() == DatabaseType.POSTGRES && trigger.getTriggerType() == TriggerType.UPDATE) {
                sqlWriter.println(trigger.getTriggerText());
             }
          }

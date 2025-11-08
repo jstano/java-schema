@@ -19,7 +19,6 @@ public class SchemaContentHandler extends AbstractContentHandler {
   private final ContentHandler functionsContentHandler;
   private final ContentHandler proceduresContentHandler;
   private final ContentHandler otherSqlContentHandler;
-  private final ContentHandler customSqlContentHandler;
 
   private final Stack<ContentHandler> contentHandlerStack = new Stack<ContentHandler>();
 
@@ -34,10 +33,9 @@ public class SchemaContentHandler extends AbstractContentHandler {
     tableContentHandler = new TableContentHandler(this, schema);
     enumContentHandler = new EnumContentHandler(schema);
     viewContentHandler = new ViewContentHandler(this, schema);
-    functionsContentHandler = new FunctionsContentHandler(this, schema);
-    proceduresContentHandler = new ProceduresContentHandler(this, schema);
+    functionsContentHandler = new FunctionContentHandler(this, schema);
+    proceduresContentHandler = new ProcedureContentHandler(this, schema);
     otherSqlContentHandler = new OtherSqlContentHandler(schema);
-    customSqlContentHandler = new CustomSQLContentHandler(this, schema);
   }
 
   public String getCurrentSchemaName() {
@@ -151,10 +149,9 @@ public class SchemaContentHandler extends AbstractContentHandler {
       case "table" -> tableContentHandler;
       case "enum" -> enumContentHandler;
       case "view" -> viewContentHandler;
-      case "functions" -> functionsContentHandler;
-      case "procedures" -> proceduresContentHandler;
+      case "function" -> functionsContentHandler;
+      case "procedure" -> proceduresContentHandler;
       case "otherSql" -> otherSqlContentHandler;
-      case "customSQL" -> customSqlContentHandler;
       default -> null;
     };
   }

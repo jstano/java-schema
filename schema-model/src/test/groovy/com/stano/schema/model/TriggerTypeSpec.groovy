@@ -31,8 +31,8 @@ class TriggerTypeSpec extends Specification {
 
   def "can be used in Trigger without errors"() {
     when:
-    def tUpd = new Trigger("AFTER UPDATE ON t", TriggerType.UPDATE, DatabaseType.PGSQL)
-    def tDel = new Trigger("BEFORE DELETE ON t", TriggerType.DELETE, DatabaseType.MSSQL)
+    def tUpd = new Trigger("AFTER UPDATE ON t", TriggerType.UPDATE, DatabaseType.POSTGRES)
+    def tDel = new Trigger("BEFORE DELETE ON t", TriggerType.DELETE, DatabaseType.SQL_SERVER)
 
     then:
     tUpd.triggerType == TriggerType.UPDATE

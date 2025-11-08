@@ -5,10 +5,10 @@ import java.util.Set;
 
 public enum DatabaseType {
   H2(";", 64, false),
-  HSQL(";", 64, false),
-  MSSQL("\nGO", 32, true),
   MYSQL(";", 64, true),
-  PGSQL(";", 63, true);
+  POSTGRES(";", 63, true),
+  SQLITE(";", 63, true),
+  SQL_SERVER("\nGO", 32, true);
 
   public static Set<DatabaseType> getDatabaseTypes(String targetDatabasesStr) {
     Set<DatabaseType> databaseTypes = new HashSet<>();
@@ -16,7 +16,7 @@ public enum DatabaseType {
     if (targetDatabasesStr != null) {
       for (String targetDatabase : targetDatabasesStr.split(",")) {
         if (!targetDatabase.trim().isEmpty()) {
-          databaseTypes.add(valueOf(targetDatabase.toUpperCase()));
+          databaseTypes.add(DatabaseType.fromString(targetDatabase));
         }
       }
     }
@@ -38,6 +38,18 @@ public enum DatabaseType {
 
   public boolean isSupportsTriggers() {
     return supportsTriggers;
+  }
+
+  public static DatabaseType fromString(String databaseType) {
+    if (databaseType == null) {
+      return null;
+    }
+
+    if (databaseType.trim().equalsIgnoreCase("sqlserver")) {
+      return SQL_SERVER;
+    }
+
+    return valueOf(databaseType.toUpperCase());
   }
 
   DatabaseType(String statementSeparator, int maxKeyNameLength, boolean supportsTriggers) {

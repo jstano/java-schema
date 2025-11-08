@@ -116,7 +116,7 @@ public class PGSQLDeleteTriggerGenerator extends BaseGenerator {
 
       if (!table.getTriggers().isEmpty()) {
          for (Trigger trigger : table.getTriggers()) {
-            if (trigger.getDatabaseType() == DatabaseType.PGSQL && trigger.getTriggerType() == TriggerType.DELETE) {
+            if (trigger.getDatabaseType() == DatabaseType.POSTGRES && trigger.getTriggerType() == TriggerType.DELETE) {
                sqlWriter.println(trigger.getTriggerText());
             }
          }

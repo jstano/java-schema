@@ -14,10 +14,10 @@ class ProcedureSpec extends Specification {
     proc.sql == sql
 
     where:
-    schemaName | name            | dbType             | sql
-    "public"  | "pr_total"     | DatabaseType.PGSQL | "create procedure pr_total() language plpgsql as \$\$ begin /* noop */ end \$\$;"
-    "dbo"     | "pr_compute"   | DatabaseType.MSSQL | "CREATE PROCEDURE dbo.pr_compute AS BEGIN SELECT 42 END"
-    "app"     | "pr_cleanup"   | DatabaseType.MYSQL | "CREATE PROCEDURE pr_cleanup() BEGIN SELECT 1; END"
+    schemaName | name         | dbType                  | sql
+    "app"      | "pr_cleanup" | DatabaseType.MYSQL      | "CREATE PROCEDURE pr_cleanup() BEGIN SELECT 1; END"
+    "public"   | "pr_total"   | DatabaseType.POSTGRES   | "create procedure pr_total() language plpgsql as \$\$ begin /* noop */ end \$\$;"
+    "dbo"      | "pr_compute" | DatabaseType.SQL_SERVER | "CREATE PROCEDURE dbo.pr_compute AS BEGIN SELECT 42 END"
   }
 
   def "supports null SQL and still returns correct fields"() {
@@ -29,27 +29,5 @@ class ProcedureSpec extends Specification {
     proc.name == "pr_empty"
     proc.databaseType == DatabaseType.H2
     proc.sql == null
-  }
-
-  def "Schema should accept multiple procedures and expose an unmodifiable copy"() {
-    given:
-    def schema = new Schema(new URL("https://example.com/schema.json"))
-    def input = [
-      new Procedure("public", "pr_a", DatabaseType.PGSQL, "sql a"),
-      new Procedure("dbo", "pr_b", DatabaseType.MSSQL, "sql b")
-    ]
-
-    when: "add procedures and then mutate the input list"
-    schema.addProcedures(input)
-    input.clear()
-
-    then: "schema retains its own copy"
-    schema.procedures*.name == ["pr_a", "pr_b"]
-
-    when: "attempt to mutate the returned procedures list"
-    schema.procedures << new Procedure("x", "pr_c", DatabaseType.HSQL, "sql c")
-
-    then:
-    thrown(UnsupportedOperationException)
   }
 }

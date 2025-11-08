@@ -207,8 +207,8 @@ class TableSpec extends Specification {
     assert table.constraints.isEmpty()
 
     when: "add constraints via the returned list"
-    def c1 = new Constraint("ck_positive", "amount > 0", DatabaseType.PGSQL)
-    def c2 = new Constraint("ck_not_null", "col is not null", DatabaseType.MSSQL)
+    def c1 = new Constraint("ck_positive", "amount > 0", DatabaseType.POSTGRES)
+    def c2 = new Constraint("ck_not_null", "col is not null", DatabaseType.SQL_SERVER)
     table.constraints.addAll([c1, c2])
 
     then:

@@ -31,7 +31,7 @@ class OtherSqlOrderSpec extends Specification {
 
   def "integration: OtherSql should retain the provided OtherSqlOrder"() {
     when:
-    def top = new OtherSql(DatabaseType.PGSQL, OtherSqlOrder.TOP, "A;")
+    def top = new OtherSql(DatabaseType.POSTGRES, OtherSqlOrder.TOP, "A;")
     def bottom = new OtherSql(DatabaseType.MYSQL, OtherSqlOrder.BOTTOM, "B;")
 
     then:

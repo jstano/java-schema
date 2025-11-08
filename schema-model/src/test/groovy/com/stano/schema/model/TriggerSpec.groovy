@@ -13,21 +13,21 @@ class TriggerSpec extends Specification {
     trg.databaseType == db
 
     where:
-    text                      | ttype             | db
-    "AFTER UPDATE SET x=1"   | TriggerType.UPDATE | DatabaseType.PGSQL
-    "BEFORE DELETE FROM t"   | TriggerType.DELETE | DatabaseType.MSSQL
+    text                     | ttype              | db
+    "AFTER UPDATE SET x=1"   | TriggerType.UPDATE | DatabaseType.POSTGRES
+    "BEFORE DELETE FROM t"   | TriggerType.DELETE | DatabaseType.SQL_SERVER
     "CREATE TRIGGER t_upd"   | TriggerType.UPDATE | DatabaseType.MYSQL
     "DROP TRIGGER IF EXISTS" | TriggerType.DELETE | DatabaseType.H2
   }
 
   def "supports null triggerText and still returns correct fields"() {
     when:
-    def trg = new Trigger(null, TriggerType.UPDATE, DatabaseType.HSQL)
+    def trg = new Trigger(null, TriggerType.UPDATE, DatabaseType.H2)
 
     then:
     trg.triggerText == null
     trg.triggerType == TriggerType.UPDATE
-    trg.databaseType == DatabaseType.HSQL
+    trg.databaseType == DatabaseType.H2
   }
 
   def "Table.getTriggers exposes a live mutable list (current contract)"() {
@@ -39,12 +39,12 @@ class TriggerSpec extends Specification {
     assert table.triggers.isEmpty()
 
     when: "add triggers via the returned list"
-    table.triggers.add(new Trigger("AFTER UPDATE ON orders", TriggerType.UPDATE, DatabaseType.PGSQL))
-    table.triggers.add(new Trigger("BEFORE DELETE ON orders", TriggerType.DELETE, DatabaseType.PGSQL))
+    table.triggers.add(new Trigger("AFTER UPDATE ON orders", TriggerType.UPDATE, DatabaseType.POSTGRES))
+    table.triggers.add(new Trigger("BEFORE DELETE ON orders", TriggerType.DELETE, DatabaseType.POSTGRES))
 
     then: "the table reflects those additions (live list)"
     table.triggers*.triggerType == [TriggerType.UPDATE, TriggerType.DELETE]
-    table.triggers*.databaseType == [DatabaseType.PGSQL, DatabaseType.PGSQL]
+    table.triggers*.databaseType == [DatabaseType.POSTGRES, DatabaseType.POSTGRES]
 
     when: "mutate the list further"
     table.triggers.remove(0)

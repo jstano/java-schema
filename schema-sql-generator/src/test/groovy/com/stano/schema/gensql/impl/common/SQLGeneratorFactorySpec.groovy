@@ -1,7 +1,6 @@
 package com.stano.schema.gensql.impl.common
 
 import com.stano.schema.gensql.impl.h2.H2Generator
-import com.stano.schema.gensql.impl.hsql.HSQLGenerator
 import com.stano.schema.gensql.impl.mssql.MSSQLGenerator
 import com.stano.schema.gensql.impl.mysql.MySQLGenerator
 import com.stano.schema.gensql.impl.pgsql.PGSQLGenerator
@@ -23,12 +22,11 @@ class SQLGeneratorFactorySpec extends Specification {
     sqlGeneratorFactory.createSQLGenerator(sqlGeneratorOptions).getClass().isAssignableFrom(generatorClass)
 
     where:
-    databaseType       | generatorClass
-    DatabaseType.H2    | H2Generator
-    DatabaseType.HSQL  | HSQLGenerator
-    DatabaseType.MSSQL | MSSQLGenerator
-    DatabaseType.MYSQL | MySQLGenerator
-    DatabaseType.PGSQL | PGSQLGenerator
+    databaseType            | generatorClass
+    DatabaseType.H2         | H2Generator
+    DatabaseType.MYSQL      | MySQLGenerator
+    DatabaseType.POSTGRES   | PGSQLGenerator
+    DatabaseType.SQL_SERVER | MSSQLGenerator
   }
 
   def "should get an IllegalStateException if an exception is thrown"() {

@@ -33,7 +33,7 @@ class MSSQLBaseTriggerGenerator extends BaseGenerator {
 
       if (!table.getTriggers().isEmpty()) {
          for (Trigger trigger : table.getTriggers()) {
-            if (trigger.getDatabaseType() == DatabaseType.MSSQL && trigger.getTriggerType() == triggerType) {
+            if (trigger.getDatabaseType() == DatabaseType.SQL_SERVER && trigger.getTriggerType() == triggerType) {
                String triggerText = trigger.getTriggerText();
 
                if (!triggerText.startsWith("   ")) {

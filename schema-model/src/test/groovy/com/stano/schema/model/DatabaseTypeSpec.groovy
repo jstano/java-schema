@@ -13,11 +13,11 @@ class DatabaseTypeSpec extends Specification {
     DatabaseType.getDatabaseTypes(targetDatabasesStr) == targetDatabases
 
     where:
-    targetDatabasesStr           | targetDatabases
-    null                         | [] as Set
-    ""                           | [] as Set
-    "mssql"                      | [DatabaseType.MSSQL] as Set
-    "mssql,PGSQL"                | [DatabaseType.MSSQL, DatabaseType.PGSQL] as Set
+    targetDatabasesStr   | targetDatabases
+    null                 | [] as Set
+    ""                   | [] as Set
+    "sqlserver"          | [DatabaseType.SQL_SERVER] as Set
+    "sqlserver,POSTGRES" | [DatabaseType.SQL_SERVER, DatabaseType.POSTGRES] as Set
   }
 
   def "getMaxKeyNameLength should return the correct value for each type"() {
@@ -25,12 +25,12 @@ class DatabaseTypeSpec extends Specification {
     targetDatabase.getMaxKeyNameLength() == maxKeyNameLength
 
     where:
-    targetDatabase     | maxKeyNameLength
-    DatabaseType.H2    | 64
-    DatabaseType.HSQL  | 64
-    DatabaseType.MSSQL | 32
-    DatabaseType.MYSQL | 64
-    DatabaseType.PGSQL | 63
+    targetDatabase          | maxKeyNameLength
+    DatabaseType.H2         | 64
+    DatabaseType.MYSQL      | 64
+    DatabaseType.POSTGRES   | 63
+    DatabaseType.SQLITE     | 63
+    DatabaseType.SQL_SERVER | 32
   }
 
   def "statement separator should be correct for each DB"() {
@@ -38,12 +38,12 @@ class DatabaseTypeSpec extends Specification {
     db.getStatementSeparator() == sep
 
     where:
-    db               | sep
-    DatabaseType.H2  | ";"
-    DatabaseType.HSQL| ";"
-    DatabaseType.MSSQL | "\nGO"
-    DatabaseType.MYSQL | ";"
-    DatabaseType.PGSQL | ";"
+    db                      | sep
+    DatabaseType.H2         | ";"
+    DatabaseType.MYSQL      | ";"
+    DatabaseType.POSTGRES   | ";"
+    DatabaseType.SQLITE     | ";"
+    DatabaseType.SQL_SERVER | "\nGO"
   }
 
   def "supportsTriggers flag should be correct for each DB"() {
@@ -51,12 +51,12 @@ class DatabaseTypeSpec extends Specification {
     db.isSupportsTriggers() == supports
 
     where:
-    db                 | supports
-    DatabaseType.H2    | false
-    DatabaseType.HSQL  | false
-    DatabaseType.MSSQL | true
-    DatabaseType.MYSQL | true
-    DatabaseType.PGSQL | true
+    db                      | supports
+    DatabaseType.H2         | false
+    DatabaseType.MYSQL      | true
+    DatabaseType.POSTGRES   | true
+    DatabaseType.SQLITE     | true
+    DatabaseType.SQL_SERVER | true
   }
 
   def "valueOf should resolve names case-sensitively (upper) and name() round-trips"() {

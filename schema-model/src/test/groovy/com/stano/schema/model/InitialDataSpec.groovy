@@ -13,8 +13,8 @@ class InitialDataSpec extends Specification {
 
     where:
     sql                                  | dbType
-    "insert into t(a) values (1)"       | DatabaseType.PGSQL
-    "INSERT INTO t(a) VALUES (42);"     | DatabaseType.MSSQL
+    "insert into t(a) values (1)"       | DatabaseType.POSTGRES
+    "INSERT INTO t(a) VALUES (42);"     | DatabaseType.SQL_SERVER
     "REPLACE INTO t(a) VALUES (7);"     | DatabaseType.MYSQL
   }
 
@@ -36,8 +36,8 @@ class InitialDataSpec extends Specification {
     assert table.initialData.isEmpty()
 
     when: "add entries via the returned list"
-    table.initialData.add(new InitialData("insert into orders(id) values (1)", DatabaseType.PGSQL))
-    table.initialData.add(new InitialData("insert into orders(id) values (2)", DatabaseType.PGSQL))
+    table.initialData.add(new InitialData("insert into orders(id) values (1)", DatabaseType.POSTGRES))
+    table.initialData.add(new InitialData("insert into orders(id) values (2)", DatabaseType.POSTGRES))
 
     then: "the table reflects those additions (live list)"
     table.initialData*.sql == [

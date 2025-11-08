@@ -15,8 +15,8 @@ class ViewSpec extends Specification {
 
     where:
     schemaName | name        | sql                                 | dbType
-    "public"  | "v_orders"  | "select * from orders"              | DatabaseType.PGSQL
-    "dbo"     | "v_users"   | "SELECT * FROM dbo.users"          | DatabaseType.MSSQL
+    "public"  | "v_orders"  | "select * from orders"              | DatabaseType.POSTGRES
+    "dbo"     | "v_users"   | "SELECT * FROM dbo.users"          | DatabaseType.SQL_SERVER
     "app"     | "v_items"   | "SELECT * FROM items"              | DatabaseType.MYSQL
   }
 
@@ -38,13 +38,13 @@ class ViewSpec extends Specification {
     and: "views where some have DB-specific overrides"
     // For name conflicts (same view name), DB-specific should override generic for that DB.
     schema.addView(new View("public", "sales", "SELECT 1 -- generic", null))
-    schema.addView(new View("public", "sales", "SELECT 1 -- pg", DatabaseType.PGSQL))
-    schema.addView(new View("dbo",    "sales", "SELECT 1 -- mssql", DatabaseType.MSSQL))
+    schema.addView(new View("public", "sales", "SELECT 1 -- pg", DatabaseType.POSTGRES))
+    schema.addView(new View("dbo",    "sales", "SELECT 1 -- mssql", DatabaseType.SQL_SERVER))
     schema.addView(new View("public", "inventory", "SELECT 2 -- generic", null))
 
     when:
-    def pgViews = schema.getViews(DatabaseType.PGSQL)
-    def msViews = schema.getViews(DatabaseType.MSSQL)
+    def pgViews = schema.getViews(DatabaseType.POSTGRES)
+    def msViews = schema.getViews(DatabaseType.SQL_SERVER)
     def h2Views = schema.getViews(DatabaseType.H2)
 
     then: "PG chooses the pg-specific variant for sales and generic for inventory"
@@ -68,12 +68,12 @@ class ViewSpec extends Specification {
     schema.addView(new View("public", "AView", "A generic", null))
     schema.addView(new View("public", "bview", "B generic", null))
     // Later DB-specific with different case for the same logical name should override per DB
-    schema.addView(new View("public", "aview", "A pg", DatabaseType.PGSQL))
+    schema.addView(new View("public", "aview", "A pg", DatabaseType.POSTGRES))
     // Another distinct name later
     schema.addView(new View("public", "CView", "C generic", null))
 
     when:
-    def pgViews = schema.getViews(DatabaseType.PGSQL)
+    def pgViews = schema.getViews(DatabaseType.POSTGRES)
     def mysqlViews = schema.getViews(DatabaseType.MYSQL)
 
     then: "Distinct order is by first appearance of each logical name in the original list: AView, bview, CView"
@@ -91,7 +91,7 @@ class ViewSpec extends Specification {
     schema.addView(new View("public", "only", "SELECT 1", null))
 
     when:
-    schema.getViews(DatabaseType.PGSQL) << new View("public", "x", "y", null)
+    schema.getViews(DatabaseType.POSTGRES) << new View("public", "x", "y", null)
 
     then:
     thrown(UnsupportedOperationException)

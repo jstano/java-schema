@@ -131,16 +131,16 @@ public class Schema {
     enumTypes.put(enumType.getName(), enumType);
   }
 
-  public void addFunctions(List<Function> functions) {
-    this.functions.addAll(functions);
+  public void addFunction(Function function) {
+    this.functions.add(function);
   }
 
   public List<Function> getFunctions() {
     return Collections.unmodifiableList(new ArrayList<>(functions));
   }
 
-  public void addProcedures(List<Procedure> procedures) {
-    this.procedures.addAll(procedures);
+  public void addProcedure(Procedure procedure) {
+    this.procedures.add(procedure);
   }
 
   public List<Procedure> getProcedures() {

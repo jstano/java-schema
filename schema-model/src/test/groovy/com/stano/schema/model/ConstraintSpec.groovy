@@ -14,8 +14,8 @@ class ConstraintSpec extends Specification {
 
     where:
     name            | sql                      | dbType
-    "ck_positive"  | "amount > 0"            | DatabaseType.MSSQL
-    "ck_not_null"  | "col is not null"       | DatabaseType.PGSQL
+    "ck_positive"  | "amount > 0"            | DatabaseType.SQL_SERVER
+    "ck_not_null"  | "col is not null"       | DatabaseType.POSTGRES
     "ck_unique"    | "unique (a,b)"          | DatabaseType.MYSQL
   }
 
