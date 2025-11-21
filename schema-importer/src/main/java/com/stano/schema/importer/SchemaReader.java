@@ -82,7 +82,6 @@ public class SchemaReader {
                                null,
                                null,
                                getElementType(dataType, typeName, columnSize),
-                               true,
                                false));
         });
       }

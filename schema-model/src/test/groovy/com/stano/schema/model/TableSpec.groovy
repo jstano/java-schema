@@ -137,7 +137,6 @@ class TableSpec extends Specification {
       "100",
       null,
       null,
-      true,
       false
     )
     table.columns.addAll([boolCol, checked, ranged])
@@ -277,6 +276,4 @@ class TableSpec extends Specification {
     !t2.hasColumnConstraints(BooleanMode.NATIVE)
     !t2.hasColumnConstraints(BooleanMode.YN)
   }
-
-
 }

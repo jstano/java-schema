@@ -50,16 +50,12 @@ class MSSQLColumnTypeGenerator extends ColumnTypeGenerator {
 
   @Override
   protected String getVarcharSql(Column column) {
-    return (column.isUnicode() ? "nvarchar(" : "varchar(") + (column.getLength() == -1 ? "max" : column.getLength()) + ")";
+    return "nvarchar(" + (column.getLength() == -1 ? "max" : column.getLength()) + ")";
   }
 
   @Override
   protected String getTextSql(Column column) {
-    if (column.isUnicode()) {
-      return "nvarchar(max)";
-    }
-
-    return "varchar(max)";
+   return "nvarchar(max)";
   }
 
   @Override

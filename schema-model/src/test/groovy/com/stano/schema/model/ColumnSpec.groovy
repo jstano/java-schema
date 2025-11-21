@@ -20,7 +20,6 @@ class ColumnSpec extends Specification {
     col.maxValue == null
     col.enumType == null
     col.elementType == null
-    col.unicode
     !col.ignoreCase
 
     and: "no constraints means no checks (and not BOOLEAN)"
@@ -41,7 +40,6 @@ class ColumnSpec extends Specification {
     col.maxValue == null
     col.enumType == null
     col.elementType == null
-    col.unicode
     !col.ignoreCase
 
     and:
@@ -63,7 +61,6 @@ class ColumnSpec extends Specification {
       null,
       null,
       ColumnType.DECIMAL, // elementType for ARRAY
-      true,
       true
     )
 
@@ -80,7 +77,6 @@ class ColumnSpec extends Specification {
     col.maxValue == null
     col.enumType == null
     col.elementType == ColumnType.DECIMAL
-    col.unicode
     col.ignoreCase
 
     and: "explicit check constraint triggers checks"
@@ -116,7 +112,6 @@ class ColumnSpec extends Specification {
       null,
       null,
       null,
-      true,
       false
     ).hasMinOrMaxValue()
 
@@ -134,7 +129,6 @@ class ColumnSpec extends Specification {
       "100",
       null,
       null,
-      true,
       false
     ).hasMinOrMaxValue()
   }
@@ -215,7 +209,6 @@ class ColumnSpec extends Specification {
       "100",
       null,
       null,
-      true,
       false
     )
     table.columns.addAll([c1, c2, c3])

@@ -316,7 +316,6 @@ class SchemaParserSpec extends Specification {
     assert columnTesterTable.columns.get(15).name == 'varchar'
     assert columnTesterTable.columns.get(15).type == ColumnType.VARCHAR
     assert columnTesterTable.columns.get(15).length == 10
-    assert columnTesterTable.columns.get(15).unicode
     assert columnTesterTable.columns.get(16).name == 'varcharWithCheck'
     assert columnTesterTable.columns.get(16).type == ColumnType.VARCHAR
     assert columnTesterTable.columns.get(16).length == 6

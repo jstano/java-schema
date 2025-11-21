@@ -58,7 +58,6 @@ class BooleanModeSpec extends Specification {
       "100",
       null,
       null,
-      true,
       false
     )
 
