@@ -7,6 +7,11 @@ if [ -z "$VERSION" ]; then
   exit 1
 fi
 
+if [ -z "$MAVEN_TOKEN" ]; then
+  echo "Error: MAVEN_TOKEN is not set."
+  exit 1
+fi
+
 function upload() {
   curl --request POST \
     --verbose \
