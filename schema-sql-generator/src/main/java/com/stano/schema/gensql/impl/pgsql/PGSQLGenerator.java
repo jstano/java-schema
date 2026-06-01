@@ -41,6 +41,7 @@ public class PGSQLGenerator extends SQLGenerator {
 
     createUUIDGeneratorFunction();
     createExtensions();
+    createEnumTypes();
   }
 
   @Override
@@ -133,5 +134,22 @@ public class PGSQLGenerator extends SQLGenerator {
     sqlWriter.println("end;");
     sqlWriter.println("$createextensions$" + statementSeparator);
     sqlWriter.println();
+  }
+
+  private void createEnumTypes() {
+    if (schema.getEnumTypes().isEmpty()) {
+      return;
+    }
+
+    for (var enumType : schema.getEnumTypes()) {
+      String enumName = enumType.getName().replaceAll("(?<=[a-z0-9])([A-Z])", "_$1").toLowerCase();
+      sqlWriter.println("drop type if exists " + enumName + " cascade" + statementSeparator);
+
+      String values = enumType.getValues().stream()
+                              .map(v -> "'" + v.getCode() + "'")
+                              .collect(java.util.stream.Collectors.joining(","));
+      sqlWriter.println("create type " + enumName + " as enum (" + values + ")" + statementSeparator);
+      sqlWriter.println();
+    }
   }
 }

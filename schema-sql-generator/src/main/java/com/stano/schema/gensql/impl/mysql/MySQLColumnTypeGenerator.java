@@ -5,6 +5,7 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.Column;
 import com.stano.schema.model.Schema;
+import java.util.stream.Collectors;
 
 class MySQLColumnTypeGenerator extends ColumnTypeGenerator {
   MySQLColumnTypeGenerator(SQLGenerator sqlGenerator) {
@@ -52,5 +53,13 @@ class MySQLColumnTypeGenerator extends ColumnTypeGenerator {
   @Override
   protected String getArraySql(Column column) {
     throw new UnsupportedOperationException("MySQL does not support arrays");
+  }
+
+  @Override
+  protected String getEnumSql(Column column) {
+    String values = schema.getEnumType(column.getEnumType()).getValues().stream()
+                          .map(v -> "'" + v.getCode() + "'")
+                          .collect(Collectors.joining(","));
+    return "enum(" + values + ")";
   }
 }

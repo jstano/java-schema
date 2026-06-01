@@ -80,4 +80,10 @@ public class PGSQLColumnTypeGenerator extends ColumnTypeGenerator {
       default -> throw new IllegalArgumentException("Unsupported array type: " + elementType);
     };
   }
+
+  @Override
+  protected String getEnumSql(Column column) {
+    String name = schema.getEnumType(column.getEnumType()).getName();
+    return name.replaceAll("(?<=[a-z0-9])([A-Z])", "_$1").toLowerCase();
+  }
 }

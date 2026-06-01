@@ -19,7 +19,7 @@ public class ColumnConstraintGenerator extends BaseGenerator {
   public List<String> getColumnCheckConstraints(Table table) {
     List<Column> columns = table.getColumnsWithCheckConstraints(booleanMode);
 
-    return columns.stream().map(column -> generateConstraint(table, column)).collect(Collectors.toList());
+    return columns.stream().map(column -> generateConstraint(table, column)).filter(c -> c != null).collect(Collectors.toList());
   }
 
   protected String getCheckConstraintSQL(Column column) {
@@ -43,9 +43,13 @@ public class ColumnConstraintGenerator extends BaseGenerator {
   }
 
   private String generateConstraint(Table table, Column column) {
+    String checkSql = getCheckConstraintSQL(column);
+    if (checkSql == null) {
+      return null;
+    }
     return String.format("   constraint %s %s",
                          getConstraintName(table.getName(), column.getName()),
-                         getCheckConstraintSQL(column));
+                         checkSql);
   }
 
   private String getConstraintName(String tableName, String columnName) {

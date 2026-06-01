@@ -5,6 +5,7 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
 import com.stano.schema.model.Schema;
+import java.util.stream.Collectors;
 
 class H2ColumnTypeGenerator extends ColumnTypeGenerator {
   H2ColumnTypeGenerator(SQLGenerator sqlGenerator) {
@@ -52,5 +53,13 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
       case ColumnType.DECIMAL -> getDecimalSql(column) + " array";
       default -> elementType.name() + " array";
     };
+  }
+
+  @Override
+  protected String getEnumSql(Column column) {
+    String values = schema.getEnumType(column.getEnumType()).getValues().stream()
+                          .map(v -> "'" + v.getCode() + "'")
+                          .collect(Collectors.joining(","));
+    return "enum(" + values + ")";
   }
 }

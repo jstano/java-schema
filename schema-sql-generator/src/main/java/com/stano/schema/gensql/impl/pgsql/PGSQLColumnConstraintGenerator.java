@@ -10,7 +10,12 @@ class PGSQLColumnConstraintGenerator extends ColumnConstraintGenerator {
     super(sqlGenerator);
   }
 
+  @Override
   protected String getCheckConstraintSQL(Column column) {
+    if (column.getType() == ColumnType.ENUM) {
+      return null;
+    }
+
     if (column.getType() == ColumnType.VARCHAR) {
       return String.format("check(length(%s) <= %d)", column.getName(), column.getLength());
     }
