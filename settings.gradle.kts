@@ -9,6 +9,7 @@ dependencyResolutionManagement {
 
 //include("gradle-platform-dependencies")
 include("schema-bom")
+include("schema-diagram-generator")
 include("schema-importer")
 include("schema-installer")
 include("schema-installer-flyway")

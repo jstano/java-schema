@@ -14,3 +14,8 @@ local.properties
 jnidispatch.dll
 native-platform.dll
 native-platform.dll.lock
+bin/
+
+# AI assistant artifacts
+context-snapshot.json
+session-log.md
