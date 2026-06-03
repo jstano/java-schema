@@ -17,7 +17,7 @@ function upload() {
     --verbose \
     --header "Authorization: Bearer $MAVEN_TOKEN" \
     --form "bundle=@$1/build/tmp/staging-deploy.zip" \
-    "https://central.sonatype.com/api/v1/publisher/upload?name=$1:$2"
+    "https://central.sonatype.com/api/v1/publisher/upload?name=$1:$2&publishingType=AUTOMATIC"
 }
 
 upload "schema-bom" "$VERSION"
