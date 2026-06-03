@@ -20,8 +20,11 @@ function upload() {
     "https://central.sonatype.com/api/v1/publisher/upload?name=$1:$2"
 }
 
+upload "schema-bom" "$VERSION"
+upload "schema-diagram-generator" "$VERSION"
 upload "schema-importer" "$VERSION"
 upload "schema-installer" "$VERSION"
+upload "schema-installer-flyway" "$VERSION"
 upload "schema-installer-liquibase" "$VERSION"
 upload "schema-migrations" "$VERSION"
 upload "schema-model" "$VERSION"
