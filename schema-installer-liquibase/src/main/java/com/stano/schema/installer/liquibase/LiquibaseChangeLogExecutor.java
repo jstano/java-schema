@@ -40,32 +40,29 @@ public class LiquibaseChangeLogExecutor {
 
   public void executeChangeLog(Liquibase liquibase, Connection connection, String changeLogResource) {
     Database database = liquibase.getDatabase();
-
     int databaseChangeLogId = databaseUpgradeLog.start(database, connection, changeLogResource);
 
     try {
-      try {
-        try {
-          liquibase.update(new Contexts());
-        }
-        catch (ValidationFailedException x) {
-          liquibase.clearCheckSums();
-
-          liquibase.update(new Contexts());
-
-          truncateTransactionLog(connection);
-        }
-
-        databaseUpgradeLog.finish(database, connection, databaseChangeLogId, null);
-      }
-      finally {
-        liquibaseFactory.getExecutorService().clearExecutor("jdbc", database);
-      }
+      runWithChecksumRetry(liquibase, connection);
+      databaseUpgradeLog.finish(database, connection, databaseChangeLogId, null);
     }
     catch (LiquibaseException x) {
       databaseUpgradeLog.finish(database, connection, databaseChangeLogId, ExceptionUtils.getStackTrace(x));
-
       throw new LiquibaseRuntimeException(x);
+    }
+    finally {
+      liquibaseFactory.getExecutorService().clearExecutor("jdbc", database);
+    }
+  }
+
+  private void runWithChecksumRetry(Liquibase liquibase, Connection connection) throws LiquibaseException {
+    try {
+      liquibase.update(new Contexts());
+    }
+    catch (ValidationFailedException x) {
+      liquibase.clearCheckSums();
+      liquibase.update(new Contexts());
+      truncateTransactionLog(connection);
     }
   }
 

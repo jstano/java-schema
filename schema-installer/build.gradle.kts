@@ -1,5 +1,4 @@
 import com.stano.buildlogic.configurePublishing
-import com.stano.buildlogic.getFullDependency
 
 plugins {
   id("com.stano.java-library-convention")
@@ -12,19 +11,14 @@ configurePublishing(
 )
 
 dependencies {
-  api(getFullDependency("com.stano:java-utils"))
-  api(getFullDependency("com.stano:jdbc-utils"))
+  api(platform(project(":schema-platform-dependencies")))
+  api("com.stano:java-utils")
+  api("com.stano:jdbc-utils")
 
   api(project(":schema-migrations"))
   api(project(":schema-model"))
   api(project(":schema-parser"))
   api(project(":schema-sql-generator"))
-
-  implementation(getFullDependency("commons-cli:commons-cli"))
-  implementation(getFullDependency("org.apache.commons:commons-lang3"))
-  implementation(getFullDependency("org.apache.commons:commons-collections4"))
-  implementation(getFullDependency("org.slf4j:slf4j-api"))
-  implementation(getFullDependency("org.postgresql:postgresql"))
 
   testImplementation(project(":test-platform-dependencies"))
 }

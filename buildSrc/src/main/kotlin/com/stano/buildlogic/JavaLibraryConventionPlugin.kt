@@ -3,7 +3,6 @@ package com.stano.buildlogic
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.tasks.compile.GroovyCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.api.tasks.testing.Test
@@ -18,7 +17,6 @@ import org.gradle.testing.jacoco.tasks.JacocoReport
 class JavaLibraryConventionPlugin : Plugin<Project> {
   override fun apply(project: Project) = with(project) {
     plugins.apply("java-library")
-    plugins.apply("groovy")
     plugins.apply("jacoco")
     plugins.apply("maven-publish")
     plugins.apply("signing")
@@ -36,13 +34,6 @@ class JavaLibraryConventionPlugin : Plugin<Project> {
       options.compilerArgs = defaultCompilerOptions()
       sourceCompatibility = "21"
       targetCompatibility = "21"
-    }
-
-    tasks.withType<GroovyCompile>().configureEach {
-      options.compilerArgs = defaultCompilerOptions()
-      sourceCompatibility = "21"
-      targetCompatibility = "21"
-      groovyOptions.isParameters = true
     }
 
     tasks.withType<Jar>().configureEach {

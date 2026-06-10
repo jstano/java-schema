@@ -39,7 +39,7 @@ public class FlywayMigrationExecutor {
       throw new FlywayRuntimeException(x);
     }
 
-    File renamedFile = new File(tempDir.toFile(), "V1__post_create.sql");
+    File renamedFile = new File(tempDir.toFile(), "V2__post_create.sql");
 
     try {
       copyClasspathResourceToFile(classpathResource, renamedFile);

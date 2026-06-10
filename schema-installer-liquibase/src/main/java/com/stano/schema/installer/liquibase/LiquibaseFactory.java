@@ -32,8 +32,6 @@ public class LiquibaseFactory {
                                     Connection connection,
                                     ResourceAccessor resourceAccessor) throws LiquibaseRuntimeException {
     try {
-//         LogFactory.setInstance(new Slf4jLogFactory());
-
       registerDatabases();
 
       Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection));
@@ -60,7 +58,7 @@ public class LiquibaseFactory {
     }
   }
 
-  private static void registerDatabases() {
+  public static void registerDatabases() {
     DatabaseFactory databaseFactory = DatabaseFactory.getInstance();
 
     if (databaseFactory.getImplementedDatabases().stream().noneMatch(it -> CustomPostgresDatabase.class.isAssignableFrom(it.getClass()))) {

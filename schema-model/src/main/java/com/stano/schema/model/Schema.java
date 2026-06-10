@@ -77,6 +77,10 @@ public class Schema {
     return Optional.ofNullable(tableMap.get(name));
   }
 
+  public List<View> getViews() {
+    return Collections.unmodifiableList(new ArrayList<>(views));
+  }
+
   public List<View> getViews(DatabaseType databaseType) {
     Map<String, View> viewMap = new HashMap<>();
 

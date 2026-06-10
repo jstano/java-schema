@@ -1,0 +1,84 @@
+erDiagram
+  ChildTable {
+    int ID PK
+    int ParentID FK
+    string Name
+  }
+  ColumnTesterTable {
+    int sequence
+    int longsequence
+    int byte
+    int short
+    int int
+    bigint long
+    float float
+    float double
+    decimal decimal
+    boolean boolean
+    date date
+    datetime datetime
+    time time
+    datetime timestamp
+    string char
+    string varchar
+    string varcharWithCheck
+    string enum
+    text text
+    binary binary
+    uuid uuid
+    json json
+  }
+  KBI {
+    int ID PK
+    int PropertyID FK
+    string Name
+    string Code
+    string ShowInModule
+    int MasterKBICodeID FK
+    int UnitID FK
+  }
+  MasterKBICode {
+    int ID PK
+    string Code
+    string Description
+    boolean ShowOnDashboard
+    int SortOrder
+    string GroupingFreeForm
+  }
+  ParentTable {
+    int ID PK
+    string Name
+    string Extra
+    string Gender
+  }
+  Property {
+    int ID PK
+    string Name
+    string ShortName
+    string Code
+    string AltCode
+    int NumberRooms
+    int RegionID FK
+  }
+  Region {
+    int ID PK
+    string Name
+    string ShortName
+    string Code
+    boolean ExcludeFromCorpReports
+  }
+  Unit {
+    int ID PK
+    int PropertyID FK
+    string Name
+    string SingularName
+    string Symbol
+    string Comment
+  }
+
+  ChildTable }o--|| ParentTable : "ParentID"
+  KBI }o--|| Property : "PropertyID"
+  KBI }o--o| Unit : "UnitID"
+  KBI }o--o| MasterKBICode : "MasterKBICodeID"
+  Property }o--o| Region : "RegionID"
+  Unit }o--|| Property : "PropertyID"

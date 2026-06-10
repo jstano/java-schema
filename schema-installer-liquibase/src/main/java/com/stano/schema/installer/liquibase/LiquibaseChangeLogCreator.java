@@ -28,11 +28,18 @@ public class LiquibaseChangeLogCreator {
       out.println(String.format("<changeSet id=\"%s\" author=\"InstallDatabase\">", version == null ? "1.0" : version));
       out.println(String.format("<sqlFile path=\"%s\" relativeToChangelogFile=\"true\" endDelimiter=\"%s\"/>",
                                 tempSqlFile.getName(),
-                                endDelimiter));
+                                escapeXmlAttribute(endDelimiter)));
       out.println("</changeSet>");
       out.println("</databaseChangeLog>");
     }
 
     return tempChangeLogFile;
+  }
+
+  private static String escapeXmlAttribute(String value) {
+    return value.replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;");
   }
 }

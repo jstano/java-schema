@@ -12,6 +12,10 @@ import java.sql.Connection;
 public class FlywaySchemaInstaller extends SchemaInstaller {
   private FlywayMigrationExecutor flywayMigrationExecutor = new FlywayMigrationExecutor();
 
+  public void setFlywayMigrationExecutor(FlywayMigrationExecutor flywayMigrationExecutor) {
+    this.flywayMigrationExecutor = flywayMigrationExecutor;
+  }
+
   @Override
   protected void executeSqlFile(Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile) throws IOException {
     flywayMigrationExecutor.executeSqlFile(databaseType, sqlFile, connection);

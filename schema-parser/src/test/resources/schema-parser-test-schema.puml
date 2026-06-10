@@ -1,0 +1,101 @@
+@startuml
+
+entity ChildTable {
+  * ID : INT <<PK>>
+  --
+  ParentID : INT <<FK>>
+  Name : VARCHAR(100)
+}
+
+entity ColumnTesterTable {
+  sequence : INT
+  longsequence : INT
+  byte : INT
+  short : INT
+  int : INT
+  long : BIGINT
+  float : FLOAT
+  double : FLOAT
+  decimal : DECIMAL
+  boolean : BOOLEAN
+  date : DATE
+  datetime : DATETIME
+  time : TIME
+  timestamp : DATETIME
+  char : CHAR(1)
+  varchar : VARCHAR(10)
+  varcharWithCheck : VARCHAR(6)
+  enum : VARCHAR(0)
+  text : TEXT
+  binary : BINARY
+  uuid : UUID
+  json : JSON
+}
+
+entity KBI {
+  * ID : INT <<PK>>
+  --
+  PropertyID : INT <<FK>>
+  Name : VARCHAR(50)
+  Code : VARCHAR(25)
+  ShowInModule : VARCHAR(1)
+  MasterKBICodeID : INT <<FK>>
+  UnitID : INT <<FK>>
+}
+
+entity MasterKBICode {
+  * ID : INT <<PK>>
+  --
+  Code : VARCHAR(25)
+  Description : VARCHAR(50)
+  ShowOnDashboard : BOOLEAN
+  SortOrder : INT
+  GroupingFreeForm : VARCHAR(50)
+}
+
+entity ParentTable {
+  * ID : INT <<PK>>
+  --
+  Name : VARCHAR(100)
+  Extra : VARCHAR(200)
+  Gender : VARCHAR(0)
+}
+
+entity Property {
+  * ID : INT <<PK>>
+  --
+  Name : VARCHAR(50)
+  ShortName : VARCHAR(25)
+  Code : VARCHAR(25)
+  AltCode : VARCHAR(25)
+  NumberRooms : INT
+  RegionID : INT <<FK>>
+}
+
+entity Region {
+  * ID : INT <<PK>>
+  --
+  Name : VARCHAR(50)
+  ShortName : VARCHAR(25)
+  Code : VARCHAR(25)
+  ExcludeFromCorpReports : BOOLEAN
+}
+
+entity Unit {
+  * ID : INT <<PK>>
+  --
+  PropertyID : INT <<FK>>
+  Name : VARCHAR(50)
+  SingularName : VARCHAR(50)
+  Symbol : VARCHAR(5)
+  Comment : VARCHAR(255)
+}
+
+ChildTable }o--|| ParentTable : ParentID
+KBI }o--|| Property : PropertyID
+KBI }o--o| Unit : UnitID
+KBI }o--o| MasterKBICode : MasterKBICodeID
+Property }o--o| Region : RegionID
+Unit }o--|| Property : PropertyID
+
+@enduml

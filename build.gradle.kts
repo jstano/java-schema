@@ -64,5 +64,5 @@ sonar {
 }
 
 fun javaProjects(): Set<Project> = subprojects - projectsToSkip()
-fun projectsToSkip(): Set<Project> = subprojects.filter { project -> project.name == "schema-bom" || project.name == "gradle-platform-dependencies" }.toSet()
+fun projectsToSkip(): Set<Project> = subprojects.filter { project -> project.name == "schema-bom" || project.name == "schema-platform-dependencies" }.toSet()
 fun compilerOptions(): List<String> = listOf("-Xlint:none", "-Xdoclint:none", "-nowarn", "-parameters")

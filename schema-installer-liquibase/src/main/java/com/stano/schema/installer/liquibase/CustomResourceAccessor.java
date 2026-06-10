@@ -33,7 +33,13 @@ public class CustomResourceAccessor extends ClassLoaderResourceAccessor {
         return Collections.singletonList(new URIResource(path, uri));
       }
       else {
-        URI uri = classLoader.getResource(path).toURI();
+        java.net.URL url = classLoader.getResource(path);
+
+        if (url == null) {
+          throw new IOException("Resource not found: " + path);
+        }
+
+        URI uri = url.toURI();
         return Collections.singletonList(new URIResource(path, uri));
       }
     }

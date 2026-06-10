@@ -22,22 +22,23 @@ public class LiquibaseDatabaseUpdateChecker {
 
   public boolean databaseNeedsUpdating(Liquibase liquibase, ExecutorService executorService) {
     try {
-      try {
-        try {
-          return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
-        }
-        catch (Exception x) {
-          liquibase.clearCheckSums();
-
-          return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
-        }
-      }
-      finally {
-        executorService.clearExecutor("jdbc", liquibase.getDatabase());
-      }
+      return listUnrunWithChecksumRetry(liquibase);
     }
     catch (Exception x) {
       throw new LiquibaseRuntimeException(x);
+    }
+    finally {
+      executorService.clearExecutor("jdbc", liquibase.getDatabase());
+    }
+  }
+
+  private boolean listUnrunWithChecksumRetry(Liquibase liquibase) throws Exception {
+    try {
+      return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
+    }
+    catch (Exception x) {
+      liquibase.clearCheckSums();
+      return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
     }
   }
 }

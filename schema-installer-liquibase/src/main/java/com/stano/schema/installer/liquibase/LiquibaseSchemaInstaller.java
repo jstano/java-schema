@@ -8,8 +8,11 @@ import com.stano.schema.model.Version;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 public class LiquibaseSchemaInstaller extends SchemaInstaller {
+  private static final Logger log = Logger.getLogger(LiquibaseSchemaInstaller.class.getName());
+
   private LiquibaseChangeLogCreator liquibaseChangeLogCreator = new LiquibaseChangeLogCreator();
   private LiquibaseChangeLogExecutor liquibaseChangeLogExecutor = new LiquibaseChangeLogExecutor();
 
@@ -21,7 +24,7 @@ public class LiquibaseSchemaInstaller extends SchemaInstaller {
 
   @Override
   protected void executePostCreateScript(Connection connection, String postCreateResourceName) {
-    new LiquibaseChangeLogExecutor().executeChangeLog(postCreateResourceName, connection);
+    liquibaseChangeLogExecutor.executeChangeLog(postCreateResourceName, connection);
   }
 
   private File createTempChangeLogFile(DatabaseType databaseType,
@@ -39,7 +42,9 @@ public class LiquibaseSchemaInstaller extends SchemaInstaller {
       liquibaseChangeLogExecutor.executeChangeLog(tempChangeLogFile, connection);
     }
     finally {
-      tempChangeLogFile.delete();
+      if (!tempChangeLogFile.delete()) {
+        log.warning("Failed to delete temp changelog file: " + tempChangeLogFile.getAbsolutePath());
+      }
     }
   }
 }

@@ -18,7 +18,7 @@ import java.net.URI;
 import java.net.URL;
 
 public class GenSQL {
-  private SQLGeneratorFactory sqlGeneratorFactory = new SQLGeneratorFactory();
+  public SQLGeneratorFactory sqlGeneratorFactory = new SQLGeneratorFactory();
 
   public void generateSQL(DatabaseType databaseType,
                           Schema schema,
@@ -52,12 +52,12 @@ public class GenSQL {
     generateSQL(databaseType, schema, writer, foreignKeyMode, booleanMode, OutputMode.ALL, statementSeparator);
   }
 
-  private void generateSQL(DatabaseType databaseType,
-                           Schema schema,
-                           PrintWriter writer,
-                           ForeignKeyMode foreignKeyMode,
-                           BooleanMode booleanMode,
-                           OutputMode outputMode) {
+  public void generateSQL(DatabaseType databaseType,
+                          Schema schema,
+                          PrintWriter writer,
+                          ForeignKeyMode foreignKeyMode,
+                          BooleanMode booleanMode,
+                          OutputMode outputMode) {
     generateSQL(databaseType, schema, writer, foreignKeyMode, booleanMode, outputMode, databaseType.getStatementSeparator());
   }
 

@@ -1,5 +1,4 @@
 import com.stano.buildlogic.configurePublishing
-import com.stano.buildlogic.getFullDependency
 
 plugins {
   id("com.stano.java-library-convention")
@@ -12,9 +11,11 @@ configurePublishing(
 )
 
 dependencies {
-  implementation(getFullDependency("org.apache.commons:commons-lang3"))
-  implementation(getFullDependency("org.apache.commons:commons-collections4"))
-  implementation(getFullDependency("org.slf4j:slf4j-api"))
+  api(platform(project(":schema-platform-dependencies")))
+
+  implementation("org.apache.commons:commons-lang3")
+  implementation("org.apache.commons:commons-collections4")
+  implementation("org.slf4j:slf4j-api")
 
   testImplementation(project(":test-platform-dependencies"))
 }
