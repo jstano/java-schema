@@ -9,9 +9,15 @@ javaPlatform {
 }
 
 dependencies {
+  api(project(":schema-diagram-generator"))
   api(project(":schema-importer"))
+  api(project(":schema-installer"))
+  api(project(":schema-installer-flyway"))
+  api(project(":schema-installer-liquibase"))
+  api(project(":schema-migrations"))
   api(project(":schema-model"))
   api(project(":schema-parser"))
+  api(platform(project(":schema-platform-dependencies")))
   api(project(":schema-sql-generator"))
 }
 
