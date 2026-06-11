@@ -96,8 +96,9 @@
       <column name="datetime" type="datetime"/>
       <column name="time" type="time"/>
       <column name="timestamp" type="timestamp"/>
+      <column name="timestamptz" type="timestamptz"/>
       <column name="char" type="char" length="1" default="default 'A'"/>
-      <column name="varchar" type="varchar" length="10" unicode="true"/>
+      <column name="varchar" type="varchar" length="10"/>
       <column name="varcharWithCheck" type="varchar" length="6">
         <check>varcharWithCheck = 'ABC123'</check>
       </column>
@@ -106,6 +107,8 @@
       <column name="binary" type="binary"/>
       <column name="uuid" type="uuid"/>
       <column name="json" type="json"/>
+      <column name="citext" type="citext"/>
+      <column name="cstext" type="cstext"/>
     </columns>
   </table>
 

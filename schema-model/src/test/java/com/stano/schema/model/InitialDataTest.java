@@ -27,8 +27,7 @@ class InitialDataTest {
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
       Arguments.of("insert into t(a) values (1)", DatabaseType.POSTGRES),
-      Arguments.of("INSERT INTO t(a) VALUES (42);", DatabaseType.SQL_SERVER),
-      Arguments.of("REPLACE INTO t(a) VALUES (7);", DatabaseType.MYSQL)
+      Arguments.of("INSERT INTO t(a) VALUES (42);", DatabaseType.SQL_SERVER)
     );
   }
 

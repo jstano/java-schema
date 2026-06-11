@@ -30,7 +30,6 @@ class OtherSqlTest {
     return Stream.of(
         new Object[]{DatabaseType.POSTGRES, OtherSqlOrder.TOP, "CREATE EXTENSION IF NOT EXISTS uuid-ossp;"},
         new Object[]{DatabaseType.SQL_SERVER, OtherSqlOrder.BOTTOM, "PRINT 'Done';"},
-        new Object[]{DatabaseType.MYSQL, OtherSqlOrder.TOP, "SET sql_safe_updates = 0;"},
         new Object[]{DatabaseType.H2, OtherSqlOrder.BOTTOM, "-- noop"}
     );
   }
@@ -58,7 +57,7 @@ class OtherSqlTest {
     assertEquals(schema.getOtherSql().stream().map(OtherSql::getSql).toList(), List.of("A;", "B;"));
 
     assertThrows(UnsupportedOperationException.class, () ->
-        schema.getOtherSql().add(new OtherSql(DatabaseType.MYSQL, OtherSqlOrder.TOP, "C;"))
+        schema.getOtherSql().add(new OtherSql(DatabaseType.H2, OtherSqlOrder.TOP, "C;"))
     );
   }
 }

@@ -16,6 +16,7 @@ public class SQLGeneratorOptions {
    private final BooleanMode booleanMode;
    private final OutputMode outputMode;
    private final String statementSeparator;
+   private final int targetPostgresVersion;
 
    public SQLGeneratorOptions(Schema schema,
                               PrintWriter sqlWriter,
@@ -35,6 +36,18 @@ public class SQLGeneratorOptions {
                               OutputMode outputMode,
                               String statementSeparator) {
 
+      this(schema, sqlWriter, databaseType, foreignKeyMode, booleanMode, outputMode, statementSeparator, 0);
+   }
+
+   public SQLGeneratorOptions(Schema schema,
+                              PrintWriter sqlWriter,
+                              DatabaseType databaseType,
+                              ForeignKeyMode foreignKeyMode,
+                              BooleanMode booleanMode,
+                              OutputMode outputMode,
+                              String statementSeparator,
+                              int targetPostgresVersion) {
+
       this.schema = schema;
       this.sqlWriter = sqlWriter;
       this.databaseType = databaseType;
@@ -42,6 +55,7 @@ public class SQLGeneratorOptions {
       this.booleanMode = booleanMode;
       this.outputMode = outputMode;
       this.statementSeparator = statementSeparator;
+      this.targetPostgresVersion = targetPostgresVersion;
    }
 
    public Schema getSchema() {
@@ -81,5 +95,10 @@ public class SQLGeneratorOptions {
    public String getStatementSeparator() {
 
       return statementSeparator;
+   }
+
+   public int getTargetPostgresVersion() {
+
+      return targetPostgresVersion;
    }
 }

@@ -81,8 +81,7 @@ public class SchemaReader {
                                null,
                                null,
                                null,
-                               getElementType(dataType, typeName, columnSize),
-                               false));
+                               getElementType(dataType, typeName, columnSize)));
         });
       }
     }
@@ -292,6 +291,9 @@ public class SchemaReader {
     }
     if (dataType == Types.TIME) {
       return ColumnType.TIME;
+    }
+    if (dataType == Types.TIME_WITH_TIMEZONE) {
+      return ColumnType.TIMESTAMPTZ;
     }
     if (dataType == Types.TIMESTAMP) {
       return ColumnType.DATETIME;

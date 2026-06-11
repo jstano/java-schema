@@ -72,8 +72,7 @@ class BooleanModeTest {
       "0",
       "100",
       null,
-      null,
-      false
+      null
     );
 
     assertTrue(colWithCheck.needsCheckConstraints(BooleanMode.NATIVE));

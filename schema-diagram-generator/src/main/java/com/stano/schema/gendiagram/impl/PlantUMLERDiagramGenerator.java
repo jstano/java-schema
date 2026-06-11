@@ -96,10 +96,10 @@ public class PlantUMLERDiagramGenerator implements DiagramGenerator {
       case BOOLEAN -> "BOOLEAN";
       case DATE -> "DATE";
       case DATETIME, TIMESTAMP -> "DATETIME";
-      case TIME -> "TIME";
+      case TIME, TIMESTAMPTZ -> "TIME";
       case CHAR -> "CHAR(" + column.getLength() + ")";
       case VARCHAR, ENUM -> "VARCHAR(" + column.getLength() + ")";
-      case TEXT -> "TEXT";
+      case TEXT, CITEXT, CSTEXT -> "TEXT";
       case BINARY -> "BINARY";
       case UUID -> "UUID";
       case JSON -> "JSON";

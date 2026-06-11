@@ -24,8 +24,7 @@ class ConstraintTest {
   static Stream<Arguments> constraintProvider() {
     return Stream.of(
       Arguments.of("ck_positive", "amount > 0", DatabaseType.SQL_SERVER),
-      Arguments.of("ck_not_null", "col is not null", DatabaseType.POSTGRES),
-      Arguments.of("ck_unique", "unique (a,b)", DatabaseType.MYSQL)
+      Arguments.of("ck_not_null", "col is not null", DatabaseType.POSTGRES)
     );
   }
 

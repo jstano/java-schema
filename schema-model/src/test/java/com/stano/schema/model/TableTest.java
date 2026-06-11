@@ -133,8 +133,7 @@ class TableTest {
         "0",
         "100",
         null,
-        null,
-        false
+        null
     );
     table.getColumns().addAll(List.of(boolCol, checked, ranged));
 

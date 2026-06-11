@@ -13,7 +13,6 @@ public class Column {
   private final String maxValue;
   private final String enumType;
   private final ColumnType elementType;
-  private final boolean ignoreCase;
 
   public Column(String name,
                 ColumnType type,
@@ -31,7 +30,6 @@ public class Column {
     this.maxValue = null;
     this.enumType = null;
     this.elementType = null;
-    this.ignoreCase = false;
   }
 
   public Column(String name,
@@ -51,7 +49,6 @@ public class Column {
     this.maxValue = null;
     this.enumType = null;
     this.elementType = null;
-    this.ignoreCase = false;
   }
 
   public Column(String name,
@@ -65,8 +62,7 @@ public class Column {
                 String minValue,
                 String maxValue,
                 String enumType,
-                ColumnType elementType,
-                boolean ignoreCase) {
+                ColumnType elementType) {
     this.name = name;
     this.type = type;
     this.length = length;
@@ -79,7 +75,6 @@ public class Column {
     this.maxValue = maxValue;
     this.enumType = enumType;
     this.elementType = elementType;
-    this.ignoreCase = ignoreCase;
   }
 
   public String getName() {
@@ -128,10 +123,6 @@ public class Column {
 
   public ColumnType getElementType() {
     return elementType;
-  }
-
-  public boolean isIgnoreCase() {
-    return ignoreCase;
   }
 
   public boolean needsCheckConstraints(BooleanMode booleanMode) {

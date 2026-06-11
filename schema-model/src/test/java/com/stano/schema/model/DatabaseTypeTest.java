@@ -16,7 +16,7 @@ class DatabaseTypeTest {
   @Test
   @DisplayName("if the values in the TargetData enum changes, we need to adjust these tests")
   void testEnumSize() {
-    assertEquals(5, DatabaseType.values().length);
+    assertEquals(3, DatabaseType.values().length);
   }
 
   @ParameterizedTest
@@ -45,9 +45,7 @@ class DatabaseTypeTest {
   static Stream<Arguments> getMaxKeyNameLengthProvider() {
     return Stream.of(
       Arguments.of(DatabaseType.H2, 64),
-      Arguments.of(DatabaseType.MYSQL, 64),
       Arguments.of(DatabaseType.POSTGRES, 63),
-      Arguments.of(DatabaseType.SQLITE, 63),
       Arguments.of(DatabaseType.SQL_SERVER, 32)
     );
   }
@@ -62,9 +60,7 @@ class DatabaseTypeTest {
   static Stream<Arguments> getStatementSeparatorProvider() {
     return Stream.of(
       Arguments.of(DatabaseType.H2, ";"),
-      Arguments.of(DatabaseType.MYSQL, ";"),
       Arguments.of(DatabaseType.POSTGRES, ";"),
-      Arguments.of(DatabaseType.SQLITE, ";"),
       Arguments.of(DatabaseType.SQL_SERVER, "\nGO")
     );
   }
@@ -79,9 +75,7 @@ class DatabaseTypeTest {
   static Stream<Arguments> supportsTriggerProvider() {
     return Stream.of(
       Arguments.of(DatabaseType.H2, false),
-      Arguments.of(DatabaseType.MYSQL, true),
       Arguments.of(DatabaseType.POSTGRES, true),
-      Arguments.of(DatabaseType.SQLITE, true),
       Arguments.of(DatabaseType.SQL_SERVER, true)
     );
   }

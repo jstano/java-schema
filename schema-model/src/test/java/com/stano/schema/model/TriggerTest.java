@@ -31,7 +31,6 @@ class TriggerTest {
     return Stream.of(
         new Object[]{"AFTER UPDATE SET x=1", TriggerType.UPDATE, DatabaseType.POSTGRES},
         new Object[]{"BEFORE DELETE FROM t", TriggerType.DELETE, DatabaseType.SQL_SERVER},
-        new Object[]{"CREATE TRIGGER t_upd", TriggerType.UPDATE, DatabaseType.MYSQL},
         new Object[]{"DROP TRIGGER IF EXISTS", TriggerType.DELETE, DatabaseType.H2}
     );
   }

@@ -9,7 +9,7 @@ class ColumnTypeTest {
   @Test
   @DisplayName("getColumnType should return the correct ColumnType for all supported types")
   void testGetColumnType() {
-    assertEquals(22, ColumnType.values().length);
+    assertEquals(25, ColumnType.values().length);
     assertEquals(ColumnType.SEQUENCE, ColumnType.getColumnType("sequence"));
     assertEquals(ColumnType.LONGSEQUENCE, ColumnType.getColumnType("longsequence"));
     assertEquals(ColumnType.BYTE, ColumnType.getColumnType("byte"));
@@ -23,11 +23,14 @@ class ColumnTypeTest {
     assertEquals(ColumnType.DATE, ColumnType.getColumnType("date"));
     assertEquals(ColumnType.DATETIME, ColumnType.getColumnType("datetime"));
     assertEquals(ColumnType.TIME, ColumnType.getColumnType("time"));
+    assertEquals(ColumnType.TIMESTAMPTZ, ColumnType.getColumnType("timestamptz"));
     assertEquals(ColumnType.TIMESTAMP, ColumnType.getColumnType("timestamp"));
     assertEquals(ColumnType.CHAR, ColumnType.getColumnType("char"));
     assertEquals(ColumnType.VARCHAR, ColumnType.getColumnType("varchar"));
     assertEquals(ColumnType.ENUM, ColumnType.getColumnType("enum"));
     assertEquals(ColumnType.TEXT, ColumnType.getColumnType("text"));
+    assertEquals(ColumnType.CITEXT, ColumnType.getColumnType("citext"));
+    assertEquals(ColumnType.CSTEXT, ColumnType.getColumnType("cstext"));
     assertEquals(ColumnType.BINARY, ColumnType.getColumnType("binary"));
     assertEquals(ColumnType.UUID, ColumnType.getColumnType("uuid"));
     assertEquals(ColumnType.JSON, ColumnType.getColumnType("json"));
@@ -55,11 +58,14 @@ class ColumnTypeTest {
     assertFalse(ColumnType.DATE.isText());
     assertFalse(ColumnType.DATETIME.isText());
     assertFalse(ColumnType.TIME.isText());
+    assertFalse(ColumnType.TIMESTAMPTZ.isText());
     assertFalse(ColumnType.TIMESTAMP.isText());
     assertTrue(ColumnType.CHAR.isText());
     assertTrue(ColumnType.VARCHAR.isText());
     assertTrue(ColumnType.ENUM.isText());
     assertTrue(ColumnType.TEXT.isText());
+    assertTrue(ColumnType.CITEXT.isText());
+    assertTrue(ColumnType.CSTEXT.isText());
     assertFalse(ColumnType.BINARY.isText());
     assertTrue(ColumnType.UUID.isText());
     assertTrue(ColumnType.JSON.isText());
@@ -81,11 +87,14 @@ class ColumnTypeTest {
     assertFalse(ColumnType.DATE.isNumeric());
     assertFalse(ColumnType.DATETIME.isNumeric());
     assertFalse(ColumnType.TIME.isNumeric());
+    assertFalse(ColumnType.TIMESTAMPTZ.isNumeric());
     assertFalse(ColumnType.TIMESTAMP.isNumeric());
     assertFalse(ColumnType.CHAR.isNumeric());
     assertFalse(ColumnType.VARCHAR.isNumeric());
     assertFalse(ColumnType.ENUM.isNumeric());
     assertFalse(ColumnType.TEXT.isNumeric());
+    assertFalse(ColumnType.CITEXT.isNumeric());
+    assertFalse(ColumnType.CSTEXT.isNumeric());
     assertFalse(ColumnType.BINARY.isNumeric());
     assertFalse(ColumnType.UUID.isNumeric());
     assertFalse(ColumnType.JSON.isNumeric());

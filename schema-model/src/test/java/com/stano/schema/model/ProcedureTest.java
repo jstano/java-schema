@@ -26,7 +26,6 @@ class ProcedureTest {
 
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
-      Arguments.of("app", "pr_cleanup", DatabaseType.MYSQL, "CREATE PROCEDURE pr_cleanup() BEGIN SELECT 1; END"),
       Arguments.of("public", "pr_total", DatabaseType.POSTGRES, "create procedure pr_total() language plpgsql as $$ begin /* noop */ end $$;"),
       Arguments.of("dbo", "pr_compute", DatabaseType.SQL_SERVER, "CREATE PROCEDURE dbo.pr_compute AS BEGIN SELECT 42 END")
     );

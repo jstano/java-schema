@@ -28,11 +28,11 @@ begin
 end;
 $createextensions$;
 
-drop type if exists gender_type cascade;
-create type gender_type as enum ('M','F');
-
 drop type if exists show_in_module_type cascade;
 create type show_in_module_type as enum ('A','B','L');
+
+drop type if exists gender_type cascade;
+create type gender_type as enum ('M','F');
 
 drop type if exists test_enum_type cascade;
 create type test_enum_type as enum ('1','2');
@@ -71,6 +71,7 @@ create table public.ColumnTesterTable
    date date,
    datetime timestamp,
    time time,
+   timestamptz timestamptz,
    timestamp timestamp,
    char char(1) default default 'A',
    varchar text,

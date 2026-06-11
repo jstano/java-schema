@@ -28,6 +28,16 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
   }
 
   @Override
+  protected String getCitextSql() {
+    return "character large object";
+  }
+
+  @Override
+  protected String getCstextSql() {
+    return "character large object";
+  }
+
+  @Override
   protected String getBinarySql() {
     return "binary large object";
   }
@@ -53,6 +63,11 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
       case ColumnType.DECIMAL -> getDecimalSql(column) + " array";
       default -> elementType.name() + " array";
     };
+  }
+
+  @Override
+  protected String getTimestampTZSql() {
+    return "timestamp with time zone";
   }
 
   @Override

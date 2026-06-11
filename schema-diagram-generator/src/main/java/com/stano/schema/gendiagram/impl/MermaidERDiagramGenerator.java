@@ -85,9 +85,9 @@ public class MermaidERDiagramGenerator implements DiagramGenerator {
       case BOOLEAN -> "boolean";
       case DATE -> "date";
       case DATETIME, TIMESTAMP -> "datetime";
-      case TIME -> "time";
+      case TIME, TIMESTAMPTZ -> "time";
       case CHAR, VARCHAR, ENUM -> "string";
-      case TEXT -> "text";
+      case TEXT, CITEXT, CSTEXT -> "text";
       case BINARY -> "binary";
       case UUID -> "uuid";
       case JSON -> "json";

@@ -127,4 +127,35 @@ class GenSQLTest {
     verify(mockSQLGenerator).generate();
     verify(mockWriter).close();
   }
+
+  @Test
+  @DisplayName("should pass targetPostgresVersion through to SQLGeneratorOptions")
+  void shouldPassTargetPostgresVersionThroughToSQLGeneratorOptions() {
+    doAnswer(inv -> {
+      return null;
+    }).when(mockSQLGenerator).generate();
+
+    when(mockSQLGeneratorFactory.createSQLGenerator(any())).thenAnswer(inv -> {
+      var options = (SQLGeneratorOptions) inv.getArgument(0);
+      if (options.getSchema() == mockSchema &&
+          options.getSqlWriter() == mockWriter &&
+          options.getDatabaseType() == DatabaseType.POSTGRES &&
+          options.getForeignKeyMode() == ForeignKeyMode.RELATIONS &&
+          options.getBooleanMode() == BooleanMode.NATIVE &&
+          options.getOutputMode() == OutputMode.ALL &&
+          options.getStatementSeparator().equals(";") &&
+          options.getTargetPostgresVersion() == 18) {
+        return mockSQLGenerator;
+      }
+      return null;
+    });
+
+    GenSQL genSql = new GenSQL();
+    genSql.sqlGeneratorFactory = mockSQLGeneratorFactory;
+
+    genSql.generateSQL(DatabaseType.POSTGRES, mockSchema, mockWriter, ForeignKeyMode.RELATIONS, BooleanMode.NATIVE, OutputMode.ALL, ";", 18);
+
+    verify(mockSQLGenerator).generate();
+    verify(mockWriter).close();
+  }
 }

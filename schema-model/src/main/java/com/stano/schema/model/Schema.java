@@ -26,6 +26,7 @@ public class Schema {
   private Version version;
   private ForeignKeyMode foreignKeyMode;
   private BooleanMode booleanMode = BooleanMode.NATIVE;
+  private boolean caseSensitiveText = true;
 
   public Schema(URL schemaURL) {
     this.schemaURL = schemaURL;
@@ -57,6 +58,14 @@ public class Schema {
 
   public void setBooleanMode(BooleanMode booleanMode) {
     this.booleanMode = booleanMode;
+  }
+
+  public boolean isCaseSensitiveText() {
+    return caseSensitiveText;
+  }
+
+  public void setCaseSensitiveText(boolean caseSensitiveText) {
+    this.caseSensitiveText = caseSensitiveText;
   }
 
   public List<Table> getTables() {

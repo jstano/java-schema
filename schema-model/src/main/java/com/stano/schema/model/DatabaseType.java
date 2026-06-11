@@ -5,9 +5,7 @@ import java.util.Set;
 
 public enum DatabaseType {
   H2(";", 64, false),
-  MYSQL(";", 64, true),
   POSTGRES(";", 63, true),
-  SQLITE(";", 63, true),
   SQL_SERVER("\nGO", 32, true);
 
   public static Set<DatabaseType> getDatabaseTypes(String targetDatabasesStr) {

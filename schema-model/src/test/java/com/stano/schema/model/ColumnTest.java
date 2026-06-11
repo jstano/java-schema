@@ -26,7 +26,6 @@ class ColumnTest {
     assertNull(col.getMaxValue());
     assertNull(col.getEnumType());
     assertNull(col.getElementType());
-    assertFalse(col.isIgnoreCase());
 
     assertFalse(col.needsCheckConstraints(BooleanMode.NATIVE));
     assertFalse(col.needsCheckConstraints(BooleanMode.YES_NO));
@@ -45,7 +44,6 @@ class ColumnTest {
     assertNull(col.getMaxValue());
     assertNull(col.getEnumType());
     assertNull(col.getElementType());
-    assertFalse(col.isIgnoreCase());
 
     assertTrue(col.needsCheckConstraints(BooleanMode.NATIVE));
   }
@@ -65,8 +63,7 @@ class ColumnTest {
       null,
       null,
       null,
-      ColumnType.DECIMAL,
-      true
+      ColumnType.DECIMAL
     );
 
     assertEquals("prices", col.getName());
@@ -81,7 +78,6 @@ class ColumnTest {
     assertNull(col.getMaxValue());
     assertNull(col.getEnumType());
     assertEquals(ColumnType.DECIMAL, col.getElementType());
-    assertTrue(col.isIgnoreCase());
 
     assertTrue(col.needsCheckConstraints(BooleanMode.NATIVE));
   }
@@ -113,8 +109,7 @@ class ColumnTest {
       "0",
       null,
       null,
-      null,
-      false
+      null
     ).hasMinOrMaxValue());
 
     assertTrue(new Column(
@@ -129,8 +124,7 @@ class ColumnTest {
       null,
       "100",
       null,
-      null,
-      false
+      null
     ).hasMinOrMaxValue());
   }
 
@@ -202,8 +196,7 @@ class ColumnTest {
       "0",
       "100",
       null,
-      null,
-      false
+      null
     );
     table.getColumns().addAll(java.util.Arrays.asList(c1, c2, c3));
 

@@ -16,18 +16,21 @@ public enum ColumnType {
   DATE,
   DATETIME,
   TIME,
+  TIMESTAMPTZ,
   TIMESTAMP,
   CHAR,
   VARCHAR,
   ENUM,
   TEXT,
+  CITEXT,
+  CSTEXT,
   BINARY,
   UUID,
   JSON,
   ARRAY;
 
   public boolean isText() {
-    return this == CHAR || this == VARCHAR || this == ENUM || this == TEXT || this == JSON || this == UUID;
+    return this == CHAR || this == VARCHAR || this == ENUM || this == TEXT || this == CITEXT || this == CSTEXT || this == JSON || this == UUID;
   }
 
   public boolean isNumeric() {

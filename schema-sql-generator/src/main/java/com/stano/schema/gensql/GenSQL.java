@@ -58,7 +58,32 @@ public class GenSQL {
                           ForeignKeyMode foreignKeyMode,
                           BooleanMode booleanMode,
                           OutputMode outputMode) {
-    generateSQL(databaseType, schema, writer, foreignKeyMode, booleanMode, outputMode, databaseType.getStatementSeparator());
+    generateSQL(databaseType, schema, writer, foreignKeyMode, booleanMode, outputMode, databaseType.getStatementSeparator(), 0);
+  }
+
+  public void generateSQL(DatabaseType databaseType,
+                          Schema schema,
+                          PrintWriter writer,
+                          ForeignKeyMode foreignKeyMode,
+                          BooleanMode booleanMode,
+                          OutputMode outputMode,
+                          String statementSeparator,
+                          int targetPostgresVersion) {
+    try {
+      SQLGenerator sqlGenerator = sqlGeneratorFactory.createSQLGenerator(new SQLGeneratorOptions(schema,
+                                                                                                 writer,
+                                                                                                 databaseType,
+                                                                                                 foreignKeyMode,
+                                                                                                 booleanMode,
+                                                                                                 outputMode,
+                                                                                                 statementSeparator,
+                                                                                                 targetPostgresVersion));
+
+      sqlGenerator.generate();
+    }
+    finally {
+      IOUtils.closeQuietly(writer);
+    }
   }
 
   private static File createOutputFile(String schemaFilename,
@@ -82,12 +107,13 @@ public class GenSQL {
     try {
       if (args.length < 2) {
         System.out.println(
-          "USAGE: GenSQL <target-database> <schema-filename> [--foreign-key-mode=mode] [--boolean-mode=mode] [--output-indexes-only] [--output-triggers-only]");
-        System.out.println("   where <target-database> is one or more of: [MSSQL,PGSQL,MYSQL,DERBY,H2,HSQL] separated by commas");
+          "USAGE: GenSQL <target-database> <schema-filename> [--foreign-key-mode=mode] [--boolean-mode=mode] [--output-indexes-only] [--output-triggers-only] [--pg-version=N]");
+        System.out.println("   where <target-database> is one or more of: [H2,POSTGRES,SQL_SERVER] separated by commas");
         System.out.println("   and   <foreign-key-mode> is one of: none,relations,triggers (default is relations)");
         System.out.println("   and   <boolean-mode> is one of: native,yes_no,yn (default is native)");
         System.out.println("   and   <output-indexes-only> causes only indexes to be output");
         System.out.println("   and   <output-triggers-only> causes only triggers to be output");
+        System.out.println("   and   <pg-version> is the target PostgreSQL major version (e.g., 17, 18)");
         System.exit(1);
       }
 
@@ -98,12 +124,13 @@ public class GenSQL {
       ForeignKeyMode foreignKeyMode = schema.getForeignKeyMode();
       BooleanMode booleanMode = schema.getBooleanMode();
       OutputMode outputMode = OutputMode.ALL;
+      int targetPostgresVersion = 0;
 
       for (String arg : args) {
         if (arg.startsWith("--foreign-key-mode=")) {
           foreignKeyMode = ForeignKeyMode.valueOf(arg.substring("--foreign-key-mode=".length()).toUpperCase());
         }
-        else if (arg.equals("--boolean-mode=")) {
+        else if (arg.startsWith("--boolean-mode=")) {
           booleanMode = BooleanMode.valueOf(arg.substring("--boolean-mode=".length()).toUpperCase());
         }
         else if (arg.equals("--output-indexes-only")) {
@@ -111,6 +138,9 @@ public class GenSQL {
         }
         else if (arg.equals("--output-triggers-only")) {
           outputMode = OutputMode.TRIGGERS_ONLY;
+        }
+        else if (arg.startsWith("--pg-version=")) {
+          targetPostgresVersion = Integer.parseInt(arg.substring("--pg-version=".length()));
         }
       }
 
@@ -122,7 +152,9 @@ public class GenSQL {
                            new PrintWriter(new FileWriter(createOutputFile(schemaFilename, databaseType))),
                            foreignKeyMode,
                            booleanMode,
-                           outputMode);
+                           outputMode,
+                           databaseType.getStatementSeparator(),
+                           targetPostgresVersion);
       }
     }
     catch (Throwable x) {

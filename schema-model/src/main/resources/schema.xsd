@@ -37,6 +37,7 @@
       <attribute name="version" type="string"/>
       <attribute name="foreignKeyMode" type="database:foreignKeyMode"/>
       <attribute name="booleanMode" type="database:booleanMode"/>
+      <attribute name="caseSensitiveText" type="boolean"/>
     </complexType>
   </element>
 
@@ -55,7 +56,6 @@
                 <attribute name="length" type="integer"/>
                 <attribute name="scale" type="integer"/>
                 <attribute name="required" type="boolean"/>
-                <attribute name="ignoreCase" type="boolean"/>
                 <attribute name="default" type="string"/>
                 <attribute name="generated" type="string"/>
                 <attribute name="enumType" type="string"/>
@@ -320,10 +320,13 @@
       <enumeration value="time"/>
       <enumeration value="datetime"/>
       <enumeration value="timestamp"/>
+      <enumeration value="timestamptz"/>
       <enumeration value="char"/>
       <enumeration value="varchar"/>
       <enumeration value="enum"/>
       <enumeration value="text"/>
+      <enumeration value="citext"/>
+      <enumeration value="cstext"/>
       <enumeration value="binary"/>
       <enumeration value="uuid"/>
       <enumeration value="json"/>

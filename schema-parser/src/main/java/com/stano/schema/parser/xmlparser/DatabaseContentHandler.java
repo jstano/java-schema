@@ -18,6 +18,7 @@ public class DatabaseContentHandler extends AbstractContentHandler {
       String versionAttribute = atts.getValue("version");
       String foreignKeyMode = atts.getValue("foreignKeyMode");
       String booleanMode = atts.getValue("booleanMode");
+      String caseSensitiveText = atts.getValue("caseSensitiveText");
 
       if (schema.getVersion() == null && versionAttribute != null) {
         schema.setVersion(new Version(versionAttribute));
@@ -29,6 +30,10 @@ public class DatabaseContentHandler extends AbstractContentHandler {
 
       if (booleanMode != null) {
         schema.setBooleanMode(BooleanMode.valueOf(booleanMode.toUpperCase()));
+      }
+
+      if (caseSensitiveText != null) {
+        schema.setCaseSensitiveText(Boolean.parseBoolean(caseSensitiveText));
       }
     }
   }

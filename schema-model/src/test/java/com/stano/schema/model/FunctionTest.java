@@ -27,8 +27,7 @@ class FunctionTest {
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
       Arguments.of("public", "fn_total", DatabaseType.POSTGRES, "create function fn_total() returns int as $$ select 1 $$;"),
-      Arguments.of("dbo", "fn_compute", DatabaseType.SQL_SERVER, "CREATE FUNCTION dbo.fn_compute() RETURNS INT AS BEGIN RETURN 42 END"),
-      Arguments.of("app", "fn_format", DatabaseType.MYSQL, "CREATE FUNCTION fn_format() RETURNS INT RETURN 7;")
+      Arguments.of("dbo", "fn_compute", DatabaseType.SQL_SERVER, "CREATE FUNCTION dbo.fn_compute() RETURNS INT AS BEGIN RETURN 42 END")
     );
   }
 

@@ -68,6 +68,10 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
       return getTimeSql();
     }
 
+    if (columnType == ColumnType.TIMESTAMPTZ) {
+      return getTimestampTZSql();
+    }
+
     if (columnType == ColumnType.CHAR) {
       return getCharSql(column);
     }
@@ -78,6 +82,14 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
 
     if (columnType == ColumnType.TEXT) {
       return getTextSql(column);
+    }
+
+    if (columnType == ColumnType.CITEXT) {
+      return getCitextSql();
+    }
+
+    if (columnType == ColumnType.CSTEXT) {
+      return getCstextSql();
     }
 
     if (columnType == ColumnType.BINARY) {
@@ -111,6 +123,10 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
   protected abstract String getLongSequenceSql();
 
   protected abstract String getTextSql(Column column);
+
+  protected abstract String getCitextSql();
+
+  protected abstract String getCstextSql();
 
   protected abstract String getBinarySql();
 
@@ -179,6 +195,10 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
 
   protected String getTimeSql() {
     return "time";
+  }
+
+  protected String getTimestampTZSql() {
+    return "timestamp";
   }
 
   protected String getCharSql(Column column) {

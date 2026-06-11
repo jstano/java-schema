@@ -30,8 +30,7 @@ class ViewTest {
   private static Stream<Object[]> provideViewTestCases() {
     return Stream.of(
         new Object[]{"public", "v_orders", "select * from orders", DatabaseType.POSTGRES},
-        new Object[]{"dbo", "v_users", "SELECT * FROM dbo.users", DatabaseType.SQL_SERVER},
-        new Object[]{"app", "v_items", "SELECT * FROM items", DatabaseType.MYSQL}
+        new Object[]{"dbo", "v_users", "SELECT * FROM dbo.users", DatabaseType.SQL_SERVER}
     );
   }
 
@@ -81,13 +80,13 @@ class ViewTest {
     schema.addView(new View("public", "CView", "C generic", null));
 
     var pgViews = schema.getViews(DatabaseType.POSTGRES);
-    var mysqlViews = schema.getViews(DatabaseType.MYSQL);
+    var h2Views = schema.getViews(DatabaseType.H2);
 
     assertEquals(pgViews.stream().map(View::getName).toList(), List.of("aview", "bview", "CView"));
-    assertEquals(mysqlViews.stream().map(View::getName).toList(), List.of("AView", "bview", "CView"));
+    assertEquals(h2Views.stream().map(View::getName).toList(), List.of("AView", "bview", "CView"));
 
     assertEquals(pgViews.stream().map(View::getSql).toList(), List.of("A pg", "B generic", "C generic"));
-    assertEquals(mysqlViews.stream().map(View::getSql).toList(), List.of("A generic", "B generic", "C generic"));
+    assertEquals(h2Views.stream().map(View::getSql).toList(), List.of("A generic", "B generic", "C generic"));
   }
 
   @Test
