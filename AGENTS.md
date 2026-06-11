@@ -16,9 +16,10 @@
 
 ## Git Rules
 
-**NEVER run `git add`, `git commit`, or `git push`.**
-
-The developer must always perform these operations manually.
+**AI will not automatically run `git add`, `git commit`, or `git push`.** Instead:
+- AI can analyze changes and prompt you to commit with suggested messages
+- You invoke git operations explicitly (e.g., `! git commit ...` or via manual terminal commands)
+- This keeps you in control while allowing AI to help facilitate the workflow
 
 ---
 
