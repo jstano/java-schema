@@ -3,6 +3,7 @@ package com.stano.schema.installer.flyway;
 import com.stano.exceptions.ExceptionUtils;
 import com.stano.jdbcutils.datasource.ConnectionDataSource;
 import com.stano.jdbcutils.datasource.DelegatingConnection;
+import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.DatabaseType;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -24,7 +25,11 @@ public class FlywayMigrationExecutor {
     try {
       Files.copy(sqlFile.toPath(), renamedFile.toPath());
       executeFlyway(
-          databaseType, "filesystem:" + tempDir.toAbsolutePath(), connection, sqlFile.getName());
+          databaseType,
+          "filesystem:" + tempDir.toAbsolutePath(),
+          connection,
+          sqlFile.getName(),
+          "flyway_schema_history_install");
     } finally {
       deleteDirectory(tempDir.toFile());
     }
@@ -44,14 +49,32 @@ public class FlywayMigrationExecutor {
     try {
       copyClasspathResourceToFile(classpathResource, renamedFile);
       executeFlyway(
-          databaseType, "filesystem:" + tempDir.toAbsolutePath(), connection, classpathResource);
+          databaseType,
+          "filesystem:" + tempDir.toAbsolutePath(),
+          connection,
+          classpathResource,
+          "flyway_schema_history_install");
     } finally {
       deleteDirectory(tempDir.toFile());
     }
   }
 
+  public void executeMigrationScripts(
+      DatabaseType databaseType, ResourceLocator locator, Connection connection) {
+    executeFlyway(
+        databaseType,
+        "classpath:" + locator.getResourcePath(),
+        connection,
+        "migration",
+        "flyway_schema_history_migration");
+  }
+
   private void executeFlyway(
-      DatabaseType databaseType, String location, Connection connection, String logName) {
+      DatabaseType databaseType,
+      String location,
+      Connection connection,
+      String logName,
+      String historyTable) {
     int logId = flywayDatabaseUpgradeLog.start(databaseType, connection, logName);
 
     try {
@@ -59,7 +82,7 @@ public class FlywayMigrationExecutor {
           Flyway.configure()
               .dataSource(new ConnectionDataSource(new DelegatingConnection(connection)))
               .locations(location)
-              .table("flyway_schema_history_install")
+              .table(historyTable)
               .validateOnMigrate(false)
               .baselineOnMigrate(true)
               .load();

@@ -5,11 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
-import com.stano.schema.model.Version;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -28,23 +25,7 @@ class DefaultSchemaContextTest {
   void setUp() throws Exception {
     conn =
         DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
-    ctx =
-        new DefaultSchemaContext() {
-          @Override
-          public URL getSchemaUrl() {
-            return null;
-          }
-
-          @Override
-          public ResourceLocator getMigrationScriptLocator(Connection connection) {
-            return null;
-          }
-
-          @Override
-          public Version getSchemaVersion() {
-            return new Version(1, 0);
-          }
-        };
+    ctx = new DefaultSchemaContext(null, null);
   }
 
   @AfterEach
@@ -64,12 +45,6 @@ class DefaultSchemaContextTest {
   @DisplayName("getForeignKeyMode returns RELATIONS by default")
   void getForeignKeyModeReturnsRelationsByDefault() {
     assertEquals(ForeignKeyMode.RELATIONS, ctx.getForeignKeyMode());
-  }
-
-  @Test
-  @DisplayName("isVersionBased returns true by default")
-  void isVersionBasedReturnsTrueByDefault() {
-    assertTrue(ctx.isVersionBased());
   }
 
   @Test

@@ -1,9 +1,10 @@
 package com.stano.schema.installer.liquibase;
 
+import com.stano.resourcelocator.ResourceLocator;
+import com.stano.resourcelocator.ResourceLocatorService;
 import com.stano.schema.installer.SchemaInstaller;
 import com.stano.schema.installer.schemacontext.SchemaContext;
 import com.stano.schema.model.DatabaseType;
-import com.stano.schema.model.Version;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -20,11 +21,7 @@ public class LiquibaseSchemaInstaller extends SchemaInstaller {
       Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile)
       throws IOException {
     File tempChangeLogFile =
-        createTempChangeLogFile(
-            databaseType,
-            sqlFile,
-            schemaContext.getSchemaVersion(),
-            schemaContext.getEndDelimiter());
+        createTempChangeLogFile(databaseType, sqlFile, schemaContext.getEndDelimiter());
     executeTempChangeLog(connection, tempChangeLogFile);
   }
 
@@ -33,11 +30,21 @@ public class LiquibaseSchemaInstaller extends SchemaInstaller {
     liquibaseChangeLogExecutor.executeChangeLog(postCreateResourceName, connection);
   }
 
+  @Override
+  protected void executeMigrationScripts(
+      Connection connection, DatabaseType databaseType, ResourceLocator locator) {
+    new ResourceLocatorService()
+        .getResourceNames(locator).stream()
+            .findFirst()
+            .ifPresent(
+                changelogUrl ->
+                    liquibaseChangeLogExecutor.executeChangeLog(changelogUrl, connection));
+  }
+
   private File createTempChangeLogFile(
-      DatabaseType databaseType, File tempSqlFile, Version schemaVersion, String endDelimiter)
-      throws IOException {
+      DatabaseType databaseType, File tempSqlFile, String endDelimiter) throws IOException {
     return liquibaseChangeLogCreator.createTempChangeLogFile(
-        databaseType, tempSqlFile, schemaVersion, endDelimiter);
+        databaseType, tempSqlFile, endDelimiter);
   }
 
   private void executeTempChangeLog(Connection connection, File tempChangeLogFile) {

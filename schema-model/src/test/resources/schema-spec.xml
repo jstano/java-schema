@@ -2,7 +2,6 @@
 <database xmlns="http://stano.com/database"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://stano.com/database http://stano.com/database"
-          version="09.16"
           foreignKeyMode="triggers"
           booleanMode="yn">
    <table name="Account">

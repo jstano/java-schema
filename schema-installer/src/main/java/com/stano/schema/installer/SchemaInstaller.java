@@ -6,7 +6,6 @@ import com.stano.resourcelocator.ResourceLocator;
 import com.stano.resourcelocator.ResourceLocatorService;
 import com.stano.schema.gensql.GenSQL;
 import com.stano.schema.gensql.impl.common.OutputMode;
-import com.stano.schema.installer.schemacontext.DatabaseVersionServices;
 import com.stano.schema.installer.schemacontext.SchemaContext;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.DatabaseType;
@@ -31,7 +30,6 @@ public abstract class SchemaInstaller {
   private GenSQL genSQL = new GenSQL();
   private SchemaParser schemaParser = new SchemaParser();
   private FileServices fileServices = new FileServices();
-  private DatabaseVersionServices databaseVersionServices = new DatabaseVersionServices();
 
   public void installSchema(DataSource dataSource, SchemaContext schemaContext) {
     try (Connection connection = dataSource.getConnection()) {
@@ -42,15 +40,6 @@ public abstract class SchemaInstaller {
   }
 
   public void installSchema(Connection connection, SchemaContext schemaContext) {
-    installSchema(connection, schemaContext, true);
-  }
-
-  public void installSchemaNoVersionUpdate(Connection connection, SchemaContext schemaContext) {
-    installSchema(connection, schemaContext, false);
-  }
-
-  public void installSchema(
-      Connection connection, SchemaContext schemaContext, boolean updateVersion) {
     try {
       if (schemaContext.schemaIsInstalled(connection)) {
         return;
@@ -67,14 +56,29 @@ public abstract class SchemaInstaller {
 
       runPostCreateScript(schemaContext, connection);
 
-      if (updateVersion) {
-        databaseVersionServices.setVersion(connection, schemaContext.getSchemaVersion());
-      }
-
       schemaContext.schemaInstalled(connection);
     } catch (IOException | SQLException x) {
       throw new SchemaMigrationException(x);
     }
+  }
+
+  public void migrateSchema(DataSource dataSource, SchemaContext schemaContext) {
+    try (Connection connection = dataSource.getConnection()) {
+      migrateSchema(connection, schemaContext);
+    } catch (SQLException x) {
+      throw new SchemaMigrationException(x);
+    }
+  }
+
+  public void migrateSchema(Connection connection, SchemaContext schemaContext) {
+    ResourceLocator migrationScriptLocator = schemaContext.getMigrationScriptLocator(connection);
+
+    if (migrationScriptLocator == null) {
+      return;
+    }
+
+    DatabaseType databaseType = DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+    executeMigrationScripts(connection, databaseType, migrationScriptLocator);
   }
 
   public void installSql(DataSource dataSource, SchemaContext schemaContext) {
@@ -98,6 +102,9 @@ public abstract class SchemaInstaller {
       throw new SchemaMigrationException(x);
     }
   }
+
+  protected void executeMigrationScripts(
+      Connection connection, DatabaseType databaseType, ResourceLocator locator) {}
 
   protected abstract void executeSqlFile(
       Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile)

@@ -1,6 +1,7 @@
 package com.stano.schema.installer.flyway;
 
 import com.stano.jdbcutils.datasource.DriverType;
+import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.installer.SchemaInstaller;
 import com.stano.schema.installer.schemacontext.SchemaContext;
 import com.stano.schema.model.DatabaseType;
@@ -27,5 +28,11 @@ public class FlywaySchemaInstaller extends SchemaInstaller {
     DatabaseType databaseType = DatabaseType.valueOf(DriverType.fromConnection(connection).name());
     flywayMigrationExecutor.executeClasspathSqlLocation(
         databaseType, postCreateResourceName, connection);
+  }
+
+  @Override
+  protected void executeMigrationScripts(
+      Connection connection, DatabaseType databaseType, ResourceLocator locator) {
+    flywayMigrationExecutor.executeMigrationScripts(databaseType, locator, connection);
   }
 }

@@ -22,7 +22,6 @@ public class Schema {
   private final List<OtherSql> otherSql = new ArrayList<>();
   private final Map<String, Table> tableMap = new CaseInsensitiveMap<>();
   private final Map<String, EnumType> enumTypes = new HashMap<>();
-  private Version version;
   private ForeignKeyMode foreignKeyMode;
   private BooleanMode booleanMode = BooleanMode.NATIVE;
   private boolean caseSensitiveText = true;
@@ -33,14 +32,6 @@ public class Schema {
 
   public URL getSchemaURL() {
     return schemaURL;
-  }
-
-  public Version getVersion() {
-    return version;
-  }
-
-  public void setVersion(Version version) {
-    this.version = version;
   }
 
   public ForeignKeyMode getForeignKeyMode() {

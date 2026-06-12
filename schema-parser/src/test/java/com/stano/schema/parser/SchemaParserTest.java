@@ -13,7 +13,6 @@ import com.stano.schema.model.RelationType;
 import com.stano.schema.model.Table;
 import com.stano.schema.model.TableOption;
 import com.stano.schema.model.TriggerType;
-import com.stano.schema.model.Version;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,7 +34,6 @@ class SchemaParserTest {
     Table kbiTable = schema.getTable("KBI");
     Table unitTable = schema.getTable("Unit");
 
-    assertEquals(schema.getVersion(), new Version(1, 2));
     assertEquals(schema.getTables().size(), 8);
 
     verifyParentTable(parentTable);

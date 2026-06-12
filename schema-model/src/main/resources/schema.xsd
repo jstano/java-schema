@@ -34,7 +34,6 @@
           </element>
         </choice>
       </sequence>
-      <attribute name="version" type="string"/>
       <attribute name="foreignKeyMode" type="database:foreignKeyMode"/>
       <attribute name="booleanMode" type="database:booleanMode"/>
       <attribute name="caseSensitiveText" type="boolean"/>

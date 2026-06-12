@@ -1,7 +1,6 @@
 package com.stano.schema.installer.liquibase;
 
 import com.stano.schema.model.DatabaseType;
-import com.stano.schema.model.Version;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -13,8 +12,7 @@ public class LiquibaseChangeLogCreator {
   private FileServices fileServices = new FileServices();
 
   public File createTempChangeLogFile(
-      DatabaseType databaseType, File tempSqlFile, Version version, String endDelimiter)
-      throws IOException {
+      DatabaseType databaseType, File tempSqlFile, String endDelimiter) throws IOException {
     File tempChangeLogFile =
         fileServices.createTempFile(
             TEMP_CHANGE_LOG_PREFIX,
@@ -28,10 +26,7 @@ public class LiquibaseChangeLogCreator {
       out.println(
           "   xsi:schemaLocation=\"http://www.liquibase.org/xml/ns/dbchangelog"
               + " https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd\">");
-      out.println(
-          String.format(
-              "<changeSet id=\"%s\" author=\"InstallDatabase\">",
-              version == null ? "1.0" : version));
+      out.println("<changeSet id=\"install\" author=\"InstallDatabase\">");
       out.println(
           String.format(
               "<sqlFile path=\"%s\" relativeToChangelogFile=\"true\" endDelimiter=\"%s\"/>",

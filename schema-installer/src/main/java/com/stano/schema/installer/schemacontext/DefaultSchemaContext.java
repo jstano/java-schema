@@ -4,44 +4,33 @@ import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.migrations.MigrationServices;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
-import com.stano.schema.model.Version;
-import com.stano.schema.parser.SchemaParser;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public abstract class DefaultSchemaContext implements SchemaContext {
-  private DatabaseVersionServices databaseVersionServices = new DatabaseVersionServices();
-  private SchemaParser schemaParser = new SchemaParser();
+public class DefaultSchemaContext implements SchemaContext {
+  private final URL schemaUrl;
+  private final ResourceLocator migrationScriptLocator;
 
   protected MigrationServices migrationServices = new MigrationServices();
 
+  public DefaultSchemaContext(URL schemaUrl, ResourceLocator migrationScriptLocator) {
+    this.schemaUrl = schemaUrl;
+    this.migrationScriptLocator = migrationScriptLocator;
+  }
+
+  @Override
+  public URL getSchemaUrl() {
+    return schemaUrl;
+  }
+
+  @Override
+  public ResourceLocator getMigrationScriptLocator(Connection connection) {
+    return migrationScriptLocator;
+  }
+
   @Override
   public ResourceLocator getPostCreateScriptLocator(Connection connection) {
-    return null;
-  }
-
-  @Override
-  public boolean isVersionBased() {
-    return true;
-  }
-
-  @Override
-  public Version getSchemaVersion() {
-    Version version = schemaParser.parseSchema(getSchemaUrl()).getVersion();
-
-    if (version != null) {
-      return version;
-    }
-
-    return new Version(1, 0);
-  }
-
-  @Override
-  public Version getDatabaseVersion(Connection connection) {
-    if (isVersionBased()) {
-      return databaseVersionServices.getVersion(connection);
-    }
-
     return null;
   }
 

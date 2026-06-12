@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.stano.schema.model.DatabaseType;
-import com.stano.schema.model.Version;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,24 +28,23 @@ class LiquibaseChangeLogCreatorTest {
   }
 
   @Test
-  @DisplayName("createTempChangeLogFile produces valid Liquibase XML with correct changeSet id")
+  @DisplayName(
+      "createTempChangeLogFile produces valid Liquibase XML with fixed install changeSet id")
   void createTempChangeLogFileProducesValidXmlWithCorrectChangeSetId() throws Exception {
-    File changeLogFile =
-        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
+    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, ";");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("<?xml version=\"1.0\""), "should start with XML declaration");
     assertTrue(content.contains("databaseChangeLog"), "should contain databaseChangeLog element");
     assertTrue(content.contains("changeSet"), "should contain changeSet element");
-    assertTrue(content.contains("01.00"), "changeSet id should be the version string");
+    assertTrue(content.contains("id=\"install\""), "changeSet id should be 'install'");
   }
 
   @Test
   @DisplayName(
       "createTempChangeLogFile references the sql file by name with relativeToChangelogFile=true")
   void createTempChangeLogFileReferencesSqlFileByName() throws Exception {
-    File changeLogFile =
-        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
+    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, ";");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains(sqlFile.getName()), "should reference sql file by name");
@@ -58,27 +56,16 @@ class LiquibaseChangeLogCreatorTest {
   @Test
   @DisplayName("createTempChangeLogFile includes the specified endDelimiter")
   void createTempChangeLogFileIncludesEndDelimiter() throws Exception {
-    File changeLogFile =
-        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "GO");
+    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, "GO");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("endDelimiter=\"GO\""), "should include the end delimiter");
   }
 
   @Test
-  @DisplayName("createTempChangeLogFile uses '1.0' as changeSet id when version is null")
-  void createTempChangeLogFileUses10AsIdWhenVersionIsNull() throws Exception {
-    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, null, ";");
-
-    String content = Files.readString(changeLogFile.toPath());
-    assertTrue(content.contains("id=\"1.0\""), "null version should use id=1.0");
-  }
-
-  @Test
   @DisplayName("createTempChangeLogFile XML-escapes special characters in endDelimiter")
   void createTempChangeLogFileEscapesSpecialCharactersInEndDelimiter() throws Exception {
-    File changeLogFile =
-        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "&<>\"");
+    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, "&<>\"");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("&amp;"), "& should be escaped to &amp;");

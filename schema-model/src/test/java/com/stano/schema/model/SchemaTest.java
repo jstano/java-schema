@@ -18,22 +18,18 @@ import org.junit.jupiter.api.Test;
 class SchemaTest {
 
   @Test
-  @DisplayName("constructor sets URL and default modes; setters update version and modes")
+  @DisplayName("constructor sets URL and default modes; setters update modes")
   void constructorSetsURLAndDefaultModes() throws MalformedURLException {
     URL url = new URL("https://example.com/schema.json");
     Schema schema = new Schema(url);
 
     assertEquals(schema.getSchemaURL(), url);
     assertEquals(schema.getBooleanMode(), BooleanMode.NATIVE);
-    assertNull(schema.getVersion());
     assertNull(schema.getForeignKeyMode());
 
-    Version ver = new Version(1, 2, 3, true);
-    schema.setVersion(ver);
     schema.setForeignKeyMode(ForeignKeyMode.RELATIONS);
     schema.setBooleanMode(BooleanMode.YN);
 
-    assertEquals(schema.getVersion(), ver);
     assertEquals(schema.getForeignKeyMode(), ForeignKeyMode.RELATIONS);
     assertEquals(schema.getBooleanMode(), BooleanMode.YN);
   }
