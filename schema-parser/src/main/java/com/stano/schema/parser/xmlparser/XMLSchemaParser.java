@@ -1,15 +1,14 @@
 package com.stano.schema.parser.xmlparser;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-
+import java.io.BufferedReader;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import java.io.BufferedReader;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class XMLSchemaParser {
   public void parse(BufferedReader reader, SchemaContentHandler schemaContentHandler) {
@@ -18,8 +17,7 @@ public class XMLSchemaParser {
 
       parser.setContentHandler(schemaContentHandler);
       parser.parse(new InputSource(reader));
-    }
-    catch (Exception x) {
+    } catch (Exception x) {
       throw new RuntimeException(x);
     }
   }
@@ -46,8 +44,7 @@ public class XMLSchemaParser {
       reader.setErrorHandler(new DefaultHandler());
 
       return reader;
-    }
-    catch (Exception x) {
+    } catch (Exception x) {
       throw new RuntimeException(x);
     }
   }

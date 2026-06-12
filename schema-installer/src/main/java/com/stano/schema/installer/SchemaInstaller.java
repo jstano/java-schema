@@ -13,8 +13,6 @@ import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.ForeignKeyMode;
 import com.stano.schema.model.Schema;
 import com.stano.schema.parser.SchemaParser;
-
-import javax.sql.DataSource;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -24,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 
 public abstract class SchemaInstaller {
   private static final String TEMP_SQL_FILE_PREFIX = "_temp_sql_";
@@ -37,8 +36,7 @@ public abstract class SchemaInstaller {
   public void installSchema(DataSource dataSource, SchemaContext schemaContext) {
     try (Connection connection = dataSource.getConnection()) {
       installSchema(connection, schemaContext);
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new SchemaMigrationException(x);
     }
   }
@@ -51,13 +49,15 @@ public abstract class SchemaInstaller {
     installSchema(connection, schemaContext, false);
   }
 
-  public void installSchema(Connection connection, SchemaContext schemaContext, boolean updateVersion) {
+  public void installSchema(
+      Connection connection, SchemaContext schemaContext, boolean updateVersion) {
     try {
       if (schemaContext.schemaIsInstalled(connection)) {
         return;
       }
 
-      DatabaseType databaseType = DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+      DatabaseType databaseType =
+          DatabaseType.valueOf(DriverType.fromConnection(connection).name());
       Schema schema = schemaParser.parseSchema(schemaContext.getSchemaUrl());
 
       File tempSqlFile = createTempSqlFile(databaseType);
@@ -72,8 +72,7 @@ public abstract class SchemaInstaller {
       }
 
       schemaContext.schemaInstalled(connection);
-    }
-    catch (IOException | SQLException x) {
+    } catch (IOException | SQLException x) {
       throw new SchemaMigrationException(x);
     }
   }
@@ -85,7 +84,8 @@ public abstract class SchemaInstaller {
           return;
         }
 
-        DatabaseType databaseType = DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+        DatabaseType databaseType =
+            DatabaseType.valueOf(DriverType.fromConnection(connection).name());
 
         File tempSqlFile = createTempSqlFile(databaseType);
         generateSqlToTempSqlFile(schemaContext.getSchemaUrl().openStream(), tempSqlFile);
@@ -94,24 +94,26 @@ public abstract class SchemaInstaller {
 
         schemaContext.schemaInstalled(connection);
       }
-    }
-    catch (IOException | SQLException x) {
+    } catch (IOException | SQLException x) {
       throw new SchemaMigrationException(x);
     }
   }
 
-  protected abstract void executeSqlFile(Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile) throws IOException;
+  protected abstract void executeSqlFile(
+      Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile)
+      throws IOException;
 
-  protected abstract void executePostCreateScript(Connection connection, String postCreateResourceName);
+  protected abstract void executePostCreateScript(
+      Connection connection, String postCreateResourceName);
 
   private File createTempSqlFile(DatabaseType databaseType) throws IOException {
-    return fileServices.createTempFile(TEMP_SQL_FILE_PREFIX, databaseType.name().toLowerCase() + TEMP_SQL_FILE_EXTENSION);
+    return fileServices.createTempFile(
+        TEMP_SQL_FILE_PREFIX, databaseType.name().toLowerCase() + TEMP_SQL_FILE_EXTENSION);
   }
 
-  private void generateSqlToTempSqlFile(DatabaseType databaseType,
-                                        SchemaContext schemaContext,
-                                        Schema schema,
-                                        File tempSqlFile) throws IOException {
+  private void generateSqlToTempSqlFile(
+      DatabaseType databaseType, SchemaContext schemaContext, Schema schema, File tempSqlFile)
+      throws IOException {
     ForeignKeyMode foreignKeyMode = schema.getForeignKeyMode();
     BooleanMode booleanMode = schema.getBooleanMode();
 
@@ -123,19 +125,20 @@ public abstract class SchemaInstaller {
       booleanMode = schemaContext.getBooleanMode();
     }
 
-    genSQL.generateSQL(databaseType,
-                       schema,
-                       new PrintWriter(fileServices.createFileWriter(tempSqlFile)),
-                       foreignKeyMode,
-                       booleanMode,
-                       OutputMode.ALL,
-                       "\nGO");
+    genSQL.generateSQL(
+        databaseType,
+        schema,
+        new PrintWriter(fileServices.createFileWriter(tempSqlFile)),
+        foreignKeyMode,
+        booleanMode,
+        OutputMode.ALL,
+        "\nGO");
   }
 
-  private void generateSqlToTempSqlFile(InputStream inputStream,
-                                        File tempSqlFile) throws IOException {
+  private void generateSqlToTempSqlFile(InputStream inputStream, File tempSqlFile)
+      throws IOException {
     try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-         PrintWriter writer = new PrintWriter(new FileWriter(tempSqlFile))) {
+        PrintWriter writer = new PrintWriter(new FileWriter(tempSqlFile))) {
       String line;
 
       while ((line = reader.readLine()) != null) {
@@ -151,9 +154,11 @@ public abstract class SchemaInstaller {
       return;
     }
 
-    new ResourceLocatorService().getResourceNames(postCreateScriptLocator)
-                                .stream()
-                                .findFirst()
-                                .ifPresent(postCreateResourceName -> executePostCreateScript(connection, postCreateResourceName));
+    new ResourceLocatorService()
+        .getResourceNames(postCreateScriptLocator).stream()
+            .findFirst()
+            .ifPresent(
+                postCreateResourceName ->
+                    executePostCreateScript(connection, postCreateResourceName));
   }
 }

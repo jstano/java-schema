@@ -1,24 +1,22 @@
 package com.stano.schema.installer.liquibase;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.Version;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 @DisplayName("LiquibaseChangeLogCreator")
 class LiquibaseChangeLogCreatorTest {
 
-  @TempDir
-  Path tempDir;
+  @TempDir Path tempDir;
 
   private LiquibaseChangeLogCreator creator;
   private File sqlFile;
@@ -33,7 +31,8 @@ class LiquibaseChangeLogCreatorTest {
   @Test
   @DisplayName("createTempChangeLogFile produces valid Liquibase XML with correct changeSet id")
   void createTempChangeLogFileProducesValidXmlWithCorrectChangeSetId() throws Exception {
-    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
+    File changeLogFile =
+        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("<?xml version=\"1.0\""), "should start with XML declaration");
@@ -43,19 +42,24 @@ class LiquibaseChangeLogCreatorTest {
   }
 
   @Test
-  @DisplayName("createTempChangeLogFile references the sql file by name with relativeToChangelogFile=true")
+  @DisplayName(
+      "createTempChangeLogFile references the sql file by name with relativeToChangelogFile=true")
   void createTempChangeLogFileReferencesSqlFileByName() throws Exception {
-    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
+    File changeLogFile =
+        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), ";");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains(sqlFile.getName()), "should reference sql file by name");
-    assertTrue(content.contains("relativeToChangelogFile=\"true\""), "should set relativeToChangelogFile=true");
+    assertTrue(
+        content.contains("relativeToChangelogFile=\"true\""),
+        "should set relativeToChangelogFile=true");
   }
 
   @Test
   @DisplayName("createTempChangeLogFile includes the specified endDelimiter")
   void createTempChangeLogFileIncludesEndDelimiter() throws Exception {
-    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "GO");
+    File changeLogFile =
+        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "GO");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("endDelimiter=\"GO\""), "should include the end delimiter");
@@ -73,13 +77,16 @@ class LiquibaseChangeLogCreatorTest {
   @Test
   @DisplayName("createTempChangeLogFile XML-escapes special characters in endDelimiter")
   void createTempChangeLogFileEscapesSpecialCharactersInEndDelimiter() throws Exception {
-    File changeLogFile = creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "&<>\"");
+    File changeLogFile =
+        creator.createTempChangeLogFile(DatabaseType.H2, sqlFile, new Version(1, 0), "&<>\"");
 
     String content = Files.readString(changeLogFile.toPath());
     assertTrue(content.contains("&amp;"), "& should be escaped to &amp;");
     assertTrue(content.contains("&lt;"), "< should be escaped to &lt;");
     assertTrue(content.contains("&gt;"), "> should be escaped to &gt;");
     assertTrue(content.contains("&quot;"), "\" should be escaped to &quot;");
-    assertFalse(content.contains("endDelimiter=\"&<>\"\""), "raw special chars should not appear unescaped");
+    assertFalse(
+        content.contains("endDelimiter=\"&<>\"\""),
+        "raw special chars should not appear unescaped");
   }
 }

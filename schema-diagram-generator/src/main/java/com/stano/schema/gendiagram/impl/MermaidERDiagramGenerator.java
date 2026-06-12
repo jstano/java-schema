@@ -8,7 +8,6 @@ import com.stano.schema.model.Relation;
 import com.stano.schema.model.RelationType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-
 import java.io.PrintWriter;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,15 +37,15 @@ public class MermaidERDiagramGenerator implements DiagramGenerator {
   }
 
   private void outputTable(Table table) {
-    Set<String> pkColumns = table.getKeys().stream()
-      .filter(k -> k.getType() == KeyType.PRIMARY)
-      .flatMap(k -> k.getColumns().stream())
-      .map(kc -> kc.getName())
-      .collect(Collectors.toSet());
+    Set<String> pkColumns =
+        table.getKeys().stream()
+            .filter(k -> k.getType() == KeyType.PRIMARY)
+            .flatMap(k -> k.getColumns().stream())
+            .map(kc -> kc.getName())
+            .collect(Collectors.toSet());
 
-    Set<String> fkColumns = table.getRelations().stream()
-      .map(Relation::getFromColumnName)
-      .collect(Collectors.toSet());
+    Set<String> fkColumns =
+        table.getRelations().stream().map(Relation::getFromColumnName).collect(Collectors.toSet());
 
     writer.println("  " + table.getName() + " {");
     for (Column column : table.getColumns()) {
@@ -65,7 +64,16 @@ public class MermaidERDiagramGenerator implements DiagramGenerator {
   private void outputRelations(Table table) {
     for (Relation relation : table.getRelations()) {
       String cardinality = toCardinality(relation.getType());
-      writer.println("  " + relation.getFromTableName() + " " + cardinality + " " + relation.getToTableName() + " : \"" + relation.getFromColumnName() + "\"");
+      writer.println(
+          "  "
+              + relation.getFromTableName()
+              + " "
+              + cardinality
+              + " "
+              + relation.getToTableName()
+              + " : \""
+              + relation.getFromColumnName()
+              + "\"");
     }
   }
 

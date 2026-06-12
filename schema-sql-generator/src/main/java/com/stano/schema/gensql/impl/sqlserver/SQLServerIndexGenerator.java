@@ -12,7 +12,8 @@ class SQLServerIndexGenerator extends IndexGenerator {
 
   @Override
   protected String getFullyQualifiedTableName(Table table) {
-    String schemaName = table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
+    String schemaName =
+        table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
     return schemaName + "." + table.getName();
   }
 

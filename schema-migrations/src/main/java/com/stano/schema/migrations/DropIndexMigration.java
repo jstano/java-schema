@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.Statement;
 
 public class DropIndexMigration implements ExecuteWithStatement<Void> {
@@ -27,6 +26,7 @@ public class DropIndexMigration implements ExecuteWithStatement<Void> {
   }
 
   private Object dropIndex(Statement statement) {
-    return new ExecuteSQLMigration(String.format("drop index %s.%s", tableName, indexName)).executeWithStatement(statement);
+    return new ExecuteSQLMigration(String.format("drop index %s.%s", tableName, indexName))
+        .executeWithStatement(statement);
   }
 }

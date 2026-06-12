@@ -41,24 +41,32 @@ public class IndexGenerator extends BaseGenerator {
   private void outputIndex(Table table, String keyName, Key key) {
     if (key.getType() == KeyType.INDEX) {
       String indexOptions = getIndexOptions(key);
-      String indexColumns = String.join(",", key.getColumns().stream().map(it -> StringEscapeUtils.unescapeXml(it.getName())).toArray(String[]::new));
+      String indexColumns =
+          String.join(
+              ",",
+              key.getColumns().stream()
+                  .map(it -> StringEscapeUtils.unescapeXml(it.getName()))
+                  .toArray(String[]::new));
 
       if (indexOptions == null) {
-        sqlWriter.println(String.format("create %sindex %s on %s (%s)%s",
-                                        key.isUnique() ? "unique " : "",
-                                        keyName.toLowerCase(),
-                                        getFullyQualifiedTableName(table),
-                                        indexColumns,
-                                        statementSeparator));
-      }
-      else {
-        sqlWriter.println(String.format("create %sindex %s on %s (%s) %s%s",
-                                        key.isUnique() ? "unique " : "",
-                                        keyName.toLowerCase(),
-                                        getFullyQualifiedTableName(table),
-                                        indexColumns,
-                                        indexOptions,
-                                        statementSeparator));
+        sqlWriter.println(
+            String.format(
+                "create %sindex %s on %s (%s)%s",
+                key.isUnique() ? "unique " : "",
+                keyName.toLowerCase(),
+                getFullyQualifiedTableName(table),
+                indexColumns,
+                statementSeparator));
+      } else {
+        sqlWriter.println(
+            String.format(
+                "create %sindex %s on %s (%s) %s%s",
+                key.isUnique() ? "unique " : "",
+                keyName.toLowerCase(),
+                getFullyQualifiedTableName(table),
+                indexColumns,
+                indexOptions,
+                statementSeparator));
       }
     }
   }

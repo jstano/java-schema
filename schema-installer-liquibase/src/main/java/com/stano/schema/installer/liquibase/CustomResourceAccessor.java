@@ -1,16 +1,15 @@
 package com.stano.schema.installer.liquibase;
 
-import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.PathResource;
-import liquibase.resource.Resource;
-import liquibase.resource.URIResource;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.PathResource;
+import liquibase.resource.Resource;
+import liquibase.resource.URIResource;
 
 public class CustomResourceAccessor extends ClassLoaderResourceAccessor {
   private final ClassLoader classLoader;
@@ -27,12 +26,10 @@ public class CustomResourceAccessor extends ClassLoaderResourceAccessor {
       if (path.startsWith("file:")) {
         URI uri = new URI(path);
         return Collections.singletonList(new PathResource(path, Paths.get(uri)));
-      }
-      else if (path.startsWith("jar:file:")) {
+      } else if (path.startsWith("jar:file:")) {
         URI uri = new URI(path);
         return Collections.singletonList(new URIResource(path, uri));
-      }
-      else {
+      } else {
         java.net.URL url = classLoader.getResource(path);
 
         if (url == null) {
@@ -42,8 +39,7 @@ public class CustomResourceAccessor extends ClassLoaderResourceAccessor {
         URI uri = url.toURI();
         return Collections.singletonList(new URIResource(path, uri));
       }
-    }
-    catch (URISyntaxException x) {
+    } catch (URISyntaxException x) {
       throw new IOException(x);
     }
   }

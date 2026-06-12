@@ -1,12 +1,11 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AggregationColumnTest {
   @ParameterizedTest
@@ -21,8 +20,7 @@ class AggregationColumnTest {
 
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
-      Arguments.of(AggregationType.SUM, "amount", "total_amount"),
-      Arguments.of(AggregationType.COUNT, "id", "count_id")
-    );
+        Arguments.of(AggregationType.SUM, "amount", "total_amount"),
+        Arguments.of(AggregationType.COUNT, "id", "count_id"));
   }
 }

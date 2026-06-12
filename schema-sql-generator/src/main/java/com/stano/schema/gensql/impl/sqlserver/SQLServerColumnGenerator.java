@@ -7,32 +7,32 @@ import com.stano.schema.model.BooleanMode;
 
 class SQLServerColumnGenerator extends ColumnGenerator {
 
-   private final ColumnTypeGenerator columnTypeGenerator;
+  private final ColumnTypeGenerator columnTypeGenerator;
 
-   SQLServerColumnGenerator(SQLGenerator sqlGenerator) {
+  SQLServerColumnGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
+    super(sqlGenerator);
 
-      this.columnTypeGenerator = new SQLServerColumnTypeGenerator(sqlGenerator);
-   }
+    this.columnTypeGenerator = new SQLServerColumnTypeGenerator(sqlGenerator);
+  }
 
-   @Override
-   protected ColumnTypeGenerator getColumnTypeGenerator() {
+  @Override
+  protected ColumnTypeGenerator getColumnTypeGenerator() {
 
-      return columnTypeGenerator;
-   }
+    return columnTypeGenerator;
+  }
 
-   @Override
-   protected String convertBooleanDefaultConstraint(boolean defaultValue) {
+  @Override
+  protected String convertBooleanDefaultConstraint(boolean defaultValue) {
 
-      if (booleanMode == BooleanMode.YES_NO) {
-         return defaultValue ? "'Yes'" : "'No'";
-      }
+    if (booleanMode == BooleanMode.YES_NO) {
+      return defaultValue ? "'Yes'" : "'No'";
+    }
 
-      if (booleanMode == BooleanMode.YN) {
-         return defaultValue ? "'Y'" : "'N'";
-      }
+    if (booleanMode == BooleanMode.YN) {
+      return defaultValue ? "'Y'" : "'N'";
+    }
 
-      return defaultValue ? "1" : "0";
-   }
+    return defaultValue ? "1" : "0";
+  }
 }

@@ -7,11 +7,10 @@ import com.stano.schema.model.AggregationGroup;
 import com.stano.schema.model.AggregationType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class AggregationContentHandler extends AbstractContentHandler {
   private final Table table;
@@ -29,7 +28,8 @@ public class AggregationContentHandler extends AbstractContentHandler {
   private String groupDestination;
   private String groupSourceDerivedFrom;
 
-  protected AggregationContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected AggregationContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -37,7 +37,8 @@ public class AggregationContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     switch (localName) {
       case "aggregate" -> {
         destinationTable = atts.getValue("destinationTable");
@@ -48,9 +49,12 @@ public class AggregationContentHandler extends AbstractContentHandler {
         aggregationColumns.clear();
         aggregationGroups.clear();
       }
-      case "sum", "count" -> aggregationColumns.add(new AggregationColumn(AggregationType.valueOf(localName.toUpperCase()),
-                                                                          atts.getValue("sourceColumn"),
-                                                                          atts.getValue("destinationColumn")));
+      case "sum", "count" ->
+          aggregationColumns.add(
+              new AggregationColumn(
+                  AggregationType.valueOf(localName.toUpperCase()),
+                  atts.getValue("sourceColumn"),
+                  atts.getValue("destinationColumn")));
       case "column" -> {
         groupSource = atts.getValue("source");
         groupDestination = atts.getValue("destination");
@@ -63,16 +67,21 @@ public class AggregationContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
       case "aggregations" -> tableContentHandler.contentHandler = null;
-      case "aggregate" -> table.getAggregations().add(new Aggregation(destinationTable,
-                                                                      dateColumn,
-                                                                      criteria,
-                                                                      timestampColumn,
-                                                                      frequency,
-                                                                      aggregationColumns,
-                                                                      aggregationGroups));
-      case "column" -> aggregationGroups.add(new AggregationGroup(groupSource,
-                                                                  groupSourceDerivedFrom,
-                                                                  groupDestination));
+      case "aggregate" ->
+          table
+              .getAggregations()
+              .add(
+                  new Aggregation(
+                      destinationTable,
+                      dateColumn,
+                      criteria,
+                      timestampColumn,
+                      frequency,
+                      aggregationColumns,
+                      aggregationGroups));
+      case "column" ->
+          aggregationGroups.add(
+              new AggregationGroup(groupSource, groupSourceDerivedFrom, groupDestination));
     }
   }
 }

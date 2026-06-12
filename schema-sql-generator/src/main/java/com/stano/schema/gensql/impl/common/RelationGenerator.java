@@ -6,74 +6,74 @@ import com.stano.schema.model.Table;
 
 public class RelationGenerator extends BaseGenerator {
 
-   private static final String FK_PREFIX = "fk_";
+  private static final String FK_PREFIX = "fk_";
 
-   protected RelationGenerator(SQLGenerator sqlGenerator) {
+  protected RelationGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   public void outputRelations() {
+  public void outputRelations() {
 
-      if (schema.getTables().stream().anyMatch(table -> !table.getRelations().isEmpty())) {
-         sqlWriter.println("/* relations */");
+    if (schema.getTables().stream().anyMatch(table -> !table.getRelations().isEmpty())) {
+      sqlWriter.println("/* relations */");
+    }
+
+    schema.getTables().stream()
+        .filter(table -> !table.getRelations().isEmpty())
+        .forEach(this::outputRelationsForTable);
+
+    sqlWriter.println();
+  }
+
+  private void outputRelationsForTable(Table table) {
+
+    for (int relationIndex = 0; relationIndex < table.getRelations().size(); relationIndex++) {
+      Relation relation = table.getRelations().get(relationIndex);
+
+      String relationName = FK_PREFIX + table.getName() + (relationIndex + 1);
+
+      if (relationName.length() > maxKeyNameLength) {
+        relationName =
+            FK_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + (relationIndex + 1);
       }
 
-      schema.getTables()
-            .stream()
-            .filter(table -> !table.getRelations().isEmpty())
-            .forEach(this::outputRelationsForTable);
+      outputRelation(table, relationName.toLowerCase(), relation);
+    }
+  }
 
-      sqlWriter.println();
-   }
+  private void outputRelation(Table table, String relationName, Relation relation) {
 
-   private void outputRelationsForTable(Table table) {
+    String operation = getRelationTypeOperation(relation.getType());
 
-      for (int relationIndex = 0; relationIndex < table.getRelations().size(); relationIndex++) {
-         Relation relation = table.getRelations().get(relationIndex);
+    sqlWriter.print("alter table " + getFullyQualifiedTableName(table));
+    sqlWriter.print(" add constraint ");
+    sqlWriter.print(relationName);
+    sqlWriter.print(" foreign key (");
+    sqlWriter.print(relation.getFromColumnName());
+    sqlWriter.print(") references ");
+    sqlWriter.print(getFullyQualifiedTableName(schema.getTable(relation.getToTableName())));
+    sqlWriter.print("(");
+    sqlWriter.print(relation.getToColumnName());
+    sqlWriter.print(") on delete ");
+    sqlWriter.print(operation);
+    sqlWriter.println(statementSeparator);
+  }
 
-         String relationName = FK_PREFIX + table.getName() + (relationIndex + 1);
+  private String getRelationTypeOperation(RelationType relationType) {
 
-         if (relationName.length() > maxKeyNameLength) {
-            relationName = FK_PREFIX + table.getName().substring(0, maxKeyNameLength - 4) + (relationIndex + 1);
-         }
+    if (relationType == RelationType.ENFORCE || relationType == RelationType.DONOTHING) {
+      return "no action";
+    }
 
-         outputRelation(table, relationName.toLowerCase(), relation);
-      }
-   }
+    if (relationType == RelationType.CASCADE) {
+      return "cascade";
+    }
 
-   private void outputRelation(Table table, String relationName, Relation relation) {
+    if (relationType == RelationType.SETNULL) {
+      return "set null";
+    }
 
-      String operation = getRelationTypeOperation(relation.getType());
-
-      sqlWriter.print("alter table " + getFullyQualifiedTableName(table));
-      sqlWriter.print(" add constraint ");
-      sqlWriter.print(relationName);
-      sqlWriter.print(" foreign key (");
-      sqlWriter.print(relation.getFromColumnName());
-      sqlWriter.print(") references ");
-      sqlWriter.print(getFullyQualifiedTableName(schema.getTable(relation.getToTableName())));
-      sqlWriter.print("(");
-      sqlWriter.print(relation.getToColumnName());
-      sqlWriter.print(") on delete ");
-      sqlWriter.print(operation);
-      sqlWriter.println(statementSeparator);
-   }
-
-   private String getRelationTypeOperation(RelationType relationType) {
-
-      if (relationType == RelationType.ENFORCE || relationType == RelationType.DONOTHING) {
-         return "no action";
-      }
-
-      if (relationType == RelationType.CASCADE) {
-         return "cascade";
-      }
-
-      if (relationType == RelationType.SETNULL) {
-         return "set null";
-      }
-
-      throw new IllegalArgumentException("Bad relation type.");
-   }
+    throw new IllegalArgumentException("Bad relation type.");
+  }
 }

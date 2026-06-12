@@ -7,30 +7,30 @@ import com.stano.schema.model.KeyType;
 
 class SQLServerKeyGenerator extends KeyGenerator {
 
-   SQLServerKeyGenerator(SQLGenerator sqlGenerator) {
+  SQLServerKeyGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   protected String getKeyClusterSql(Key key) {
+  protected String getKeyClusterSql(Key key) {
 
-      if (!key.isCluster() && key.getType() == KeyType.PRIMARY) {
-         return "nonclustered";
-      }
+    if (!key.isCluster() && key.getType() == KeyType.PRIMARY) {
+      return "nonclustered";
+    }
 
-      if (key.isCluster() && key.getType() == KeyType.UNIQUE) {
-         return "clustered";
-      }
+    if (key.isCluster() && key.getType() == KeyType.UNIQUE) {
+      return "clustered";
+    }
 
-      return null;
-   }
+    return null;
+  }
 
-   protected String getKeyCompressSql(Key key) {
+  protected String getKeyCompressSql(Key key) {
 
-      if (key.isCompress()) {
-         sqlWriter.print("with (data_compression = page)");
-      }
+    if (key.isCompress()) {
+      sqlWriter.print("with (data_compression = page)");
+    }
 
-      return null;
-   }
+    return null;
+  }
 }

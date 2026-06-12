@@ -1,5 +1,7 @@
 package com.stano.schema.gendiagram.impl;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.stano.schema.gendiagram.DiagramFormat;
 import com.stano.schema.gendiagram.DiagramGeneratorOptions;
 import com.stano.schema.model.Column;
@@ -12,13 +14,10 @@ import com.stano.schema.model.Relation;
 import com.stano.schema.model.RelationType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("MermaidERDiagramGenerator")
 class MermaidERDiagramGeneratorTest {
@@ -41,7 +40,9 @@ class MermaidERDiagramGeneratorTest {
 
     StringWriter output = new StringWriter();
     PrintWriter writer = new PrintWriter(output);
-    MermaidERDiagramGenerator generator = new MermaidERDiagramGenerator(new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
+    MermaidERDiagramGenerator generator =
+        new MermaidERDiagramGenerator(
+            new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
 
     generator.generate();
     writer.flush();
@@ -56,11 +57,18 @@ class MermaidERDiagramGeneratorTest {
     Table table = buildTable(schema, "CUSTOMER");
     table.getColumns().add(new Column("id", ColumnType.INT, 0, true));
     table.getColumns().add(new Column("name", ColumnType.VARCHAR, 255, false));
-    table.getKeys().add(new Key(KeyType.PRIMARY, new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
+    table
+        .getKeys()
+        .add(
+            new Key(
+                KeyType.PRIMARY,
+                new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
 
     StringWriter output = new StringWriter();
     PrintWriter writer = new PrintWriter(output);
-    MermaidERDiagramGenerator generator = new MermaidERDiagramGenerator(new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
+    MermaidERDiagramGenerator generator =
+        new MermaidERDiagramGenerator(
+            new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
 
     generator.generate();
     writer.flush();
@@ -78,17 +86,31 @@ class MermaidERDiagramGeneratorTest {
     Schema schema = buildSchema();
     Table customer = buildTable(schema, "CUSTOMER");
     customer.getColumns().add(new Column("id", ColumnType.INT, 0, true));
-    customer.getKeys().add(new Key(KeyType.PRIMARY, new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
+    customer
+        .getKeys()
+        .add(
+            new Key(
+                KeyType.PRIMARY,
+                new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
 
     Table order = buildTable(schema, "ORDER");
     order.getColumns().add(new Column("id", ColumnType.INT, 0, true));
     order.getColumns().add(new Column("customer_id", ColumnType.INT, 0, true));
-    order.getKeys().add(new Key(KeyType.PRIMARY, new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
-    order.getRelations().add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.ENFORCE, false));
+    order
+        .getKeys()
+        .add(
+            new Key(
+                KeyType.PRIMARY,
+                new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
+    order
+        .getRelations()
+        .add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.ENFORCE, false));
 
     StringWriter output = new StringWriter();
     PrintWriter writer = new PrintWriter(output);
-    MermaidERDiagramGenerator generator = new MermaidERDiagramGenerator(new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
+    MermaidERDiagramGenerator generator =
+        new MermaidERDiagramGenerator(
+            new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
 
     generator.generate();
     writer.flush();
@@ -103,17 +125,31 @@ class MermaidERDiagramGeneratorTest {
     Schema schema = buildSchema();
     Table customer = buildTable(schema, "CUSTOMER");
     customer.getColumns().add(new Column("id", ColumnType.INT, 0, true));
-    customer.getKeys().add(new Key(KeyType.PRIMARY, new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
+    customer
+        .getKeys()
+        .add(
+            new Key(
+                KeyType.PRIMARY,
+                new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
 
     Table order = buildTable(schema, "ORDER");
     order.getColumns().add(new Column("id", ColumnType.INT, 0, true));
     order.getColumns().add(new Column("customer_id", ColumnType.INT, 0, true));
-    order.getKeys().add(new Key(KeyType.PRIMARY, new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
-    order.getRelations().add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.ENFORCE, false));
+    order
+        .getKeys()
+        .add(
+            new Key(
+                KeyType.PRIMARY,
+                new java.util.ArrayList<>(java.util.List.of(new KeyColumn("id")))));
+    order
+        .getRelations()
+        .add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.ENFORCE, false));
 
     StringWriter output = new StringWriter();
     PrintWriter writer = new PrintWriter(output);
-    MermaidERDiagramGenerator generator = new MermaidERDiagramGenerator(new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
+    MermaidERDiagramGenerator generator =
+        new MermaidERDiagramGenerator(
+            new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
 
     generator.generate();
     writer.flush();
@@ -131,11 +167,15 @@ class MermaidERDiagramGeneratorTest {
 
     Table order = buildTable(schema, "ORDER");
     order.getColumns().add(new Column("customer_id", ColumnType.INT, 0, false));
-    order.getRelations().add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.SETNULL, false));
+    order
+        .getRelations()
+        .add(new Relation("ORDER", "customer_id", "CUSTOMER", "id", RelationType.SETNULL, false));
 
     StringWriter output = new StringWriter();
     PrintWriter writer = new PrintWriter(output);
-    MermaidERDiagramGenerator generator = new MermaidERDiagramGenerator(new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
+    MermaidERDiagramGenerator generator =
+        new MermaidERDiagramGenerator(
+            new DiagramGeneratorOptions(schema, writer, DiagramFormat.MERMAID));
 
     generator.generate();
     writer.flush();

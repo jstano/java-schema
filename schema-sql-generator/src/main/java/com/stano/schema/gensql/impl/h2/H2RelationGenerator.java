@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 class H2RelationGenerator extends RelationGenerator {
 
-   H2RelationGenerator(SQLGenerator sqlGenerator) {
+  H2RelationGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

@@ -17,11 +17,13 @@ public class ColumnExistsMigration {
 
   public boolean columnExists() {
     try {
-      try (ResultSet rs = connection.getMetaData().getColumns(null, null, getAdjustedName(tableName), getAdjustedName(columnName))) {
+      try (ResultSet rs =
+          connection
+              .getMetaData()
+              .getColumns(null, null, getAdjustedName(tableName), getAdjustedName(columnName))) {
         return rs.next();
       }
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }

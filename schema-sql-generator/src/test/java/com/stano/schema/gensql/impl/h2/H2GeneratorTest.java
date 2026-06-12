@@ -1,5 +1,7 @@
 package com.stano.schema.gensql.impl.h2;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.stano.schema.gensql.impl.common.OutputMode;
 import com.stano.schema.gensql.impl.common.SQLGeneratorOptions;
 import com.stano.schema.model.BooleanMode;
@@ -7,15 +9,12 @@ import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.ForeignKeyMode;
 import com.stano.schema.model.Schema;
 import com.stano.schema.parser.SchemaParser;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("H2Generator integration")
 class H2GeneratorTest {
@@ -31,9 +30,15 @@ class H2GeneratorTest {
 
   private String generate(ForeignKeyMode fkMode) {
     StringWriter sw = new StringWriter();
-    new H2Generator(new SQLGeneratorOptions(
-        schema, new PrintWriter(sw), DatabaseType.H2,
-        fkMode, BooleanMode.NATIVE, OutputMode.ALL)).generate();
+    new H2Generator(
+            new SQLGeneratorOptions(
+                schema,
+                new PrintWriter(sw),
+                DatabaseType.H2,
+                fkMode,
+                BooleanMode.NATIVE,
+                OutputMode.ALL))
+        .generate();
     return sw.toString();
   }
 
@@ -43,31 +48,39 @@ class H2GeneratorTest {
     String sql = generate(ForeignKeyMode.RELATIONS);
     assertTrue(sql.contains("create table public.ParentTable"), "should create ParentTable");
     assertTrue(sql.contains("create table public.ChildTable"), "should create ChildTable");
-    assertTrue(sql.contains("create table public.ColumnTesterTable"), "should create ColumnTesterTable");
+    assertTrue(
+        sql.contains("create table public.ColumnTesterTable"), "should create ColumnTesterTable");
   }
 
   @Test
   @DisplayName("generates inline PRIMARY KEY and UNIQUE constraints in CREATE TABLE DDL")
   void generatesInlinePrimaryKeyAndUniqueConstraints() {
     String sql = generate(ForeignKeyMode.RELATIONS);
-    assertTrue(sql.contains("constraint pk_parenttable primary key"), "should generate primary key constraint");
-    assertTrue(sql.contains("constraint ak_parenttable1 unique"), "should generate unique constraint");
+    assertTrue(
+        sql.contains("constraint pk_parenttable primary key"),
+        "should generate primary key constraint");
+    assertTrue(
+        sql.contains("constraint ak_parenttable1 unique"), "should generate unique constraint");
   }
 
   @Test
   @DisplayName("generates CREATE INDEX for non-unique indexes")
   void generatesCreateIndexForNonUniqueIndexes() {
     String sql = generate(ForeignKeyMode.RELATIONS);
-    assertTrue(sql.contains("create index ix_parenttable1 on public.ParentTable"), "should generate indexes");
+    assertTrue(
+        sql.contains("create index ix_parenttable1 on public.ParentTable"),
+        "should generate indexes");
   }
 
   @Test
   @DisplayName("generates FOREIGN KEY constraints with RELATIONS mode")
   void generatesForeignKeyConstraintsWithRelationsMode() {
     String sql = generate(ForeignKeyMode.RELATIONS);
-    assertTrue(sql.contains("foreign key"), "RELATIONS mode should produce foreign key constraints");
+    assertTrue(
+        sql.contains("foreign key"), "RELATIONS mode should produce foreign key constraints");
     assertTrue(sql.contains("on delete cascade"), "cascade relation should use ON DELETE CASCADE");
-    assertTrue(sql.contains("on delete set null"), "setnull relation should use ON DELETE SET NULL");
+    assertTrue(
+        sql.contains("on delete set null"), "setnull relation should use ON DELETE SET NULL");
   }
 
   @Test
@@ -81,8 +94,12 @@ class H2GeneratorTest {
   @DisplayName("does not generate dialect-specific SQL for postgres or sqlserver")
   void doesNotGenerateDialectSpecificSqlForOtherDatabases() {
     String sql = generate(ForeignKeyMode.RELATIONS);
-    assertFalse(sql.contains("custom function sql for pgsql 1"), "should not include postgres-specific function SQL");
-    assertFalse(sql.contains("other top sql for mssql 1"), "should not include sqlserver-specific otherSql");
+    assertFalse(
+        sql.contains("custom function sql for pgsql 1"),
+        "should not include postgres-specific function SQL");
+    assertFalse(
+        sql.contains("other top sql for mssql 1"),
+        "should not include sqlserver-specific otherSql");
   }
 
   @Test
@@ -95,9 +112,12 @@ class H2GeneratorTest {
   }
 
   @Test
-  @DisplayName("TRIGGERS ForeignKeyMode falls back to RELATIONS for H2 since H2 does not support triggers")
+  @DisplayName(
+      "TRIGGERS ForeignKeyMode falls back to RELATIONS for H2 since H2 does not support triggers")
   void triggersForeignKeyModeFallsBackToRelationsForH2() {
     String sql = generate(ForeignKeyMode.TRIGGERS);
-    assertTrue(sql.contains("foreign key"), "H2 does not support triggers so FK mode should fall back to RELATIONS");
+    assertTrue(
+        sql.contains("foreign key"),
+        "H2 does not support triggers so FK mode should fall back to RELATIONS");
   }
 }

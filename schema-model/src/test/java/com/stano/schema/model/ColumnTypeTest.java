@@ -1,9 +1,12 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ColumnTypeTest {
   @Test
@@ -37,7 +40,8 @@ class ColumnTypeTest {
   }
 
   @Test
-  @DisplayName("getColumnType should throw an IllegalArgumentException if the type name is not valid")
+  @DisplayName(
+      "getColumnType should throw an IllegalArgumentException if the type name is not valid")
   void testGetColumnTypeInvalid() {
     assertThrows(IllegalArgumentException.class, () -> ColumnType.getColumnType("invalid"));
   }

@@ -6,15 +6,15 @@ import com.stano.schema.model.Function;
 
 public class PostgreSQLFunctionGenerator extends FunctionGenerator {
 
-   protected PostgreSQLFunctionGenerator(SQLGenerator sqlGenerator) {
+  protected PostgreSQLFunctionGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputFunction(Function function) {
+  @Override
+  protected void outputFunction(Function function) {
 
-      sqlWriter.println(function.getSql() + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println(function.getSql() + statementSeparator);
+    sqlWriter.println();
+  }
 }

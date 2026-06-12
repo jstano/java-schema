@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,10 +16,12 @@ public class ItemExistsMigration implements ExecuteWithStatement<Boolean> {
 
   @Override
   public Boolean executeWithStatement(Statement statement) {
-    try (ResultSet rs = statement.executeQuery(String.format("select name from dbo.sysobjects where name = '%s' and type = '%s'", name, type))) {
+    try (ResultSet rs =
+        statement.executeQuery(
+            String.format(
+                "select name from dbo.sysobjects where name = '%s' and type = '%s'", name, type))) {
       return rs.next();
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }

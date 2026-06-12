@@ -13,7 +13,8 @@ public class DatabaseContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("database")) {
       String versionAttribute = atts.getValue("version");
       String foreignKeyMode = atts.getValue("foreignKeyMode");

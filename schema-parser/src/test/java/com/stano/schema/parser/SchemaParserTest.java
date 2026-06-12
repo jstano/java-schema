@@ -1,5 +1,7 @@
 package com.stano.schema.parser;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import com.stano.schema.model.AggregationFrequency;
 import com.stano.schema.model.AggregationType;
 import com.stano.schema.model.ColumnType;
@@ -15,8 +17,6 @@ import com.stano.schema.model.Version;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @DisplayName("SchemaParser")
 class SchemaParserTest {
 
@@ -25,7 +25,9 @@ class SchemaParserTest {
   void shouldBeAbleToParseAValidSchemaFile() {
     SchemaParser schemaParser = new SchemaParser();
 
-    var schema = schemaParser.parseSchema(getClass().getClassLoader().getResource("schema-parser-test-schema.xml"));
+    var schema =
+        schemaParser.parseSchema(
+            getClass().getClassLoader().getResource("schema-parser-test-schema.xml"));
 
     Table parentTable = schema.getTable("ParentTable");
     Table childTable = schema.getTable("ChildTable");
@@ -150,9 +152,9 @@ class SchemaParserTest {
   void shouldGetARuntimeIOExceptionIfAnIOExceptionOccurs() {
     SchemaParser schemaParser = new SchemaParser();
 
-    assertThrows(SchemaParserException.class, () ->
-        schemaParser.parseSchema(new java.net.URI("file:bad-url").toURL())
-    );
+    assertThrows(
+        SchemaParserException.class,
+        () -> schemaParser.parseSchema(new java.net.URI("file:bad-url").toURL()));
   }
 
   private void verifyParentTable(Table parentTable) {
@@ -201,10 +203,18 @@ class SchemaParserTest {
     assertTrue(parentTable.getRelations().isEmpty());
 
     assertEquals(parentTable.getInitialData().size(), 4);
-    assertEquals(parentTable.getInitialData().get(0).getSql(), "insert into ParentTable (Name,Extra,Gender) values ('AAA','Extra AAA','M')");
-    assertEquals(parentTable.getInitialData().get(1).getSql(), "insert into ParentTable (Name,Extra,Gender) values ('BBB','Extra BBB','F')");
-    assertEquals(parentTable.getInitialData().get(2).getSql(), "insert into ParentTable (Name,Extra,Gender) values ('PGSQL','Extra PGSQL','M')");
-    assertEquals(parentTable.getInitialData().get(3).getSql(), "insert into ParentTable (Name,Extra,Gender) values ('MSSQL','Extra MSSQL','F')");
+    assertEquals(
+        parentTable.getInitialData().get(0).getSql(),
+        "insert into ParentTable (Name,Extra,Gender) values ('AAA','Extra AAA','M')");
+    assertEquals(
+        parentTable.getInitialData().get(1).getSql(),
+        "insert into ParentTable (Name,Extra,Gender) values ('BBB','Extra BBB','F')");
+    assertEquals(
+        parentTable.getInitialData().get(2).getSql(),
+        "insert into ParentTable (Name,Extra,Gender) values ('PGSQL','Extra PGSQL','M')");
+    assertEquals(
+        parentTable.getInitialData().get(3).getSql(),
+        "insert into ParentTable (Name,Extra,Gender) values ('MSSQL','Extra MSSQL','F')");
 
     assertEquals(parentTable.getTriggers().size(), 4);
     assertEquals(parentTable.getTriggers().get(0).getDatabaseType(), DatabaseType.POSTGRES);
@@ -221,45 +231,93 @@ class SchemaParserTest {
     assertEquals(parentTable.getTriggers().get(3).getTriggerText(), "update mssql");
 
     assertEquals(parentTable.getAggregations().size(), 2);
-    assertEquals(parentTable.getAggregations().get(0).getDestinationTable(), "ParentTableAggregation");
+    assertEquals(
+        parentTable.getAggregations().get(0).getDestinationTable(), "ParentTableAggregation");
     assertEquals(parentTable.getAggregations().get(0).getDateColumn(), "Extra");
     assertEquals(parentTable.getAggregations().get(0).getCriteria(), "criteria");
     assertEquals(parentTable.getAggregations().get(0).getTimeStampColumn(), "timestamp");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationFrequency(), AggregationFrequency.DAILY);
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationFrequency(), AggregationFrequency.DAILY);
     assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().size(), 2);
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(0).getAggregationType(), AggregationType.COUNT);
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(0).getSourceColumn(), null);
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(0).getDestinationColumn(), "CountOfData");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(1).getAggregationType(), AggregationType.SUM);
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(1).getSourceColumn(), "Name");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationColumns().get(1).getDestinationColumn(), "SumOfData");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(0).getAggregationType(),
+        AggregationType.COUNT);
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(0).getSourceColumn(),
+        null);
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(0).getDestinationColumn(),
+        "CountOfData");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(1).getAggregationType(),
+        AggregationType.SUM);
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(1).getSourceColumn(),
+        "Name");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationColumns().get(1).getDestinationColumn(),
+        "SumOfData");
     assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().size(), 2);
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(0).getSource(), "Source1");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(0).getDestination(), "Destination1");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(0).getSourceDerivedFrom(), "SourceDerivedFrom1");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(1).getSource(), "Source2");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(1).getDestination(), "Destination2");
-    assertEquals(parentTable.getAggregations().get(0).getAggregationGroups().get(1).getSourceDerivedFrom(), "SourceDerivedFrom2");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(0).getSource(), "Source1");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(0).getDestination(),
+        "Destination1");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(0).getSourceDerivedFrom(),
+        "SourceDerivedFrom1");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(1).getSource(), "Source2");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(1).getDestination(),
+        "Destination2");
+    assertEquals(
+        parentTable.getAggregations().get(0).getAggregationGroups().get(1).getSourceDerivedFrom(),
+        "SourceDerivedFrom2");
 
-    assertEquals(parentTable.getAggregations().get(1).getDestinationTable(), "ParentTableAggregation2");
+    assertEquals(
+        parentTable.getAggregations().get(1).getDestinationTable(), "ParentTableAggregation2");
     assertEquals(parentTable.getAggregations().get(1).getDateColumn(), "Extra");
     assertFalse(parentTable.getAggregations().get(1).getCriteria() != null);
     assertEquals(parentTable.getAggregations().get(1).getTimeStampColumn(), "timestamp");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationFrequency(), AggregationFrequency.DAILY);
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationFrequency(), AggregationFrequency.DAILY);
     assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().size(), 2);
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(0).getAggregationType(), AggregationType.COUNT);
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(0).getSourceColumn(), null);
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(0).getDestinationColumn(), "CountOfData");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(1).getAggregationType(), AggregationType.SUM);
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(1).getSourceColumn(), "Name");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationColumns().get(1).getDestinationColumn(), "SumOfData");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(0).getAggregationType(),
+        AggregationType.COUNT);
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(0).getSourceColumn(),
+        null);
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(0).getDestinationColumn(),
+        "CountOfData");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(1).getAggregationType(),
+        AggregationType.SUM);
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(1).getSourceColumn(),
+        "Name");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationColumns().get(1).getDestinationColumn(),
+        "SumOfData");
     assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().size(), 2);
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(0).getSource(), "Source1");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(0).getDestination(), "Destination1");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(0).getSourceDerivedFrom(), "SourceDerivedFrom1");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(1).getSource(), "Source2");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(1).getDestination(), "Destination2");
-    assertEquals(parentTable.getAggregations().get(1).getAggregationGroups().get(1).getSourceDerivedFrom(), "SourceDerivedFrom2");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(0).getSource(), "Source1");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(0).getDestination(),
+        "Destination1");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(0).getSourceDerivedFrom(),
+        "SourceDerivedFrom1");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(1).getSource(), "Source2");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(1).getDestination(),
+        "Destination2");
+    assertEquals(
+        parentTable.getAggregations().get(1).getAggregationGroups().get(1).getSourceDerivedFrom(),
+        "SourceDerivedFrom2");
   }
 
   private void verifyChildTable(Table childTable) {
@@ -322,7 +380,9 @@ class SchemaParserTest {
     assertEquals(columnTesterTable.getColumns().get(17).getName(), "varcharWithCheck");
     assertEquals(columnTesterTable.getColumns().get(17).getType(), ColumnType.VARCHAR);
     assertEquals(columnTesterTable.getColumns().get(17).getLength(), 6);
-    assertEquals(columnTesterTable.getColumns().get(17).getCheckConstraint(), "check(varcharWithCheck = 'ABC123')");
+    assertEquals(
+        columnTesterTable.getColumns().get(17).getCheckConstraint(),
+        "check(varcharWithCheck = 'ABC123')");
     assertEquals(columnTesterTable.getColumns().get(18).getName(), "enum");
     assertEquals(columnTesterTable.getColumns().get(18).getType(), ColumnType.ENUM);
     assertEquals(columnTesterTable.getColumns().get(18).getEnumType(), "TestEnumType");

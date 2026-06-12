@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -17,8 +16,7 @@ public class DropAllTriggersMigration implements ExecuteWithStatement<Void> {
       }
 
       return null;
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }
@@ -26,7 +24,8 @@ public class DropAllTriggersMigration implements ExecuteWithStatement<Void> {
   private List<String> loadTriggerNames(Statement statement) throws SQLException {
     List<String> triggerNames = new ArrayList<>();
 
-    try (ResultSet rs = statement.executeQuery("select name from dbo.sysobjects where type = 'TR'")) {
+    try (ResultSet rs =
+        statement.executeQuery("select name from dbo.sysobjects where type = 'TR'")) {
       while (rs.next()) {
         triggerNames.add(rs.getString("name"));
       }

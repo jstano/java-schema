@@ -72,9 +72,10 @@ class H2ColumnTypeGenerator extends ColumnTypeGenerator {
 
   @Override
   protected String getEnumSql(Column column) {
-    String values = schema.getEnumType(column.getEnumType()).getValues().stream()
-                          .map(v -> "'" + v.getCode() + "'")
-                          .collect(Collectors.joining(","));
+    String values =
+        schema.getEnumType(column.getEnumType()).getValues().stream()
+            .map(v -> "'" + v.getCode() + "'")
+            .collect(Collectors.joining(","));
     return "enum(" + values + ")";
   }
 }

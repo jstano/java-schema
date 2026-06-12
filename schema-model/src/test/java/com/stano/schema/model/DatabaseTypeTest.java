@@ -1,16 +1,15 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DatabaseTypeTest {
   @Test
@@ -28,11 +27,10 @@ class DatabaseTypeTest {
 
   static Stream<Arguments> getDatabaseTypesProvider() {
     return Stream.of(
-      Arguments.of(null, new HashSet<>()),
-      Arguments.of("", new HashSet<>()),
-      Arguments.of("sqlserver", Set.of(DatabaseType.SQL_SERVER)),
-      Arguments.of("sqlserver,POSTGRES", Set.of(DatabaseType.SQL_SERVER, DatabaseType.POSTGRES))
-    );
+        Arguments.of(null, new HashSet<>()),
+        Arguments.of("", new HashSet<>()),
+        Arguments.of("sqlserver", Set.of(DatabaseType.SQL_SERVER)),
+        Arguments.of("sqlserver,POSTGRES", Set.of(DatabaseType.SQL_SERVER, DatabaseType.POSTGRES)));
   }
 
   @ParameterizedTest
@@ -44,10 +42,9 @@ class DatabaseTypeTest {
 
   static Stream<Arguments> getMaxKeyNameLengthProvider() {
     return Stream.of(
-      Arguments.of(DatabaseType.H2, 64),
-      Arguments.of(DatabaseType.POSTGRES, 63),
-      Arguments.of(DatabaseType.SQL_SERVER, 32)
-    );
+        Arguments.of(DatabaseType.H2, 64),
+        Arguments.of(DatabaseType.POSTGRES, 63),
+        Arguments.of(DatabaseType.SQL_SERVER, 32));
   }
 
   @ParameterizedTest
@@ -59,10 +56,9 @@ class DatabaseTypeTest {
 
   static Stream<Arguments> getStatementSeparatorProvider() {
     return Stream.of(
-      Arguments.of(DatabaseType.H2, ";"),
-      Arguments.of(DatabaseType.POSTGRES, ";"),
-      Arguments.of(DatabaseType.SQL_SERVER, "\nGO")
-    );
+        Arguments.of(DatabaseType.H2, ";"),
+        Arguments.of(DatabaseType.POSTGRES, ";"),
+        Arguments.of(DatabaseType.SQL_SERVER, "\nGO"));
   }
 
   @ParameterizedTest
@@ -74,10 +70,9 @@ class DatabaseTypeTest {
 
   static Stream<Arguments> supportsTriggerProvider() {
     return Stream.of(
-      Arguments.of(DatabaseType.H2, false),
-      Arguments.of(DatabaseType.POSTGRES, true),
-      Arguments.of(DatabaseType.SQL_SERVER, true)
-    );
+        Arguments.of(DatabaseType.H2, false),
+        Arguments.of(DatabaseType.POSTGRES, true),
+        Arguments.of(DatabaseType.SQL_SERVER, true));
   }
 
   @ParameterizedTest
@@ -88,7 +83,6 @@ class DatabaseTypeTest {
   }
 
   static Stream<Arguments> valueOfProvider() {
-    return Stream.of(DatabaseType.values())
-      .map(db -> Arguments.of(db.name()));
+    return Stream.of(DatabaseType.values()).map(db -> Arguments.of(db.name()));
   }
 }

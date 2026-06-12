@@ -10,7 +10,13 @@ public class Key {
   private final boolean unique;
   private final String include;
 
-  public Key(KeyType type, List<KeyColumn> columns, boolean cluster, boolean compress, boolean unique, String include) {
+  public Key(
+      KeyType type,
+      List<KeyColumn> columns,
+      boolean cluster,
+      boolean compress,
+      boolean unique,
+      String include) {
     this.type = type;
     this.columns = List.copyOf(columns);
     this.cluster = cluster;

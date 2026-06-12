@@ -6,24 +6,24 @@ import org.slf4j.LoggerFactory;
 
 public abstract class FunctionGenerator extends BaseGenerator {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(FunctionGenerator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(FunctionGenerator.class);
 
-   protected FunctionGenerator(SQLGenerator sqlGenerator) {
+  protected FunctionGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   public void outputFunctions() {
+  public void outputFunctions() {
 
-      schema.getFunctions()
-            .stream()
-            .filter(function -> function.getDatabaseType() == databaseType)
-            .forEach(function -> {
-               LOGGER.debug("Generating SQL for function {}", function.getName());
+    schema.getFunctions().stream()
+        .filter(function -> function.getDatabaseType() == databaseType)
+        .forEach(
+            function -> {
+              LOGGER.debug("Generating SQL for function {}", function.getName());
 
-               outputFunction(function);
+              outputFunction(function);
             });
-   }
+  }
 
-   protected abstract void outputFunction(Function function);
+  protected abstract void outputFunction(Function function);
 }

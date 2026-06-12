@@ -5,7 +5,6 @@ import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
 import com.stano.schema.model.Version;
-
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -38,11 +37,11 @@ public interface SchemaContext {
 
   default String getMigrateParams(DataSourceProperties dataSourceProperties) {
 
-    return String.format("--migrate=%s,%s,%s,%s",
-                         dataSourceProperties.getUrl(),
-                         dataSourceProperties.getUsername(),
-                         "xxxxxx",
-                         dataSourceProperties.getDriverType().toString().toLowerCase());
-
+    return String.format(
+        "--migrate=%s,%s,%s,%s",
+        dataSourceProperties.getUrl(),
+        dataSourceProperties.getUsername(),
+        "xxxxxx",
+        dataSourceProperties.getDriverType().toString().toLowerCase());
   }
 }

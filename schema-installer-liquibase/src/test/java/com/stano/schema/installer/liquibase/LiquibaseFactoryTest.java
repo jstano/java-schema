@@ -1,5 +1,9 @@
 package com.stano.schema.installer.liquibase;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.stream.Stream;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.ObjectQuotingStrategy;
 import liquibase.database.core.PostgresDatabase;
@@ -8,11 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("LiquibaseFactory")
 class LiquibaseFactoryTest {
@@ -29,10 +28,9 @@ class LiquibaseFactoryTest {
 
   private static Stream<Object[]> providePostgresQuotingTestCases() {
     return Stream.of(
-        new Object[]{ObjectQuotingStrategy.QUOTE_ONLY_RESERVED_WORDS, "TestTable"},
-        new Object[]{ObjectQuotingStrategy.QUOTE_ALL_OBJECTS, "\"TestTable\""},
-        new Object[]{ObjectQuotingStrategy.LEGACY, "\"TestTable\""}
-    );
+        new Object[] {ObjectQuotingStrategy.QUOTE_ONLY_RESERVED_WORDS, "TestTable"},
+        new Object[] {ObjectQuotingStrategy.QUOTE_ALL_OBJECTS, "\"TestTable\""},
+        new Object[] {ObjectQuotingStrategy.LEGACY, "\"TestTable\""});
   }
 
   @Test
@@ -40,7 +38,8 @@ class LiquibaseFactoryTest {
   void testRegisteringTheCustomPostgresDatabase() {
     LiquibaseFactory.registerDatabases();
 
-    assertTrue(DatabaseFactory.getInstance().getImplementedDatabases().stream()
-        .anyMatch(db -> CustomPostgresDatabase.class.isAssignableFrom(db.getClass())));
+    assertTrue(
+        DatabaseFactory.getInstance().getImplementedDatabases().stream()
+            .anyMatch(db -> CustomPostgresDatabase.class.isAssignableFrom(db.getClass())));
   }
 }

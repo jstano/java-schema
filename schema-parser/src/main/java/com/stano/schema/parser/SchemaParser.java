@@ -3,7 +3,6 @@ package com.stano.schema.parser;
 import com.stano.schema.model.Schema;
 import com.stano.schema.parser.xmlparser.SchemaContentHandler;
 import com.stano.schema.parser.xmlparser.XMLSchemaParser;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,8 +13,7 @@ public class SchemaParser {
   public Schema parseSchema(URL schemaURL) {
     try {
       return parseSchema(schemaURL, schemaURL.openStream());
-    }
-    catch (IOException x) {
+    } catch (IOException x) {
       throw new SchemaParserException(x);
     }
   }
@@ -34,8 +32,7 @@ public class SchemaParser {
       schema.buildReverseRelations();
 
       return schema;
-    }
-    catch (Exception x) {
+    } catch (Exception x) {
       throw new IllegalStateException(x);
     }
   }

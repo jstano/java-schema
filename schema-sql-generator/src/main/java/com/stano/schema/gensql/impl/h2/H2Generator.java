@@ -9,67 +9,57 @@ import com.stano.schema.gensql.impl.common.ViewGenerator;
 
 public class H2Generator extends SQLGenerator {
 
-   private final TableGenerator tableGenerator;
-   private final RelationGenerator relationGenerator;
-   private final IndexGenerator indexGenerator;
-   private final ViewGenerator viewGenerator;
+  private final TableGenerator tableGenerator;
+  private final RelationGenerator relationGenerator;
+  private final IndexGenerator indexGenerator;
+  private final ViewGenerator viewGenerator;
 
-   public H2Generator(SQLGeneratorOptions sqlGeneratorOptions) {
+  public H2Generator(SQLGeneratorOptions sqlGeneratorOptions) {
 
-      super(sqlGeneratorOptions);
+    super(sqlGeneratorOptions);
 
-      this.tableGenerator = new H2TableGenerator(this);
-      this.relationGenerator = new H2RelationGenerator(this);
-      this.indexGenerator = new H2IndexGenerator(this);
-      this.viewGenerator = new H2ViewGenerator(this);
-   }
+    this.tableGenerator = new H2TableGenerator(this);
+    this.relationGenerator = new H2RelationGenerator(this);
+    this.indexGenerator = new H2IndexGenerator(this);
+    this.viewGenerator = new H2ViewGenerator(this);
+  }
 
-   @Override
-   protected void outputTables() {
+  @Override
+  protected void outputTables() {
 
-      tableGenerator.outputTables();
-   }
+    tableGenerator.outputTables();
+  }
 
-   @Override
-   protected void outputRelations() {
+  @Override
+  protected void outputRelations() {
 
-      relationGenerator.outputRelations();
-   }
+    relationGenerator.outputRelations();
+  }
 
-   @Override
-   protected void outputIndexes() {
+  @Override
+  protected void outputIndexes() {
 
-      indexGenerator.outputIndexes();
-   }
+    indexGenerator.outputIndexes();
+  }
 
-   @Override
-   protected void outputOtherSqlTop() {
+  @Override
+  protected void outputOtherSqlTop() {}
 
-   }
+  @Override
+  protected void outputOtherSqlBottom() {}
 
-   @Override
-   protected void outputOtherSqlBottom() {
+  @Override
+  protected void outputTriggers() {}
 
-   }
+  @Override
+  protected void outputFunctions() {}
 
-   @Override
-   protected void outputTriggers() {
+  @Override
+  protected void outputViews() {
 
-   }
+    viewGenerator.outputViews();
+  }
 
-   @Override
-   protected void outputFunctions() {
-
-   }
-
-   @Override
-   protected void outputViews() {
-
-      viewGenerator.outputViews();
-   }
-
-   @Override
-   protected void outputProcedures() {
-
-   }
+  @Override
+  protected void outputProcedures() {}
 }

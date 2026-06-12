@@ -5,7 +5,8 @@ public class AggregationColumn {
   private final String sourceColumn;
   private final String destinationColumn;
 
-  public AggregationColumn(AggregationType aggregationType, String sourceColumn, String destinationColumn) {
+  public AggregationColumn(
+      AggregationType aggregationType, String sourceColumn, String destinationColumn) {
     this.aggregationType = aggregationType;
     this.sourceColumn = sourceColumn;
     this.destinationColumn = destinationColumn;

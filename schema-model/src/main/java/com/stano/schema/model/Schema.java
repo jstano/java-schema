@@ -1,7 +1,5 @@
 package com.stano.schema.model;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 public class Schema {
   private final URL schemaURL;
@@ -79,7 +78,8 @@ public class Schema {
       return table;
     }
 
-    throw new IllegalStateException(String.format("Unable to locate a table with the name '%s'", name));
+    throw new IllegalStateException(
+        String.format("Unable to locate a table with the name '%s'", name));
   }
 
   public Optional<Table> getOptionalTable(String name) {
@@ -94,27 +94,30 @@ public class Schema {
     Map<String, View> viewMap = new HashMap<>();
 
     views.stream()
-         .filter(view -> view.getDatabaseType() == databaseType)
-         .forEach(view -> {
-           viewMap.put(view.getName().toLowerCase(), view);
-         });
+        .filter(view -> view.getDatabaseType() == databaseType)
+        .forEach(
+            view -> {
+              viewMap.put(view.getName().toLowerCase(), view);
+            });
 
     views.stream()
-         .filter(view -> view.getDatabaseType() == null)
-         .forEach(view -> {
-           String viewName = view.getName().toLowerCase();
+        .filter(view -> view.getDatabaseType() == null)
+        .forEach(
+            view -> {
+              String viewName = view.getName().toLowerCase();
 
-           if (!viewMap.containsKey(viewName)) {
-             viewMap.put(viewName, view);
-           }
-         });
+              if (!viewMap.containsKey(viewName)) {
+                viewMap.put(viewName, view);
+              }
+            });
 
-    return Collections.unmodifiableList(views.stream()
-                                             .map(view -> view.getName().toLowerCase())
-                                             .distinct()
-                                             .map(viewMap::get)
-                                             .filter(Objects::nonNull)
-                                             .collect(Collectors.toList()));
+    return Collections.unmodifiableList(
+        views.stream()
+            .map(view -> view.getName().toLowerCase())
+            .distinct()
+            .map(viewMap::get)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList()));
   }
 
   public Collection<EnumType> getEnumTypes() {
@@ -128,7 +131,8 @@ public class Schema {
       return enumType;
     }
 
-    throw new IllegalStateException(String.format("Unable to locate an enum type with name '%s'", typeName));
+    throw new IllegalStateException(
+        String.format("Unable to locate an enum type with name '%s'", typeName));
   }
 
   public void addTable(Table table) {
@@ -180,11 +184,14 @@ public class Schema {
           Table fromTable = getTable(fromTableName);
 
           if (fromTable.getColumn(fromColumnName).isRequired()) {
-            errors.add(String.format("ERROR: %s.%s is required. The %s.%s relation specifies setnull, which is not allowed",
-                                     fromTableName,
-                                     fromColumnName,
-                                     relation.getToTableName(),
-                                     relation.getToColumnName()));
+            errors.add(
+                String.format(
+                    "ERROR: %s.%s is required. The %s.%s relation specifies setnull, which is not"
+                        + " allowed",
+                    fromTableName,
+                    fromColumnName,
+                    relation.getToTableName(),
+                    relation.getToColumnName()));
           }
         }
       }
@@ -204,12 +211,14 @@ public class Schema {
           String parentTableName = relation.getToTableName();
           Table parentTable = getTable(parentTableName);
 
-          Relation reverseRelation = new Relation(relation.getToTableName(),
-                                                  relation.getToColumnName(),
-                                                  relation.getFromTableName(),
-                                                  relation.getFromColumnName(),
-                                                  relation.getType(),
-                                                  false);
+          Relation reverseRelation =
+              new Relation(
+                  relation.getToTableName(),
+                  relation.getToColumnName(),
+                  relation.getFromTableName(),
+                  relation.getFromColumnName(),
+                  relation.getType(),
+                  false);
 
           parentTable.getReverseRelations().add(reverseRelation);
         }

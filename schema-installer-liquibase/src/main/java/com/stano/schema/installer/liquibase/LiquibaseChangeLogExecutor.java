@@ -1,15 +1,14 @@
 package com.stano.schema.installer.liquibase;
 
 import com.stano.exceptions.ExceptionUtils;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import liquibase.Contexts;
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.ValidationFailedException;
-
-import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class LiquibaseChangeLogExecutor {
   private LiquibaseFactory liquibaseFactory = new LiquibaseFactory();
@@ -18,48 +17,48 @@ public class LiquibaseChangeLogExecutor {
 
   public void executeChangeLog(String changeLogResource, Connection connection) {
     try {
-      executeChangeLog(liquibaseFactory.createLiquibase(changeLogResource, connection),
-                       connection,
-                       changeLogResource);
-    }
-    catch (LiquibaseException x) {
+      executeChangeLog(
+          liquibaseFactory.createLiquibase(changeLogResource, connection),
+          connection,
+          changeLogResource);
+    } catch (LiquibaseException x) {
       throw new LiquibaseRuntimeException(x);
     }
   }
 
   public void executeChangeLog(File changeLogFile, Connection connection) {
     try {
-      executeChangeLog(liquibaseFactory.createLiquibase(changeLogFile, connection),
-                       connection,
-                       changeLogFile.getAbsolutePath());
-    }
-    catch (LiquibaseException x) {
+      executeChangeLog(
+          liquibaseFactory.createLiquibase(changeLogFile, connection),
+          connection,
+          changeLogFile.getAbsolutePath());
+    } catch (LiquibaseException x) {
       throw new LiquibaseRuntimeException(x);
     }
   }
 
-  public void executeChangeLog(Liquibase liquibase, Connection connection, String changeLogResource) {
+  public void executeChangeLog(
+      Liquibase liquibase, Connection connection, String changeLogResource) {
     Database database = liquibase.getDatabase();
     int databaseChangeLogId = databaseUpgradeLog.start(database, connection, changeLogResource);
 
     try {
       runWithChecksumRetry(liquibase, connection);
       databaseUpgradeLog.finish(database, connection, databaseChangeLogId, null);
-    }
-    catch (LiquibaseException x) {
-      databaseUpgradeLog.finish(database, connection, databaseChangeLogId, ExceptionUtils.getStackTrace(x));
+    } catch (LiquibaseException x) {
+      databaseUpgradeLog.finish(
+          database, connection, databaseChangeLogId, ExceptionUtils.getStackTrace(x));
       throw new LiquibaseRuntimeException(x);
-    }
-    finally {
+    } finally {
       liquibaseFactory.getExecutorService().clearExecutor("jdbc", database);
     }
   }
 
-  private void runWithChecksumRetry(Liquibase liquibase, Connection connection) throws LiquibaseException {
+  private void runWithChecksumRetry(Liquibase liquibase, Connection connection)
+      throws LiquibaseException {
     try {
       liquibase.update(new Contexts());
-    }
-    catch (ValidationFailedException x) {
+    } catch (ValidationFailedException x) {
       liquibase.clearCheckSums();
       liquibase.update(new Contexts());
       truncateTransactionLog(connection);
@@ -69,8 +68,7 @@ public class LiquibaseChangeLogExecutor {
   private void truncateTransactionLog(Connection connection) throws LiquibaseException {
     try {
       liquibaseServices.truncateTransactionLog(connection);
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new LiquibaseException(x);
     }
   }

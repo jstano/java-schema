@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -37,8 +36,7 @@ public class DropColumnCheckConstraintMigration implements ExecuteWithStatement<
       }
 
       return null;
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }

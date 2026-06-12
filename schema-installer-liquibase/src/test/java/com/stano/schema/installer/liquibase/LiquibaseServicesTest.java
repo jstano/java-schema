@@ -1,10 +1,9 @@
 package com.stano.schema.installer.liquibase;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("LiquibaseServices")
 class LiquibaseServicesTest {

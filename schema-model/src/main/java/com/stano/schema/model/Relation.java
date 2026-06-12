@@ -8,12 +8,13 @@ public class Relation {
   private final RelationType type;
   private final boolean disableUsageChecking;
 
-  public Relation(String fromTableName,
-                  String fromColumnName,
-                  String toTableName,
-                  String toColumnName,
-                  RelationType type,
-                  boolean disableUsageChecking) {
+  public Relation(
+      String fromTableName,
+      String fromColumnName,
+      String toTableName,
+      String toColumnName,
+      RelationType type,
+      boolean disableUsageChecking) {
     this.fromTableName = fromTableName;
     this.fromColumnName = fromColumnName;
     this.toTableName = toTableName;

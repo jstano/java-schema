@@ -12,135 +12,145 @@ import com.stano.schema.model.TriggerType;
 
 class SQLServerBaseTriggerGenerator extends BaseGenerator {
 
-   SQLServerBaseTriggerGenerator(SQLGenerator sqlGenerator) {
+  SQLServerBaseTriggerGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected String getFullyQualifiedTableName(Table table) {
+  @Override
+  protected String getFullyQualifiedTableName(Table table) {
 
-      String schemaName = table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
-      if (table.getName().equalsIgnoreCase("function")) {
-         return "[" + schemaName + "]" + "." + "[" + table.getName() +"]";
+    String schemaName =
+        table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
+    if (table.getName().equalsIgnoreCase("function")) {
+      return "[" + schemaName + "]" + "." + "[" + table.getName() + "]";
+    } else {
+      return schemaName + "." + table.getName();
+    }
+  }
+
+  void outputAdditionalTriggerStatements(Table table, TriggerType triggerType) {
+
+    if (!table.getTriggers().isEmpty()) {
+      for (Trigger trigger : table.getTriggers()) {
+        if (trigger.getDatabaseType() == DatabaseType.SQL_SERVER
+            && trigger.getTriggerType() == triggerType) {
+          String triggerText = trigger.getTriggerText();
+
+          if (!triggerText.startsWith("   ")) {
+            sqlWriter.print("   ");
+          }
+
+          sqlWriter.println(triggerText);
+        }
       }
-      else {
-         return schemaName + "." + table.getName();
-      }
-   }
+    }
+  }
 
-   void outputAdditionalTriggerStatements(Table table, TriggerType triggerType) {
+  protected String createSourceCTE(Aggregation aggregation, String sourceColumn, String alias) {
 
-      if (!table.getTriggers().isEmpty()) {
-         for (Trigger trigger : table.getTriggers()) {
-            if (trigger.getDatabaseType() == DatabaseType.SQL_SERVER && trigger.getTriggerType() == triggerType) {
-               String triggerText = trigger.getTriggerText();
+    StringBuilder s = new StringBuilder();
 
-               if (!triggerText.startsWith("   ")) {
-                  sqlWriter.print("   ");
-               }
+    s.append(alias).append(" as (select ");
 
-               sqlWriter.println(triggerText);
-            }
-         }
-      }
-   }
-
-
-   protected String createSourceCTE(Aggregation aggregation, String sourceColumn, String alias) {
-
-      StringBuilder s = new StringBuilder();
-
-      s.append(alias).append(" as (select ");
-
-      for (AggregationColumn column : aggregation.getAggregationColumns()) {
-         s.append(column.getSourceColumn() != null && !column.getSourceColumn().trim().isEmpty() ? column.getSourceColumn() : "1")
+    for (AggregationColumn column : aggregation.getAggregationColumns()) {
+      s.append(
+              column.getSourceColumn() != null && !column.getSourceColumn().trim().isEmpty()
+                  ? column.getSourceColumn()
+                  : "1")
           .append(" as ")
           .append(column.getDestinationColumn())
           .append(", ");
+    }
+
+    for (AggregationGroup group : aggregation.getAggregationGroups()) {
+
+      if (group.getSource().equals(group.getDestination())) {
+        s.append(group.getSource()).append(", ");
+      } else {
+        s.append(group.getSource()).append(" as ").append(group.getDestination()).append(", ");
       }
+    }
 
-      for (AggregationGroup group : aggregation.getAggregationGroups()) {
+    s.append(createAggregationFrequencyConversion(aggregation))
+        .append(" as ")
+        .append(aggregation.getDateColumn())
+        .append(" from ")
+        .append(sourceColumn);
 
-         if (group.getSource().equals(group.getDestination())) {
-            s.append(group.getSource()).append(", ");
-         }
-         else {
-            s.append(group.getSource()).append(" as ").append(group.getDestination()).append(", ");
-         }
-      }
+    if (aggregation.getCriteria() != null && !aggregation.getCriteria().trim().isEmpty()) {
+      s.append(" where ").append(aggregation.getCriteria());
+    }
 
-      s.append(createAggregationFrequencyConversion(aggregation))
-       .append(" as ")
-       .append(aggregation.getDateColumn())
-       .append(" from ")
-       .append(sourceColumn);
+    return s.append(")").toString();
+  }
 
-      if (aggregation.getCriteria() != null && !aggregation.getCriteria().trim().isEmpty()) {
-         s.append(" where ").append(aggregation.getCriteria());
-      }
+  protected String createBothCTE(Aggregation aggregation) {
 
-      return s.append(")").toString();
-   }
+    StringBuilder s = new StringBuilder("BOTH as (select ");
 
-   protected String createBothCTE(Aggregation aggregation) {
+    for (AggregationColumn column : aggregation.getAggregationColumns()) {
+      s.append(column.getDestinationColumn())
+          .append(" as Inserted")
+          .append(column.getDestinationColumn())
+          .append(", ");
+      s.append("0 as Deleted").append(column.getDestinationColumn()).append(", ");
+    }
 
-      StringBuilder s = new StringBuilder("BOTH as (select ");
+    for (AggregationGroup group : aggregation.getAggregationGroups()) {
+      s.append(group.getDestination()).append(", ");
+    }
 
-      for (AggregationColumn column : aggregation.getAggregationColumns()) {
-         s.append(column.getDestinationColumn()).append(" as Inserted").append(column.getDestinationColumn()).append(", ");
-         s.append("0 as Deleted").append(column.getDestinationColumn()).append(", ");
-      }
+    s.append(aggregation.getDateColumn()).append(" from I union select ");
 
-      for (AggregationGroup group : aggregation.getAggregationGroups()) {
-         s.append(group.getDestination()).append(", ");
-      }
+    for (AggregationColumn column : aggregation.getAggregationColumns()) {
+      s.append("0 as Inserted").append(column.getDestinationColumn()).append(", ");
+      s.append(column.getDestinationColumn())
+          .append(" as Deleted")
+          .append(column.getDestinationColumn())
+          .append(", ");
+    }
 
-      s.append(aggregation.getDateColumn()).append(" from I union select ");
+    for (AggregationGroup group : aggregation.getAggregationGroups()) {
+      s.append(group.getDestination()).append(", ");
+    }
 
-      for (AggregationColumn column : aggregation.getAggregationColumns()) {
-         s.append("0 as Inserted").append(column.getDestinationColumn()).append(", ");
-         s.append(column.getDestinationColumn()).append(" as Deleted").append(column.getDestinationColumn()).append(", ");
-      }
+    return s.append(aggregation.getDateColumn()).append(" from D)").toString();
+  }
 
-      for (AggregationGroup group : aggregation.getAggregationGroups()) {
-         s.append(group.getDestination()).append(", ");
-      }
+  protected String createAggregationFrequencyConversion(Aggregation aggregation) {
 
-      return s.append(aggregation.getDateColumn()).append(" from D)").toString();
-   }
+    StringBuilder s = new StringBuilder();
 
-   protected String createAggregationFrequencyConversion(Aggregation aggregation) {
+    switch (aggregation.getAggregationFrequency()) {
+      case DAILY:
+        return s.append("convert(varchar, ")
+            .append(aggregation.getDateColumn())
+            .append(", 110)")
+            .toString();
+      case WEEKLY:
+        return s.append("convert(varchar, DATEADD(d,-DATEPART(dw, ")
+            .append(aggregation.getDateColumn())
+            .append(") + 1, ")
+            .append(aggregation.getDateColumn())
+            .append("), 110)")
+            .toString();
+      case MONTHLY:
+        return s.append("convert(varchar, DATEADD(d,-DATEPART(d, ")
+            .append(aggregation.getDateColumn())
+            .append(") + 1, ")
+            .append(aggregation.getDateColumn())
+            .append("), 110)")
+            .toString();
+      case YEARLY:
+        return s.append("convert(varchar, DATEADD(d,-DATEPART(dy, ")
+            .append(aggregation.getDateColumn())
+            .append(") + 1, ")
+            .append(aggregation.getDateColumn())
+            .append("), 110)")
+            .toString();
+    }
 
-      StringBuilder s = new StringBuilder();
-
-      switch (aggregation.getAggregationFrequency()) {
-
-         case DAILY:
-            return s.append("convert(varchar, ").append(aggregation.getDateColumn()).append(", 110)").toString();
-         case WEEKLY:
-            return s.append("convert(varchar, DATEADD(d,-DATEPART(dw, ")
-                    .append(aggregation.getDateColumn())
-                    .append(") + 1, ")
-                    .append(aggregation.getDateColumn())
-                    .append("), 110)")
-                    .toString();
-         case MONTHLY:
-            return s.append("convert(varchar, DATEADD(d,-DATEPART(d, ")
-                    .append(aggregation.getDateColumn())
-                    .append(") + 1, ")
-                    .append(aggregation.getDateColumn())
-                    .append("), 110)")
-                    .toString();
-         case YEARLY:
-            return s.append("convert(varchar, DATEADD(d,-DATEPART(dy, ")
-                    .append(aggregation.getDateColumn())
-                    .append(") + 1, ")
-                    .append(aggregation.getDateColumn())
-                    .append("), 110)")
-                    .toString();
-      }
-
-      return null;
-   }
+    return null;
+  }
 }

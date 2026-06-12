@@ -6,17 +6,17 @@ import com.stano.schema.model.View;
 
 class H2ViewGenerator extends ViewGenerator {
 
-   H2ViewGenerator(SQLGenerator sqlGenerator) {
+  H2ViewGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputView(View view) {
+  @Override
+  protected void outputView(View view) {
 
-      sqlWriter.println("drop view " + view.getName() + " if exists" + statementSeparator);
-      sqlWriter.println("create view " + view.getName() + " as");
-      sqlWriter.println("   " + view.getSql() + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println("drop view " + view.getName() + " if exists" + statementSeparator);
+    sqlWriter.println("create view " + view.getName() + " as");
+    sqlWriter.println("   " + view.getSql() + statementSeparator);
+    sqlWriter.println();
+  }
 }

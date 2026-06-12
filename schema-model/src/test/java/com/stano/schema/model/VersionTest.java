@@ -1,14 +1,16 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("Version")
 class VersionTest {
@@ -68,13 +70,14 @@ class VersionTest {
 
   @ParameterizedTest
   @CsvSource({
-      "1,2,0,false,01.02",
-      "1,2,0,true,01.02-SNAPSHOT",
-      "1,2,3,false,01.02.03",
-      "1,2,3,true,01.02.03-SNAPSHOT"
+    "1,2,0,false,01.02",
+    "1,2,0,true,01.02-SNAPSHOT",
+    "1,2,3,false,01.02.03",
+    "1,2,3,true,01.02.03-SNAPSHOT"
   })
   @DisplayName("toString should zero-pad and include -SNAPSHOT when preReleaseSuffix is true")
-  void toStringShouldZeroPadAndIncludeSnapshot(int major, int minor, int patch, boolean pre, String expected) {
+  void toStringShouldZeroPadAndIncludeSnapshot(
+      int major, int minor, int patch, boolean pre, String expected) {
     Version version = new Version(major, minor, patch, pre);
     assertEquals(version.toString(), expected);
   }
@@ -92,7 +95,9 @@ class VersionTest {
   }
 
   @Test
-  @DisplayName("compareTo should order by major, minor, patch, then preRelease (preRelease considered greater)")
+  @DisplayName(
+      "compareTo should order by major, minor, patch, then preRelease (preRelease considered"
+          + " greater)")
   void compareToShouldOrderCorrectly() {
     assertTrue(new Version(1, 0).compareTo(new Version(2, 0)) < 0);
     assertTrue(new Version(2, 0).compareTo(new Version(1, 9, 9)) > 0);
@@ -121,7 +126,9 @@ class VersionTest {
   }
 
   @Test
-  @DisplayName("equals should handle null, type, and differences across fields; hashCode and contract properties")
+  @DisplayName(
+      "equals should handle null, type, and differences across fields; hashCode and contract"
+          + " properties")
   void equalsShouldHandleNullAndType() {
     Version a = new Version(1, 2, 0, false);
     Version b = new Version("1.2");
@@ -154,7 +161,8 @@ class VersionTest {
   }
 
   @Test
-  @DisplayName("compareTo contract: reflexivity, anti-symmetry, transitivity, and consistency with equals")
+  @DisplayName(
+      "compareTo contract: reflexivity, anti-symmetry, transitivity, and consistency with equals")
   void compareToContract() {
     Version v1 = new Version(1, 2);
     Version v1b = new Version("1.2");
@@ -174,7 +182,9 @@ class VersionTest {
 
     assertEquals(new Version(1, 2).compareTo(new Version(1, 2, 0)), 0);
 
-    assertEquals(Integer.signum(new Version(1, 2, 0, true).compareTo(new Version(1, 2, 0, false))), 1);
-    assertEquals(Integer.signum(new Version(1, 2, 0, false).compareTo(new Version(1, 2, 0, true))), -1);
+    assertEquals(
+        Integer.signum(new Version(1, 2, 0, true).compareTo(new Version(1, 2, 0, false))), 1);
+    assertEquals(
+        Integer.signum(new Version(1, 2, 0, false).compareTo(new Version(1, 2, 0, true))), -1);
   }
 }

@@ -6,15 +6,16 @@ import com.stano.schema.model.Table;
 
 class SQLServerRelationGenerator extends RelationGenerator {
 
-   SQLServerRelationGenerator(SQLGenerator sqlGenerator) {
+  SQLServerRelationGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected String getFullyQualifiedTableName(Table table) {
+  @Override
+  protected String getFullyQualifiedTableName(Table table) {
 
-      String schemaName = table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
-      return schemaName + "." + table.getName();
-   }
+    String schemaName =
+        table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
+    return schemaName + "." + table.getName();
+  }
 }

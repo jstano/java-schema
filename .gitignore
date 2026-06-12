@@ -1,20 +1,11 @@
 .DS_Store
-.idea
-*.iml
-*.ipr
-*.iws
-*.log
-.gradle
-build
-out
-!.gitkeep
-activemq-data
-libnative-*
-local.properties
-jnidispatch.dll
-native-platform.dll
-native-platform.dll.lock
+.idea/
+.gradle/
 bin/
+build/
+out/
+!.gitkeep
+local.properties
 
 # AI assistant artifacts
 context-snapshot.json

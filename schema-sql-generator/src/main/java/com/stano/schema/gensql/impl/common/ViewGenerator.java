@@ -6,23 +6,24 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ViewGenerator extends BaseGenerator {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(ViewGenerator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ViewGenerator.class);
 
-   public ViewGenerator(SQLGenerator sqlGenerator) {
+  public ViewGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   public void outputViews() {
+  public void outputViews() {
 
-      schema.getViews(databaseType)
-            .forEach(view -> {
+    schema
+        .getViews(databaseType)
+        .forEach(
+            view -> {
+              LOGGER.debug("Generating SQL for view " + getFullyQualifiedViewName(view));
 
-               LOGGER.debug("Generating SQL for view " + getFullyQualifiedViewName(view));
-
-               outputView(view);
+              outputView(view);
             });
-   }
+  }
 
-   protected abstract void outputView(View view);
+  protected abstract void outputView(View view);
 }

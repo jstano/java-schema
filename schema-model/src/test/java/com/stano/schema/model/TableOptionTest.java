@@ -1,17 +1,18 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class TableOptionTest {
   @Test
@@ -34,10 +35,9 @@ class TableOptionTest {
 
   static Stream<Arguments> valueOfProvider() {
     return Stream.of(
-      Arguments.of("DATA", TableOption.DATA),
-      Arguments.of("NO_EXPORT", TableOption.NO_EXPORT),
-      Arguments.of("COMPRESS", TableOption.COMPRESS)
-    );
+        Arguments.of("DATA", TableOption.DATA),
+        Arguments.of("NO_EXPORT", TableOption.NO_EXPORT),
+        Arguments.of("COMPRESS", TableOption.COMPRESS));
   }
 
   @Test

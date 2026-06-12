@@ -1,13 +1,15 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("Table")
 class TableTest {
@@ -34,10 +36,12 @@ class TableTest {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "accounts", null, LockEscalation.AUTO, false);
 
-    table.getColumns().addAll(List.of(
-        new Column("Id", ColumnType.SEQUENCE, 0, true),
-        new Column("userName", ColumnType.VARCHAR, 50, false)
-    ));
+    table
+        .getColumns()
+        .addAll(
+            List.of(
+                new Column("Id", ColumnType.SEQUENCE, 0, true),
+                new Column("userName", ColumnType.VARCHAR, 50, false)));
 
     assertTrue(table.hasColumn("id"));
     assertTrue(table.hasColumn("USERNAME"));
@@ -53,17 +57,19 @@ class TableTest {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
 
     Table t1 = new Table(schema, "public", "t1", null, LockEscalation.AUTO, false);
-    t1.getColumns().addAll(List.of(
-        new Column("code", ColumnType.VARCHAR, 20, false),
-        new Column("id", ColumnType.SEQUENCE, 0, true),
-        new Column("id2", ColumnType.LONGSEQUENCE, 0, true)
-    ));
+    t1.getColumns()
+        .addAll(
+            List.of(
+                new Column("code", ColumnType.VARCHAR, 20, false),
+                new Column("id", ColumnType.SEQUENCE, 0, true),
+                new Column("id2", ColumnType.LONGSEQUENCE, 0, true)));
 
     Table t2 = new Table(schema, "public", "t2", null, LockEscalation.AUTO, false);
-    t2.getColumns().addAll(List.of(
-        new Column("code", ColumnType.VARCHAR, 20, false),
-        new Column("id2", ColumnType.LONGSEQUENCE, 0, true)
-    ));
+    t2.getColumns()
+        .addAll(
+            List.of(
+                new Column("code", ColumnType.VARCHAR, 20, false),
+                new Column("id2", ColumnType.LONGSEQUENCE, 0, true)));
 
     Table t3 = new Table(schema, "public", "t3", null, LockEscalation.AUTO, false);
     t3.getColumns().add(new Column("code", ColumnType.VARCHAR, 20, false));
@@ -75,15 +81,18 @@ class TableTest {
 
   @Test
   @DisplayName("getPrimaryKey and getPrimaryKeyColumns return correct info or null when absent")
-  void getPrimaryKeyAndGetPrimaryKeyColumnsReturnCorrectInfoOrNullWhenAbsent() throws MalformedURLException {
+  void getPrimaryKeyAndGetPrimaryKeyColumnsReturnCorrectInfoOrNullWhenAbsent()
+      throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "orders", null, LockEscalation.AUTO, false);
 
-    table.getColumns().addAll(List.of(
-        new Column("id", ColumnType.SEQUENCE, 0, true),
-        new Column("tenant_id", ColumnType.INT, 0, true),
-        new Column("code", ColumnType.VARCHAR, 50, false)
-    ));
+    table
+        .getColumns()
+        .addAll(
+            List.of(
+                new Column("id", ColumnType.SEQUENCE, 0, true),
+                new Column("tenant_id", ColumnType.INT, 0, true),
+                new Column("code", ColumnType.VARCHAR, 50, false)));
 
     table.getKeys().add(new Key(KeyType.INDEX, List.of(new KeyColumn("code"))));
     Key pk = new Key(KeyType.PRIMARY, List.of(new KeyColumn("id"), new KeyColumn("tenant_id")));
@@ -114,27 +123,19 @@ class TableTest {
   }
 
   @Test
-  @DisplayName("hasColumnConstraints and getColumnsWithCheckConstraints depend on BooleanMode and explicit constraints")
-  void hasColumnConstraintsAndGetColumnsWithCheckConstraintsDependOnBooleanMode() throws MalformedURLException {
+  @DisplayName(
+      "hasColumnConstraints and getColumnsWithCheckConstraints depend on BooleanMode and explicit"
+          + " constraints")
+  void hasColumnConstraintsAndGetColumnsWithCheckConstraintsDependOnBooleanMode()
+      throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "orders", null, LockEscalation.AUTO, false);
 
     Column boolCol = new Column("flag", ColumnType.BOOLEAN, 0, false);
     Column checked = new Column("amt", ColumnType.INT, 0, false, "amt > 0");
-    Column ranged = new Column(
-        "price",
-        ColumnType.DECIMAL,
-        10,
-        2,
-        false,
-        null,
-        null,
-        null,
-        "0",
-        "100",
-        null,
-        null
-    );
+    Column ranged =
+        new Column(
+            "price", ColumnType.DECIMAL, 10, 2, false, null, null, null, "0", "100", null, null);
     table.getColumns().addAll(List.of(boolCol, checked, ranged));
 
     assertTrue(table.hasColumnConstraints(BooleanMode.NATIVE));
@@ -143,23 +144,32 @@ class TableTest {
 
     assertTrue(table.hasColumnConstraints(BooleanMode.YN));
     var ynConstraints = table.getColumnsWithCheckConstraints(BooleanMode.YN);
-    assertEquals(ynConstraints.stream().map(Column::getName).toList(), List.of("flag", "amt", "price"));
+    assertEquals(
+        ynConstraints.stream().map(Column::getName).toList(), List.of("flag", "amt", "price"));
   }
 
   @Test
-  @DisplayName("getColumnRelation should return matching relation by from-column name case-insensitively or null")
+  @DisplayName(
+      "getColumnRelation should return matching relation by from-column name case-insensitively or"
+          + " null")
   void getColumnRelationShouldReturnMatchingRelation() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "child", null, LockEscalation.AUTO, false);
 
-    table.getColumns().addAll(List.of(
-        new Column("parent_id", ColumnType.INT, 0, false),
-        new Column("other", ColumnType.VARCHAR, 10, false)
-    ));
+    table
+        .getColumns()
+        .addAll(
+            List.of(
+                new Column("parent_id", ColumnType.INT, 0, false),
+                new Column("other", ColumnType.VARCHAR, 10, false)));
 
-    table.getRelations().add(new Relation("child", "Parent_Id", "parent", "id", RelationType.CASCADE, false));
+    table
+        .getRelations()
+        .add(new Relation("child", "Parent_Id", "parent", "id", RelationType.CASCADE, false));
 
-    assertEquals(table.getColumnRelation(new Column("PARENT_id", ColumnType.INT, 0, false)).getType(), RelationType.CASCADE);
+    assertEquals(
+        table.getColumnRelation(new Column("PARENT_id", ColumnType.INT, 0, false)).getType(),
+        RelationType.CASCADE);
     assertNull(table.getColumnRelation(new Column("missing", ColumnType.INT, 0, false)));
   }
 
@@ -197,23 +207,37 @@ class TableTest {
     Constraint c2 = new Constraint("ck_not_null", "col is not null", DatabaseType.SQL_SERVER);
     table.getConstraints().addAll(List.of(c1, c2));
 
-    assertEquals(table.getConstraints().stream().map(Constraint::getName).toList(), List.of("ck_positive", "ck_not_null"));
-    assertEquals(table.getConstraints().stream().map(Constraint::getSql).toList(), List.of("amount > 0", "col is not null"));
+    assertEquals(
+        table.getConstraints().stream().map(Constraint::getName).toList(),
+        List.of("ck_positive", "ck_not_null"));
+    assertEquals(
+        table.getConstraints().stream().map(Constraint::getSql).toList(),
+        List.of("amount > 0", "col is not null"));
 
     table.getConstraints().remove(0);
 
-    assertEquals(table.getConstraints().stream().map(Constraint::getName).toList(), List.of("ck_not_null"));
+    assertEquals(
+        table.getConstraints().stream().map(Constraint::getName).toList(), List.of("ck_not_null"));
   }
 
   @Test
-  @DisplayName("getAggregations should expose a live list and store Aggregation instances correctly")
+  @DisplayName(
+      "getAggregations should expose a live list and store Aggregation instances correctly")
   void getAggregationsShouldExposeLiveList() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "agg_test", null, LockEscalation.AUTO, false);
 
     var cols = List.of(new AggregationColumn(AggregationType.SUM, "amount", "total_amount"));
     var groups = List.of(new AggregationGroup("country", null, "country"));
-    Aggregation agg = new Aggregation("agg_sales", "sale_date", "status='CONFIRMED'", "updated_at", AggregationFrequency.MONTHLY, cols, groups);
+    Aggregation agg =
+        new Aggregation(
+            "agg_sales",
+            "sale_date",
+            "status='CONFIRMED'",
+            "updated_at",
+            AggregationFrequency.MONTHLY,
+            cols,
+            groups);
 
     table.getAggregations().add(agg);
 
@@ -221,10 +245,17 @@ class TableTest {
     assertEquals(table.getAggregations().get(0).getDestinationTable(), "agg_sales");
     assertEquals(table.getAggregations().get(0).getDateColumn(), "sale_date");
     assertEquals(table.getAggregations().get(0).getTimeStampColumn(), "updated_at");
-    assertEquals(table.getAggregations().get(0).getAggregationFrequency(), AggregationFrequency.MONTHLY);
+    assertEquals(
+        table.getAggregations().get(0).getAggregationFrequency(), AggregationFrequency.MONTHLY);
     assertEquals(table.getAggregations().get(0).getAggregationColumns().size(), 1);
-    assertEquals(table.getAggregations().get(0).getAggregationColumns().get(0).getAggregationType(), AggregationType.SUM);
-    assertEquals(table.getAggregations().get(0).getAggregationGroups().stream().map(AggregationGroup::getDestination).toList(), List.of("country"));
+    assertEquals(
+        table.getAggregations().get(0).getAggregationColumns().get(0).getAggregationType(),
+        AggregationType.SUM);
+    assertEquals(
+        table.getAggregations().get(0).getAggregationGroups().stream()
+            .map(AggregationGroup::getDestination)
+            .toList(),
+        List.of("country"));
 
     table.getAggregations().remove(0);
 
@@ -232,21 +263,25 @@ class TableTest {
   }
 
   @Test
-  @DisplayName("hasColumnConstraints returns false when no columns require constraints (false path)")
-  void hasColumnConstraintsReturnsFalseWhenNoColumnsRequireConstraints() throws MalformedURLException {
+  @DisplayName(
+      "hasColumnConstraints returns false when no columns require constraints (false path)")
+  void hasColumnConstraintsReturnsFalseWhenNoColumnsRequireConstraints()
+      throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table t1 = new Table(schema, "public", "no_checks_native", null, LockEscalation.AUTO, false);
     Table t2 = new Table(schema, "public", "no_checks_any", null, LockEscalation.AUTO, false);
 
-    t1.getColumns().addAll(List.of(
-        new Column("flag", ColumnType.BOOLEAN, 0, false),
-        new Column("code", ColumnType.VARCHAR, 50, false)
-    ));
+    t1.getColumns()
+        .addAll(
+            List.of(
+                new Column("flag", ColumnType.BOOLEAN, 0, false),
+                new Column("code", ColumnType.VARCHAR, 50, false)));
 
-    t2.getColumns().addAll(List.of(
-        new Column("a", ColumnType.INT, 0, false),
-        new Column("b", ColumnType.VARCHAR, 10, false)
-    ));
+    t2.getColumns()
+        .addAll(
+            List.of(
+                new Column("a", ColumnType.INT, 0, false),
+                new Column("b", ColumnType.VARCHAR, 10, false)));
 
     assertFalse(t1.hasColumnConstraints(BooleanMode.NATIVE));
     assertFalse(t2.hasColumnConstraints(BooleanMode.NATIVE));

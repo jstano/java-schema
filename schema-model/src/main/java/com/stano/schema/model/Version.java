@@ -41,8 +41,7 @@ public final class Version implements Comparable<Version> {
 
     if (parts.length == 3) {
       this.patchVersion = Integer.parseInt(parts[2]);
-    }
-    else {
+    } else {
       this.patchVersion = 0;
     }
   }
@@ -73,7 +72,7 @@ public final class Version implements Comparable<Version> {
       return false;
     }
 
-    Version that = (Version)o;
+    Version that = (Version) o;
 
     if (majorVersion != that.majorVersion) {
       return false;

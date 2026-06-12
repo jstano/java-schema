@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.Statement;
 
 public class DropTableConstraintMigration implements ExecuteWithStatement<Void> {
@@ -27,6 +26,8 @@ public class DropTableConstraintMigration implements ExecuteWithStatement<Void> 
   }
 
   private void dropConstraint(Statement statement, String tableName, String constraintName) {
-    new ExecuteSQLMigration(String.format("alter table %s drop constraint %s", tableName, constraintName)).executeWithStatement(statement);
+    new ExecuteSQLMigration(
+            String.format("alter table %s drop constraint %s", tableName, constraintName))
+        .executeWithStatement(statement);
   }
 }

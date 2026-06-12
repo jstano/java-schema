@@ -1,5 +1,7 @@
 package com.stano.schema.gensql.impl.postgresql;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.stano.schema.gensql.impl.common.OutputMode;
 import com.stano.schema.gensql.impl.common.SQLGenerator;
 import com.stano.schema.gensql.impl.common.SQLGeneratorOptions;
@@ -16,8 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("PostgreSQL column type SQL generation")
 class PostgreSQLColumnTypeGeneratorTest {
@@ -73,14 +73,18 @@ class PostgreSQLColumnTypeGeneratorTest {
   @Test
   @DisplayName("DECIMAL with precision and scale should produce decimal(p,s)")
   void decimalWithPrecisionAndScaleShouldProduceDecimalPrecisionScale() {
-    Column col = new Column("col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
     assertEquals("decimal(19,4)", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("DECIMAL with no precision or scale should produce decimal")
   void decimalWithNoPrecisionOrScaleShouldProduceBareDecimal() {
-    Column col = new Column("col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
     assertEquals("decimal", generator.getColumnTypeSql(null, col));
   }
 
@@ -112,7 +116,8 @@ class PostgreSQLColumnTypeGeneratorTest {
   void textWithCaseInsensitiveSchemaShouldProduceCitext() {
     Schema schema = new Schema(null);
     schema.setCaseSensitiveText(false);
-    PostgreSQLColumnTypeGenerator caseInsensitiveGenerator = createGenerator(BooleanMode.NATIVE, schema);
+    PostgreSQLColumnTypeGenerator caseInsensitiveGenerator =
+        createGenerator(BooleanMode.NATIVE, schema);
     Column col = new Column("col", ColumnType.TEXT, 0, false);
     assertEquals("citext", caseInsensitiveGenerator.getColumnTypeSql(null, col));
   }
@@ -122,7 +127,8 @@ class PostgreSQLColumnTypeGeneratorTest {
   void textWithCaseSensitiveSchemaShouldProduceText() {
     Schema schema = new Schema(null);
     schema.setCaseSensitiveText(true);
-    PostgreSQLColumnTypeGenerator caseSensitiveGenerator = createGenerator(BooleanMode.NATIVE, schema);
+    PostgreSQLColumnTypeGenerator caseSensitiveGenerator =
+        createGenerator(BooleanMode.NATIVE, schema);
     Column col = new Column("col", ColumnType.TEXT, 0, false);
     assertEquals("text", caseSensitiveGenerator.getColumnTypeSql(null, col));
   }
@@ -135,45 +141,109 @@ class PostgreSQLColumnTypeGeneratorTest {
     enumType.addValue(new EnumValue("Active", "ACTIVE"));
     schema.addEnumType(enumType);
     PostgreSQLColumnTypeGenerator enumGenerator = createGenerator(BooleanMode.NATIVE, schema);
-    Column col = new Column("col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "UserStatus", null);
+    Column col =
+        new Column(
+            "col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "UserStatus", null);
     assertEquals("user_status", enumGenerator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of INT should produce integer[]")
   void arrayOfIntShouldProduceIntegerArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 0, 0, false, null, null, null, null, null, null, ColumnType.INT);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.INT);
     assertEquals("integer[]", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of VARCHAR should produce text[]")
   void arrayOfVarcharShouldProduceTextArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 100, 0, false, null, null, null, null, null, null, ColumnType.VARCHAR);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            100,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.VARCHAR);
     assertEquals("text[]", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of LONG should produce bigint[]")
   void arrayOfLongShouldProduceBigintArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 0, 0, false, null, null, null, null, null, null, ColumnType.LONG);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.LONG);
     assertEquals("bigint[]", generator.getColumnTypeSql(null, col));
   }
 
   private PostgreSQLColumnTypeGenerator createGenerator(BooleanMode booleanMode, Schema schema) {
-    SQLGenerator sqlGen = new SQLGenerator(
-        new SQLGeneratorOptions(schema, null, DatabaseType.POSTGRES, ForeignKeyMode.RELATIONS,
-            booleanMode, OutputMode.ALL)) {
-      @Override protected void outputTables() {}
-      @Override protected void outputRelations() {}
-      @Override protected void outputIndexes() {}
-      @Override protected void outputTriggers() {}
-      @Override protected void outputFunctions() {}
-      @Override protected void outputViews() {}
-      @Override protected void outputProcedures() {}
-      @Override protected void outputOtherSqlTop() {}
-      @Override protected void outputOtherSqlBottom() {}
-    };
+    SQLGenerator sqlGen =
+        new SQLGenerator(
+            new SQLGeneratorOptions(
+                schema,
+                null,
+                DatabaseType.POSTGRES,
+                ForeignKeyMode.RELATIONS,
+                booleanMode,
+                OutputMode.ALL)) {
+          @Override
+          protected void outputTables() {}
+
+          @Override
+          protected void outputRelations() {}
+
+          @Override
+          protected void outputIndexes() {}
+
+          @Override
+          protected void outputTriggers() {}
+
+          @Override
+          protected void outputFunctions() {}
+
+          @Override
+          protected void outputViews() {}
+
+          @Override
+          protected void outputProcedures() {}
+
+          @Override
+          protected void outputOtherSqlTop() {}
+
+          @Override
+          protected void outputOtherSqlBottom() {}
+        };
     return new PostgreSQLColumnTypeGenerator(sqlGen);
   }
 }

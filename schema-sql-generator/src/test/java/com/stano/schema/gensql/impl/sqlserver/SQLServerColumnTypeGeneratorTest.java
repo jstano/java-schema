@@ -1,5 +1,8 @@
 package com.stano.schema.gensql.impl.sqlserver;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.stano.schema.gensql.impl.common.OutputMode;
 import com.stano.schema.gensql.impl.common.SQLGenerator;
 import com.stano.schema.gensql.impl.common.SQLGeneratorOptions;
@@ -16,9 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("SQL Server column type SQL generation")
 class SQLServerColumnTypeGeneratorTest {
@@ -82,14 +82,18 @@ class SQLServerColumnTypeGeneratorTest {
   @Test
   @DisplayName("DECIMAL with precision and scale should produce decimal(p,s)")
   void decimalWithPrecisionAndScaleShouldProduceDecimalPrecisionScale() {
-    Column col = new Column("col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
     assertEquals("decimal(19,4)", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("DECIMAL with no precision or scale should produce decimal")
   void decimalWithNoPrecisionOrScaleShouldProduceBareDecimal() {
-    Column col = new Column("col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
     assertEquals("decimal", generator.getColumnTypeSql(null, col));
   }
 
@@ -125,7 +129,9 @@ class SQLServerColumnTypeGeneratorTest {
     enumType.addValue(new EnumValue("Inactive", "INACTIVE"));
     schema.addEnumType(enumType);
     SQLServerColumnTypeGenerator enumGenerator = createGenerator(BooleanMode.NATIVE, schema);
-    Column col = new Column("col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Status", null);
+    Column col =
+        new Column(
+            "col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Status", null);
     assertEquals("nvarchar(8)", enumGenerator.getColumnTypeSql(null, col));
   }
 
@@ -138,31 +144,68 @@ class SQLServerColumnTypeGeneratorTest {
     enumType.addValue(new EnumValue("No", "NOO"));
     schema.addEnumType(enumType);
     SQLServerColumnTypeGenerator enumGenerator = createGenerator(BooleanMode.NATIVE, schema);
-    Column col = new Column("col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Flag", null);
+    Column col =
+        new Column("col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Flag", null);
     assertEquals("nchar(3)", enumGenerator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY should throw UnsupportedOperationException")
   void arrayShouldThrowUnsupportedOperationException() {
-    Column col = new Column("col", ColumnType.ARRAY, 0, 0, false, null, null, null, null, null, null, ColumnType.INT);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.INT);
     assertThrows(UnsupportedOperationException.class, () -> generator.getColumnTypeSql(null, col));
   }
 
   private SQLServerColumnTypeGenerator createGenerator(BooleanMode booleanMode, Schema schema) {
-    SQLGenerator sqlGen = new SQLGenerator(
-        new SQLGeneratorOptions(schema, null, DatabaseType.SQL_SERVER, ForeignKeyMode.RELATIONS,
-            booleanMode, OutputMode.ALL)) {
-      @Override protected void outputTables() {}
-      @Override protected void outputRelations() {}
-      @Override protected void outputIndexes() {}
-      @Override protected void outputTriggers() {}
-      @Override protected void outputFunctions() {}
-      @Override protected void outputViews() {}
-      @Override protected void outputProcedures() {}
-      @Override protected void outputOtherSqlTop() {}
-      @Override protected void outputOtherSqlBottom() {}
-    };
+    SQLGenerator sqlGen =
+        new SQLGenerator(
+            new SQLGeneratorOptions(
+                schema,
+                null,
+                DatabaseType.SQL_SERVER,
+                ForeignKeyMode.RELATIONS,
+                booleanMode,
+                OutputMode.ALL)) {
+          @Override
+          protected void outputTables() {}
+
+          @Override
+          protected void outputRelations() {}
+
+          @Override
+          protected void outputIndexes() {}
+
+          @Override
+          protected void outputTriggers() {}
+
+          @Override
+          protected void outputFunctions() {}
+
+          @Override
+          protected void outputViews() {}
+
+          @Override
+          protected void outputProcedures() {}
+
+          @Override
+          protected void outputOtherSqlTop() {}
+
+          @Override
+          protected void outputOtherSqlBottom() {}
+        };
     return new SQLServerColumnTypeGenerator(sqlGen);
   }
 }

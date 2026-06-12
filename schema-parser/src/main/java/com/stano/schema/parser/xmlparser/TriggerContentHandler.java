@@ -16,7 +16,8 @@ public class TriggerContentHandler extends AbstractContentHandler {
   private DatabaseType databaseType;
   private TriggerType triggerType;
 
-  protected TriggerContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected TriggerContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -24,7 +25,8 @@ public class TriggerContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if ((localName.equals("update") || localName.equals("delete"))) {
       databaseType = DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
       triggerType = TriggerType.valueOf(localName.toUpperCase());
@@ -37,8 +39,7 @@ public class TriggerContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("triggers")) {
       tableContentHandler.contentHandler = null;
-    }
-    else if (localName.equals("update") || localName.equals("delete")) {
+    } else if (localName.equals("update") || localName.equals("delete")) {
       String content = getContent();
 
       if (StringUtils.isNotBlank(content)) {

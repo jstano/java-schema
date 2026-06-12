@@ -1,20 +1,20 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-
 class ProcedureTest {
   @ParameterizedTest
   @MethodSource("constructorProvider")
-  @DisplayName("constructor should set fields and getters should return them for various database types")
+  @DisplayName(
+      "constructor should set fields and getters should return them for various database types")
   void testConstructor(String schemaName, String name, DatabaseType dbType, String sql) {
     Procedure proc = new Procedure(schemaName, name, dbType, sql);
 
@@ -26,9 +26,16 @@ class ProcedureTest {
 
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
-      Arguments.of("public", "pr_total", DatabaseType.POSTGRES, "create procedure pr_total() language plpgsql as $$ begin /* noop */ end $$;"),
-      Arguments.of("dbo", "pr_compute", DatabaseType.SQL_SERVER, "CREATE PROCEDURE dbo.pr_compute AS BEGIN SELECT 42 END")
-    );
+        Arguments.of(
+            "public",
+            "pr_total",
+            DatabaseType.POSTGRES,
+            "create procedure pr_total() language plpgsql as $$ begin /* noop */ end $$;"),
+        Arguments.of(
+            "dbo",
+            "pr_compute",
+            DatabaseType.SQL_SERVER,
+            "CREATE PROCEDURE dbo.pr_compute AS BEGIN SELECT 42 END"));
   }
 
   @Test

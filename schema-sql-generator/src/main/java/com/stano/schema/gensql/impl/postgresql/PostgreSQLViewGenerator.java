@@ -8,21 +8,21 @@ import org.slf4j.LoggerFactory;
 
 public class PostgreSQLViewGenerator extends ViewGenerator {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(PostgreSQLViewGenerator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(PostgreSQLViewGenerator.class);
 
-   protected PostgreSQLViewGenerator(SQLGenerator sqlGenerator) {
+  protected PostgreSQLViewGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputView(View view) {
+  @Override
+  protected void outputView(View view) {
 
-      String viewName = getFullyQualifiedViewName(view);
+    String viewName = getFullyQualifiedViewName(view);
 
-      sqlWriter.println(String.format("/* %s */", viewName));
-      sqlWriter.println("create or replace view " + viewName + " as");
-      sqlWriter.println("   " + view.getSql() + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println(String.format("/* %s */", viewName));
+    sqlWriter.println("create or replace view " + viewName + " as");
+    sqlWriter.println("   " + view.getSql() + statementSeparator);
+    sqlWriter.println();
+  }
 }

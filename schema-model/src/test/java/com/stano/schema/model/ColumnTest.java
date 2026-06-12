@@ -1,12 +1,14 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 class ColumnTest {
   @Test
@@ -51,20 +53,20 @@ class ColumnTest {
   @Test
   @DisplayName("full constructor should assign all fields correctly")
   void testFullConstructor() {
-    Column col = new Column(
-      "prices",
-      ColumnType.ARRAY,
-      0,
-      4,
-      false,
-      "json_valid(prices)",
-      "DEFAULT '[]'",
-      null,
-      null,
-      null,
-      null,
-      ColumnType.DECIMAL
-    );
+    Column col =
+        new Column(
+            "prices",
+            ColumnType.ARRAY,
+            0,
+            4,
+            false,
+            "json_valid(prices)",
+            "DEFAULT '[]'",
+            null,
+            null,
+            null,
+            null,
+            ColumnType.DECIMAL);
 
     assertEquals("prices", col.getName());
     assertEquals(ColumnType.ARRAY, col.getType());
@@ -83,7 +85,8 @@ class ColumnTest {
   }
 
   @Test
-  @DisplayName("needsCheckConstraints for BOOLEAN depends on BooleanMode when no explicit constraints")
+  @DisplayName(
+      "needsCheckConstraints for BOOLEAN depends on BooleanMode when no explicit constraints")
   void testNeedsCheckConstraintsBoolean() {
     Column col = new Column("active", ColumnType.BOOLEAN, 0, false);
 
@@ -97,47 +100,28 @@ class ColumnTest {
   void testHasMinOrMaxValue() {
     assertFalse(new Column("x", ColumnType.INT, 0, false).hasMinOrMaxValue());
 
-    assertTrue(new Column(
-      "y",
-      ColumnType.DECIMAL,
-      10,
-      2,
-      false,
-      null,
-      null,
-      null,
-      "0",
-      null,
-      null,
-      null
-    ).hasMinOrMaxValue());
+    assertTrue(
+        new Column("y", ColumnType.DECIMAL, 10, 2, false, null, null, null, "0", null, null, null)
+            .hasMinOrMaxValue());
 
-    assertTrue(new Column(
-      "z",
-      ColumnType.DECIMAL,
-      10,
-      2,
-      false,
-      null,
-      null,
-      null,
-      null,
-      "100",
-      null,
-      null
-    ).hasMinOrMaxValue());
+    assertTrue(
+        new Column("z", ColumnType.DECIMAL, 10, 2, false, null, null, null, null, "100", null, null)
+            .hasMinOrMaxValue());
   }
 
   @Test
-  @DisplayName("Table integration: hasColumn is case-insensitive and getColumn caches names ignoring case")
+  @DisplayName(
+      "Table integration: hasColumn is case-insensitive and getColumn caches names ignoring case")
   void testTableIntegrationHasColumn() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "users", null, LockEscalation.AUTO, false);
 
-    table.getColumns().addAll(java.util.Arrays.asList(
-      new Column("Id", ColumnType.SEQUENCE, 0, true),
-      new Column("userName", ColumnType.VARCHAR, 100, false)
-    ));
+    table
+        .getColumns()
+        .addAll(
+            java.util.Arrays.asList(
+                new Column("Id", ColumnType.SEQUENCE, 0, true),
+                new Column("userName", ColumnType.VARCHAR, 100, false)));
 
     assertTrue(table.hasColumn("id"));
     assertTrue(table.hasColumn("ID"));
@@ -154,19 +138,21 @@ class ColumnTest {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table t1 = new Table(schema, "public", "t1", null, LockEscalation.AUTO, false);
 
-    t1.getColumns().addAll(java.util.Arrays.asList(
-      new Column("code", ColumnType.VARCHAR, 20, false),
-      new Column("id", ColumnType.SEQUENCE, 0, true),
-      new Column("id2", ColumnType.LONGSEQUENCE, 0, true)
-    ));
+    t1.getColumns()
+        .addAll(
+            java.util.Arrays.asList(
+                new Column("code", ColumnType.VARCHAR, 20, false),
+                new Column("id", ColumnType.SEQUENCE, 0, true),
+                new Column("id2", ColumnType.LONGSEQUENCE, 0, true)));
 
     assertEquals("id", t1.getIdentityColumn().getName());
 
     Table t2 = new Table(schema, "public", "t2", null, LockEscalation.AUTO, false);
-    t2.getColumns().addAll(java.util.Arrays.asList(
-      new Column("code", ColumnType.VARCHAR, 20, false),
-      new Column("id2", ColumnType.LONGSEQUENCE, 0, true)
-    ));
+    t2.getColumns()
+        .addAll(
+            java.util.Arrays.asList(
+                new Column("code", ColumnType.VARCHAR, 20, false),
+                new Column("id2", ColumnType.LONGSEQUENCE, 0, true)));
 
     assertEquals("id2", t2.getIdentityColumn().getName());
 
@@ -184,28 +170,19 @@ class ColumnTest {
 
     Column c1 = new Column("flag", ColumnType.BOOLEAN, 0, false);
     Column c2 = new Column("amt", ColumnType.INT, 0, false, "amt > 0");
-    Column c3 = new Column(
-      "price",
-      ColumnType.DECIMAL,
-      10,
-      2,
-      false,
-      null,
-      null,
-      null,
-      "0",
-      "100",
-      null,
-      null
-    );
+    Column c3 =
+        new Column(
+            "price", ColumnType.DECIMAL, 10, 2, false, null, null, null, "0", "100", null, null);
     table.getColumns().addAll(java.util.Arrays.asList(c1, c2, c3));
 
     java.util.List<Column> nativeCols = table.getColumnsWithCheckConstraints(BooleanMode.NATIVE);
     java.util.List<Column> ynCols = table.getColumnsWithCheckConstraints(BooleanMode.YN);
 
-    assertEquals(java.util.Arrays.asList("amt", "price"),
-      nativeCols.stream().map(Column::getName).collect(java.util.stream.Collectors.toList()));
-    assertEquals(java.util.Arrays.asList("flag", "amt", "price"),
-      ynCols.stream().map(Column::getName).collect(java.util.stream.Collectors.toList()));
+    assertEquals(
+        java.util.Arrays.asList("amt", "price"),
+        nativeCols.stream().map(Column::getName).collect(java.util.stream.Collectors.toList()));
+    assertEquals(
+        java.util.Arrays.asList("flag", "amt", "price"),
+        ynCols.stream().map(Column::getName).collect(java.util.stream.Collectors.toList()));
   }
 }

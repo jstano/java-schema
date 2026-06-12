@@ -18,7 +18,8 @@ public class TableContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (contentHandler != null) {
       contentHandler.startElement(namespaceURI, localName, qName, atts);
       return;
@@ -79,12 +80,16 @@ public class TableContentHandler extends AbstractContentHandler {
   private Table parseTable(Attributes atts) {
     String lockEscalationStr = atts.getValue("lockEscalation");
 
-    table = new Table(schema,
-                      getCurrentSchemaName(),
-                      atts.getValue("name"),
-                      atts.getValue("exportDataColumn"),
-                      StringUtils.isBlank(lockEscalationStr) ? null : LockEscalation.valueOf(lockEscalationStr.toUpperCase()),
-                      Boolean.parseBoolean(atts.getValue("noExport")));
+    table =
+        new Table(
+            schema,
+            getCurrentSchemaName(),
+            atts.getValue("name"),
+            atts.getValue("exportDataColumn"),
+            StringUtils.isBlank(lockEscalationStr)
+                ? null
+                : LockEscalation.valueOf(lockEscalationStr.toUpperCase()),
+            Boolean.parseBoolean(atts.getValue("noExport")));
 
     if (atts.getValue("noExport") != null && "true".equalsIgnoreCase(atts.getValue("noExport"))) {
       table.getOptions().add(TableOption.NO_EXPORT);

@@ -1,10 +1,10 @@
 package com.stano.schema.installer.liquibase;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DisplayName("LiquibaseRuntimeException")
 class LiquibaseRuntimeExceptionTest {

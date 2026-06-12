@@ -1,15 +1,14 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.HashSet;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.HashSet;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AggregationTypeTest {
   @Test
@@ -31,9 +30,7 @@ class AggregationTypeTest {
 
   static Stream<Arguments> valueOfProvider() {
     return Stream.of(
-      Arguments.of("SUM", AggregationType.SUM),
-      Arguments.of("COUNT", AggregationType.COUNT)
-    );
+        Arguments.of("SUM", AggregationType.SUM), Arguments.of("COUNT", AggregationType.COUNT));
   }
 
   @Test

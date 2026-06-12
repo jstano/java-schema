@@ -1,12 +1,11 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AggregationGroupTest {
   @ParameterizedTest
@@ -21,8 +20,6 @@ class AggregationGroupTest {
 
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
-      Arguments.of("country", null, "country"),
-      Arguments.of("city", "country", "city")
-    );
+        Arguments.of("country", null, "country"), Arguments.of("city", "country", "city"));
   }
 }

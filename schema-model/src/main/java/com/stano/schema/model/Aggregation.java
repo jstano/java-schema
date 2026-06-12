@@ -13,13 +13,14 @@ public class Aggregation {
   private final List<AggregationColumn> aggregationColumns;
   private final List<AggregationGroup> aggregationGroups;
 
-  public Aggregation(String destinationTable,
-                     String dateColumn,
-                     String criteria,
-                     String timeStampColumn,
-                     AggregationFrequency aggregationFrequency,
-                     List<AggregationColumn> aggregationColumns,
-                     List<AggregationGroup> aggregationGroups) {
+  public Aggregation(
+      String destinationTable,
+      String dateColumn,
+      String criteria,
+      String timeStampColumn,
+      AggregationFrequency aggregationFrequency,
+      List<AggregationColumn> aggregationColumns,
+      List<AggregationGroup> aggregationGroups) {
     this.destinationTable = destinationTable;
     this.dateColumn = dateColumn;
     this.criteria = criteria;

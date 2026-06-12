@@ -1,10 +1,9 @@
 package com.stano.schema.model;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 public class Table {
   private final Schema schema;
@@ -26,7 +25,13 @@ public class Table {
   private final List<Aggregation> aggregations = new ArrayList<>();
   private final Map<String, Column> columnMap = new CaseInsensitiveMap<>();
 
-  public Table(Schema schema, String schemaName, String name, String exportDateColumn, LockEscalation lockEscalation, boolean noExport) {
+  public Table(
+      Schema schema,
+      String schemaName,
+      String name,
+      String exportDateColumn,
+      LockEscalation lockEscalation,
+      boolean noExport) {
     this.schema = schema;
     this.schemaName = schemaName;
     this.name = name;

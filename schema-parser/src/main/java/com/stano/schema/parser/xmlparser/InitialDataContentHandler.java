@@ -14,7 +14,8 @@ public class InitialDataContentHandler extends AbstractContentHandler {
 
   private DatabaseType databaseType;
 
-  protected InitialDataContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected InitialDataContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -22,7 +23,8 @@ public class InitialDataContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("sql")) {
       initContentStorage();
 
@@ -30,8 +32,7 @@ public class InitialDataContentHandler extends AbstractContentHandler {
 
       if (StringUtils.isNotBlank(databaseType)) {
         this.databaseType = DatabaseType.fromString(databaseType.toUpperCase());
-      }
-      else {
+      } else {
         this.databaseType = null;
       }
     }
@@ -41,8 +42,7 @@ public class InitialDataContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("initialData")) {
       tableContentHandler.contentHandler = null;
-    }
-    else if (localName.equals("sql")) {
+    } else if (localName.equals("sql")) {
       String content = getContent();
 
       if (StringUtils.isNotBlank(content)) {

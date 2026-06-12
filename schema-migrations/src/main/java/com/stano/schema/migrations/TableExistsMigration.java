@@ -14,10 +14,12 @@ public class TableExistsMigration {
   }
 
   public boolean tableExists() {
-    try (ResultSet rs = connection.getMetaData().getTables(null, null, getAdjustedTableName(), new String[] {"TABLE"})) {
+    try (ResultSet rs =
+        connection
+            .getMetaData()
+            .getTables(null, null, getAdjustedTableName(), new String[] {"TABLE"})) {
       return rs.next();
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }

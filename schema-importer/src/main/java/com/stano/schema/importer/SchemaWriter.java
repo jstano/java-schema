@@ -8,10 +8,9 @@ import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Relation;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-import org.apache.commons.text.StringEscapeUtils;
-
 import java.io.PrintWriter;
 import java.util.List;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class SchemaWriter {
   private final PrintWriter out;
@@ -22,11 +21,13 @@ public class SchemaWriter {
 
   public void outputSchema(Schema schema) {
     out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-    out.println("""
-                  <database xmlns="http://stano.com/database"
-                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xsi:schemaLocation="http://stano.com/database https://raw.githubusercontent.com/jstano/java-schema/refs/heads/main/schema-model/src/resources/schema.xsd"
-                            version="1.0">""");
+    out.println(
+"""
+<database xmlns="http://stano.com/database"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://stano.com/database https://raw.githubusercontent.com/jstano/java-schema/refs/heads/main/schema-model/src/resources/schema.xsd"
+          version="1.0">\
+""");
 
     for (int i = 0; i < schema.getTables().size(); i++) {
       var table = schema.getTables().get(i);
@@ -82,34 +83,35 @@ public class SchemaWriter {
 
     if (columnType == ColumnType.ARRAY) {
       if (column.isRequired()) {
-        out.printf("      <column name=\"%s\" type=\"%s\" elementType=\"%s\" required=\"true\"/>\n",
-                   name,
-                   columnType.toString().toLowerCase(),
-                   column.getElementType().toString().toLowerCase());
+        out.printf(
+            "      <column name=\"%s\" type=\"%s\" elementType=\"%s\" required=\"true\"/>\n",
+            name,
+            columnType.toString().toLowerCase(),
+            column.getElementType().toString().toLowerCase());
+      } else {
+        out.printf(
+            "      <column name=\"%s\" type=\"%s\" elementType=\"%s\"/>\n",
+            name,
+            columnType.toString().toLowerCase(),
+            column.getElementType().toString().toLowerCase());
       }
-      else {
-        out.printf("      <column name=\"%s\" type=\"%s\" elementType=\"%s\"/>\n",
-                   name,
-                   columnType.toString().toLowerCase(),
-                   column.getElementType().toString().toLowerCase());
-      }
-    }
-    else {
+    } else {
       if (column.isRequired()) {
-        out.printf("      <column name=\"%s\" type=\"%s\"%s required=\"true\"%s%s/>\n",
-                   name,
-                   columnType.toString().toLowerCase(),
-                   lengthScale(length, scale),
-                   defaultConstraint(column),
-                   generatedValue(column));
-      }
-      else {
-        out.printf("      <column name=\"%s\" type=\"%s\"%s%s%s/>\n",
-                   name,
-                   columnType.toString().toLowerCase(),
-                   lengthScale(length, scale),
-                   defaultConstraint(column),
-                   generatedValue(column));
+        out.printf(
+            "      <column name=\"%s\" type=\"%s\"%s required=\"true\"%s%s/>\n",
+            name,
+            columnType.toString().toLowerCase(),
+            lengthScale(length, scale),
+            defaultConstraint(column),
+            generatedValue(column));
+      } else {
+        out.printf(
+            "      <column name=\"%s\" type=\"%s\"%s%s%s/>\n",
+            name,
+            columnType.toString().toLowerCase(),
+            lengthScale(length, scale),
+            defaultConstraint(column),
+            generatedValue(column));
       }
     }
   }
@@ -129,7 +131,9 @@ public class SchemaWriter {
   private String defaultConstraint(Column column) {
     String defaultValue = column.getDefaultConstraint();
 
-    if (defaultValue == null || (column.getType() == ColumnType.SEQUENCE || column.getType() == ColumnType.LONGSEQUENCE)) {
+    if (defaultValue == null
+        || (column.getType() == ColumnType.SEQUENCE
+            || column.getType() == ColumnType.LONGSEQUENCE)) {
       return "";
     }
 
@@ -143,15 +147,17 @@ public class SchemaWriter {
       return "";
     }
 
-    return String.format(" generated=\"%s\"", StringEscapeUtils.escapeXml11(generatedValue.replace("\n", "")));
+    return String.format(
+        " generated=\"%s\"", StringEscapeUtils.escapeXml11(generatedValue.replace("\n", "")));
   }
 
   private void outputRelation(Relation relation) {
-    out.printf("      <relation src=\"%s\" table=\"%s\" column=\"%s\" type=\"%s\"/>\n",
-               relation.getFromColumnName(),
-               relation.getToTableName(),
-               relation.getToColumnName(),
-               relation.getType().toString().toLowerCase());
+    out.printf(
+        "      <relation src=\"%s\" table=\"%s\" column=\"%s\" type=\"%s\"/>\n",
+        relation.getFromColumnName(),
+        relation.getToTableName(),
+        relation.getToColumnName(),
+        relation.getType().toString().toLowerCase());
   }
 
   private void outputPrimaryKey(Key key) {
@@ -163,21 +169,23 @@ public class SchemaWriter {
   private void outputUniqueKeys(List<Key> keys) {
     var uniqueKeys = keys.stream().filter(key -> key.getType() == KeyType.UNIQUE).toList();
 
-    uniqueKeys.forEach(key -> {
-      out.printf("      <unique>\n");
-      outputKeyColumns(key);
-      out.printf("      </unique>\n");
-    });
+    uniqueKeys.forEach(
+        key -> {
+          out.printf("      <unique>\n");
+          outputKeyColumns(key);
+          out.printf("      </unique>\n");
+        });
   }
 
   private void outputIndexKeys(List<Key> keys) {
     var indexKeys = keys.stream().filter(key -> key.getType() == KeyType.INDEX).toList();
 
-    indexKeys.forEach(key -> {
-      out.printf("      <index>\n");
-      outputKeyColumns(key);
-      out.printf("      </index>\n");
-    });
+    indexKeys.forEach(
+        key -> {
+          out.printf("      <index>\n");
+          outputKeyColumns(key);
+          out.printf("      </index>\n");
+        });
   }
 
   private void outputConstraints(List<Constraint> constraints) {
@@ -195,8 +203,10 @@ public class SchemaWriter {
   }
 
   private void outputKeyColumns(Key key) {
-    key.getColumns().forEach(keyColumn -> {
-      out.printf("        <column name=\"%s\"/>\n", keyColumn.getName());
-    });
+    key.getColumns()
+        .forEach(
+            keyColumn -> {
+              out.printf("        <column name=\"%s\"/>\n", keyColumn.getName());
+            });
   }
 }

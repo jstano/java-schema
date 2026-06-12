@@ -2,7 +2,6 @@ package com.stano.schema.gendiagram;
 
 import com.stano.schema.model.Schema;
 import com.stano.schema.parser.SchemaParser;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -14,12 +13,12 @@ public class GenDiagram {
 
   public void generateDiagram(Schema schema, DiagramFormat format, PrintWriter writer) {
     try {
-      DiagramGenerator generator = diagramGeneratorFactory.createDiagramGenerator(
-        new DiagramGeneratorOptions(schema, writer, format));
+      DiagramGenerator generator =
+          diagramGeneratorFactory.createDiagramGenerator(
+              new DiagramGeneratorOptions(schema, writer, format));
 
       generator.generate();
-    }
-    finally {
+    } finally {
       writer.close();
     }
   }
@@ -51,11 +50,11 @@ public class GenDiagram {
       Schema schema = new SchemaParser().parseSchema(schemaURL);
 
       GenDiagram genDiagram = new GenDiagram();
-      genDiagram.generateDiagram(schema,
-                                 format,
-                                 new PrintWriter(new FileWriter(createOutputFile(schemaFilename, format))));
-    }
-    catch (Throwable x) {
+      genDiagram.generateDiagram(
+          schema,
+          format,
+          new PrintWriter(new FileWriter(createOutputFile(schemaFilename, format))));
+    } catch (Throwable x) {
       x.printStackTrace();
     }
   }

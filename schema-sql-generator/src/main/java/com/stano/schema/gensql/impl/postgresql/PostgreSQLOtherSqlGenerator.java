@@ -5,15 +5,15 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 public class PostgreSQLOtherSqlGenerator extends OtherSqlGenerator {
 
-   protected PostgreSQLOtherSqlGenerator(SQLGenerator sqlGenerator) {
+  protected PostgreSQLOtherSqlGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputOtherSql(String sql) {
+  @Override
+  protected void outputOtherSql(String sql) {
 
-      sqlWriter.println(sql + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println(sql + statementSeparator);
+    sqlWriter.println();
+  }
 }

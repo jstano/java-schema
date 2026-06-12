@@ -1,22 +1,24 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 class InitialDataTest {
   @ParameterizedTest
   @MethodSource("constructorProvider")
-  @DisplayName("constructor should set fields and getters should return them for various database types")
+  @DisplayName(
+      "constructor should set fields and getters should return them for various database types")
   void testConstructor(String sql, DatabaseType dbType) {
     InitialData init = new InitialData(sql, dbType);
 
@@ -26,9 +28,8 @@ class InitialDataTest {
 
   static Stream<Arguments> constructorProvider() {
     return Stream.of(
-      Arguments.of("insert into t(a) values (1)", DatabaseType.POSTGRES),
-      Arguments.of("INSERT INTO t(a) VALUES (42);", DatabaseType.SQL_SERVER)
-    );
+        Arguments.of("insert into t(a) values (1)", DatabaseType.POSTGRES),
+        Arguments.of("INSERT INTO t(a) VALUES (42);", DatabaseType.SQL_SERVER));
   }
 
   @Test
@@ -48,8 +49,12 @@ class InitialDataTest {
 
     assertTrue(table.getInitialData().isEmpty());
 
-    table.getInitialData().add(new InitialData("insert into orders(id) values (1)", DatabaseType.POSTGRES));
-    table.getInitialData().add(new InitialData("insert into orders(id) values (2)", DatabaseType.POSTGRES));
+    table
+        .getInitialData()
+        .add(new InitialData("insert into orders(id) values (1)", DatabaseType.POSTGRES));
+    table
+        .getInitialData()
+        .add(new InitialData("insert into orders(id) values (2)", DatabaseType.POSTGRES));
 
     List<InitialData> data = table.getInitialData();
     assertEquals(2, data.size());

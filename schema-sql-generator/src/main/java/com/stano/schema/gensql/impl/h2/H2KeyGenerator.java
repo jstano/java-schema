@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 class H2KeyGenerator extends KeyGenerator {
 
-   H2KeyGenerator(SQLGenerator sqlGenerator) {
+  H2KeyGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

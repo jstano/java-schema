@@ -6,19 +6,22 @@ import com.stano.schema.model.Function;
 
 class SQLServerFunctionGenerator extends FunctionGenerator {
 
-   SQLServerFunctionGenerator(SQLGenerator sqlGenerator) {
+  SQLServerFunctionGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputFunction(Function function) {
+  @Override
+  protected void outputFunction(Function function) {
 
-      String functionName = function.getName();
+    String functionName = function.getName();
 
-      sqlWriter.println("if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].[" + functionName + "]') and objectproperty(id, N'IsScalarFunction') = 1)");
-      sqlWriter.println("   drop function dbo." + functionName + statementSeparator);
-      sqlWriter.println(function.getSql() + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println(
+        "if exists (select * from dbo.sysobjects where id = object_id(N'[dbo].["
+            + functionName
+            + "]') and objectproperty(id, N'IsScalarFunction') = 1)");
+    sqlWriter.println("   drop function dbo." + functionName + statementSeparator);
+    sqlWriter.println(function.getSql() + statementSeparator);
+    sqlWriter.println();
+  }
 }

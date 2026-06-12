@@ -4,7 +4,6 @@ import com.stano.jdbcutils.utils.SqlUtils;
 import com.stano.jdbcutils.utils.TransactionalExecutor;
 import com.stano.schema.migrations.MigrationServices;
 import com.stano.schema.model.DatabaseType;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,42 +13,55 @@ public class FlywayDatabaseUpgradeLog {
   private MigrationServices migrationServices = new MigrationServices();
 
   public int start(DatabaseType databaseType, Connection connection, String changeLogResource) {
-    return TransactionalExecutor.withConnection(connection).execute(() -> {
-      ensureDatabaseUpgradeLogTableExists(databaseType, connection);
+    return TransactionalExecutor.withConnection(connection)
+        .execute(
+            () -> {
+              ensureDatabaseUpgradeLogTableExists(databaseType, connection);
 
-      try (Statement statement = connection.createStatement()) {
-        statement.executeUpdate(String.format("insert into databaseupgradelog (StartDateTime,ChangeLogName) values (CURRENT_TIMESTAMP,%s)", //NON-NLS
-                                              SqlUtils.quoteSqlString(changeLogResource.substring(changeLogResource.lastIndexOf("/") + 1))),
-                                Statement.RETURN_GENERATED_KEYS);
+              try (Statement statement = connection.createStatement()) {
+                statement.executeUpdate(
+                    String.format(
+                        "insert into databaseupgradelog (StartDateTime,ChangeLogName) values"
+                            + " (CURRENT_TIMESTAMP,%s)", // NON-NLS
+                        SqlUtils.quoteSqlString(
+                            changeLogResource.substring(changeLogResource.lastIndexOf("/") + 1))),
+                    Statement.RETURN_GENERATED_KEYS);
 
-        try (ResultSet rs = statement.getGeneratedKeys()) {
-          if (rs.next()) {
-            return rs.getInt(1);
-          }
-        }
-      }
+                try (ResultSet rs = statement.getGeneratedKeys()) {
+                  if (rs.next()) {
+                    return rs.getInt(1);
+                  }
+                }
+              }
 
-      return 0;
-    });
+              return 0;
+            });
   }
 
   public void finish(Connection connection, int databaseChangeLogId, String error) {
-    TransactionalExecutor.withConnection(connection).execute(() -> {
-      try (Statement statement = connection.createStatement()) {
-        if (error != null) {
-          statement.executeUpdate(String.format("update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP, Error = %s where ID = %d", //NON-NLS
-                                                SqlUtils.quoteSqlString(error),
-                                                databaseChangeLogId));
-        }
-        else {
-          statement.executeUpdate(String.format("update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP where ID = %d", //NON-NLS
-                                                databaseChangeLogId));
-        }
-      }
-    });
+    TransactionalExecutor.withConnection(connection)
+        .execute(
+            () -> {
+              try (Statement statement = connection.createStatement()) {
+                if (error != null) {
+                  statement.executeUpdate(
+                      String.format(
+                          "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP, Error ="
+                              + " %s where ID = %d", // NON-NLS
+                          SqlUtils.quoteSqlString(error), databaseChangeLogId));
+                } else {
+                  statement.executeUpdate(
+                      String.format(
+                          "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP where ID ="
+                              + " %d", // NON-NLS
+                          databaseChangeLogId));
+                }
+              }
+            });
   }
 
-  private void ensureDatabaseUpgradeLogTableExists(DatabaseType databaseType, Connection connection) throws SQLException {
+  private void ensureDatabaseUpgradeLogTableExists(DatabaseType databaseType, Connection connection)
+      throws SQLException {
     if (!databaseUpgradeLogTableExists(connection)) {
       try (Statement statement = connection.createStatement()) {
         statement.executeUpdate(getDatabaseUpgradeLogDDL(databaseType));
@@ -59,22 +71,36 @@ public class FlywayDatabaseUpgradeLog {
 
   private String getDatabaseUpgradeLogDDL(DatabaseType databaseType) {
     return switch (databaseType) {
-      case SQL_SERVER -> "create table dbo.databaseupgradelog (ID integer identity(1,1) not null,StartDateTime datetime not null,EndDateTime datetime,ChangeLogName varchar(max),Error varchar(max),constraint pk_databaseupgradelog primary key (ID))";//NON-NLS
-      case POSTGRES -> "create table databaseupgradelog (ID serial not null,StartDateTime timestamp not null,EndDateTime timestamp,ChangeLogName text,Error text,constraint pk_databaseupgradelog primary key (ID))";//NON-NLS
-      case H2 -> "create table databaseupgradelog (ID integer generated by default as identity (start with 1) not null,StartDateTime datetime not null,EndDateTime datetime,ChangeLogName longvarchar,Error longvarchar,constraint pk_databaseupgradelog primary key (ID))";//NON-NLS
+      case SQL_SERVER ->
+          "create table dbo.databaseupgradelog (ID integer identity(1,1) not null,StartDateTime"
+              + " datetime not null,EndDateTime datetime,ChangeLogName varchar(max),Error"
+              + " varchar(max),constraint pk_databaseupgradelog primary key (ID))"; // NON-NLS
+      case POSTGRES ->
+          "create table databaseupgradelog (ID serial not null,StartDateTime timestamp not"
+              + " null,EndDateTime timestamp,ChangeLogName text,Error text,constraint"
+              + " pk_databaseupgradelog primary key (ID))"; // NON-NLS
+      case H2 ->
+          "create table databaseupgradelog (ID integer generated by default as identity (start with"
+              + " 1) not null,StartDateTime datetime not null,EndDateTime datetime,ChangeLogName"
+              + " longvarchar,Error longvarchar,constraint pk_databaseupgradelog"
+              + " primary key (ID))"; // NON-NLS
     };
   }
 
   private boolean databaseUpgradeLogTableExists(Connection connection) throws SQLException {
     if (migrationServices.tableExists(connection, "databaseupgradelog")) {
       if (!databaseUpgradeLogHasChangeLogName(connection)) {
-        executeSQL(connection, "alter table databaseupgradelog add ChangeLogName varchar(200)"); //NON-NLS
-        // Legacy tables created by older Liquibase installers may not have explicit primary key constraints
+        executeSQL(
+            connection, "alter table databaseupgradelog add ChangeLogName varchar(200)"); // NON-NLS
+        // Legacy tables created by older Liquibase installers may not have explicit primary key
+        // constraints
         // Only add the constraint if it doesn't already exist
         try {
-          executeSQL(connection, "alter table databaseupgradelog add constraint pk_databaseupgradelog primary key (ID)"); //NON-NLS
-        }
-        catch (SQLException e) {
+          executeSQL(
+              connection,
+              "alter table databaseupgradelog add constraint pk_databaseupgradelog"
+                  + " primary key (ID)"); // NON-NLS
+        } catch (SQLException e) {
           // Constraint already exists, silently ignore
           if (!e.getMessage().contains("already exists")) {
             throw e;

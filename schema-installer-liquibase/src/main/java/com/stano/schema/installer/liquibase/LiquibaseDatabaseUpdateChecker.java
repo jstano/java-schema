@@ -1,21 +1,20 @@
 package com.stano.schema.installer.liquibase;
 
+import java.sql.Connection;
 import liquibase.Contexts;
 import liquibase.LabelExpression;
 import liquibase.Liquibase;
 import liquibase.executor.ExecutorService;
-
-import java.sql.Connection;
 
 public class LiquibaseDatabaseUpdateChecker {
   private LiquibaseFactory liquibaseFactory = new LiquibaseFactory();
 
   public boolean databaseNeedsUpdating(String changeLogResource, Connection connection) {
     try {
-      return databaseNeedsUpdating(liquibaseFactory.createLiquibase(changeLogResource, connection),
-                                   liquibaseFactory.getExecutorService());
-    }
-    catch (Exception x) {
+      return databaseNeedsUpdating(
+          liquibaseFactory.createLiquibase(changeLogResource, connection),
+          liquibaseFactory.getExecutorService());
+    } catch (Exception x) {
       throw new LiquibaseRuntimeException(x);
     }
   }
@@ -23,11 +22,9 @@ public class LiquibaseDatabaseUpdateChecker {
   public boolean databaseNeedsUpdating(Liquibase liquibase, ExecutorService executorService) {
     try {
       return listUnrunWithChecksumRetry(liquibase);
-    }
-    catch (Exception x) {
+    } catch (Exception x) {
       throw new LiquibaseRuntimeException(x);
-    }
-    finally {
+    } finally {
       executorService.clearExecutor("jdbc", liquibase.getDatabase());
     }
   }
@@ -35,8 +32,7 @@ public class LiquibaseDatabaseUpdateChecker {
   private boolean listUnrunWithChecksumRetry(Liquibase liquibase) throws Exception {
     try {
       return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
-    }
-    catch (Exception x) {
+    } catch (Exception x) {
       liquibase.clearCheckSums();
       return !liquibase.listUnrunChangeSets(new Contexts(), new LabelExpression()).isEmpty();
     }

@@ -11,7 +11,8 @@ public class RelationContentHandler extends AbstractContentHandler {
   private final Table table;
   private final TableContentHandler tableContentHandler;
 
-  protected RelationContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected RelationContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -19,15 +20,19 @@ public class RelationContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("relation")) {
-      table.getRelations()
-           .add(new Relation(table.getName(),
-                             atts.getValue("src"),
-                             atts.getValue("table"),
-                             atts.getValue("column"),
-                             RelationType.valueOf(atts.getValue("type").toUpperCase()),
-                             Boolean.parseBoolean(atts.getValue("disableUsageChecking"))));
+      table
+          .getRelations()
+          .add(
+              new Relation(
+                  table.getName(),
+                  atts.getValue("src"),
+                  atts.getValue("table"),
+                  atts.getValue("column"),
+                  RelationType.valueOf(atts.getValue("type").toUpperCase()),
+                  Boolean.parseBoolean(atts.getValue("disableUsageChecking"))));
     }
   }
 

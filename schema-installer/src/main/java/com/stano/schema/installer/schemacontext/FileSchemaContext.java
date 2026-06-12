@@ -1,7 +1,6 @@
 package com.stano.schema.installer.schemacontext;
 
 import com.stano.resourcelocator.ResourceLocator;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,8 +18,7 @@ public class FileSchemaContext extends DefaultSchemaContext {
   public URL getSchemaUrl() {
     try {
       return schemaFile.toURI().toURL();
-    }
-    catch (MalformedURLException x) {
+    } catch (MalformedURLException x) {
       throw new IllegalArgumentException(x);
     }
   }

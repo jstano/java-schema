@@ -15,7 +15,8 @@ public class ConstraintContentHandler extends AbstractContentHandler {
   private String name;
   private DatabaseType databaseType;
 
-  protected ConstraintContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected ConstraintContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -23,7 +24,8 @@ public class ConstraintContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("constraint")) {
       initContentStorage();
 
@@ -33,8 +35,7 @@ public class ConstraintContentHandler extends AbstractContentHandler {
 
       if (StringUtils.isNotBlank(databaseType)) {
         this.databaseType = DatabaseType.fromString(databaseType.toUpperCase());
-      }
-      else {
+      } else {
         this.databaseType = null;
       }
     }
@@ -44,8 +45,7 @@ public class ConstraintContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("constraints")) {
       tableContentHandler.contentHandler = null;
-    }
-    else if (localName.equals("constraint")) {
+    } else if (localName.equals("constraint")) {
       String content = getContent();
 
       if (StringUtils.isNotBlank(content)) {

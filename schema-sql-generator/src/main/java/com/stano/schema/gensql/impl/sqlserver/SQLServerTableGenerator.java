@@ -32,7 +32,10 @@ class SQLServerTableGenerator extends TableGenerator {
     String tableName = getFullyQualifiedTableName(table);
 
     sqlWriter.println("/* " + table.getName() + " */");
-    sqlWriter.println("if exists (select name from dbo.sysobjects where name = '" + table.getName() + "' and type = 'U')");
+    sqlWriter.println(
+        "if exists (select name from dbo.sysobjects where name = '"
+            + table.getName()
+            + "' and type = 'U')");
     sqlWriter.println("drop table " + tableName + statementSeparator);
     sqlWriter.println();
     sqlWriter.println("create table " + tableName);
@@ -43,16 +46,19 @@ class SQLServerTableGenerator extends TableGenerator {
   protected void outputTableFooter(Table table) {
     if (table.getOptions().contains(TableOption.COMPRESS)) {
       sqlWriter.println(") with (data_compression = page)" + statementSeparator);
-    }
-    else {
+    } else {
       sqlWriter.println(")" + statementSeparator);
     }
 
     if (table.getLockEscalation() != null) {
       sqlWriter.println();
-      sqlWriter.println("alter table " + table.getName() + " set (lock_escalation = " + table.getLockEscalation()
-                                                                                             .name()
-                                                                                             .toLowerCase() + ")" + statementSeparator);
+      sqlWriter.println(
+          "alter table "
+              + table.getName()
+              + " set (lock_escalation = "
+              + table.getLockEscalation().name().toLowerCase()
+              + ")"
+              + statementSeparator);
     }
 
     sqlWriter.println();
@@ -85,7 +91,8 @@ class SQLServerTableGenerator extends TableGenerator {
 
   @Override
   protected String getFullyQualifiedTableName(Table table) {
-    String schemaName = table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
+    String schemaName =
+        table.getSchemaName().equalsIgnoreCase("public") ? "dbo" : table.getSchemaName();
     return schemaName + "." + table.getName();
   }
 }

@@ -1,7 +1,6 @@
 package com.stano.schema.gendiagram;
 
 import com.stano.schema.model.Schema;
-
 import java.io.PrintWriter;
 
 public class DiagramGeneratorOptions {

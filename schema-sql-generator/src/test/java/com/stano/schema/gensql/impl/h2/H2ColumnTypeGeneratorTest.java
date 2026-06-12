@@ -1,5 +1,7 @@
 package com.stano.schema.gensql.impl.h2;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.stano.schema.gensql.impl.common.OutputMode;
 import com.stano.schema.gensql.impl.common.SQLGenerator;
 import com.stano.schema.gensql.impl.common.SQLGeneratorOptions;
@@ -16,8 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("H2 column type SQL generation")
 class H2ColumnTypeGeneratorTest {
@@ -74,14 +74,18 @@ class H2ColumnTypeGeneratorTest {
   @Test
   @DisplayName("DECIMAL with precision and scale should produce decimal(p,s)")
   void decimalWithPrecisionAndScaleShouldProduceDecimalPrecisionScale() {
-    Column col = new Column("col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 19, 4, false, null, null, null, null, null, null, null);
     assertEquals("decimal(19,4)", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("DECIMAL with no precision or scale should produce decimal")
   void decimalWithNoPrecisionOrScaleShouldProduceBareDecimal() {
-    Column col = new Column("col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
+    Column col =
+        new Column(
+            "col", ColumnType.DECIMAL, 0, 0, false, null, null, null, null, null, null, null);
     assertEquals("decimal", generator.getColumnTypeSql(null, col));
   }
 
@@ -117,45 +121,109 @@ class H2ColumnTypeGeneratorTest {
     enumType.addValue(new EnumValue("Inactive", "INACTIVE"));
     schema.addEnumType(enumType);
     H2ColumnTypeGenerator enumGenerator = createGenerator(BooleanMode.NATIVE, schema);
-    Column col = new Column("col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Status", null);
+    Column col =
+        new Column(
+            "col", ColumnType.ENUM, 0, 0, false, null, null, null, null, null, "Status", null);
     assertEquals("enum('ACTIVE','INACTIVE')", enumGenerator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of VARCHAR should produce varchar(n) array")
   void arrayOfVarcharShouldProduceVarcharArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 100, 0, false, null, null, null, null, null, null, ColumnType.VARCHAR);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            100,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.VARCHAR);
     assertEquals("varchar(100) array", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of INT should produce INT array (default name)")
   void arrayOfIntShouldProduceIntArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 0, 0, false, null, null, null, null, null, null, ColumnType.INT);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.INT);
     assertEquals("INT array", generator.getColumnTypeSql(null, col));
   }
 
   @Test
   @DisplayName("ARRAY of TEXT should produce character large object array")
   void arrayOfTextShouldProduceCharacterLargeObjectArray() {
-    Column col = new Column("col", ColumnType.ARRAY, 0, 0, false, null, null, null, null, null, null, ColumnType.TEXT);
+    Column col =
+        new Column(
+            "col",
+            ColumnType.ARRAY,
+            0,
+            0,
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            ColumnType.TEXT);
     assertEquals("character large object array", generator.getColumnTypeSql(null, col));
   }
 
   private H2ColumnTypeGenerator createGenerator(BooleanMode booleanMode, Schema schema) {
-    SQLGenerator sqlGen = new SQLGenerator(
-        new SQLGeneratorOptions(schema, null, DatabaseType.H2, ForeignKeyMode.RELATIONS,
-            booleanMode, OutputMode.ALL)) {
-      @Override protected void outputTables() {}
-      @Override protected void outputRelations() {}
-      @Override protected void outputIndexes() {}
-      @Override protected void outputTriggers() {}
-      @Override protected void outputFunctions() {}
-      @Override protected void outputViews() {}
-      @Override protected void outputProcedures() {}
-      @Override protected void outputOtherSqlTop() {}
-      @Override protected void outputOtherSqlBottom() {}
-    };
+    SQLGenerator sqlGen =
+        new SQLGenerator(
+            new SQLGeneratorOptions(
+                schema,
+                null,
+                DatabaseType.H2,
+                ForeignKeyMode.RELATIONS,
+                booleanMode,
+                OutputMode.ALL)) {
+          @Override
+          protected void outputTables() {}
+
+          @Override
+          protected void outputRelations() {}
+
+          @Override
+          protected void outputIndexes() {}
+
+          @Override
+          protected void outputTriggers() {}
+
+          @Override
+          protected void outputFunctions() {}
+
+          @Override
+          protected void outputViews() {}
+
+          @Override
+          protected void outputProcedures() {}
+
+          @Override
+          protected void outputOtherSqlTop() {}
+
+          @Override
+          protected void outputOtherSqlBottom() {}
+        };
     return new H2ColumnTypeGenerator(sqlGen);
   }
 }

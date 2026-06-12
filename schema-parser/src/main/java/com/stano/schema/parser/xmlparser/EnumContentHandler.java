@@ -15,12 +15,12 @@ public class EnumContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("enum")) {
       enumType = new EnumType(atts.getValue("name"));
       schema.addEnumType(enumType);
-    }
-    else if (localName.equals("value")) {
+    } else if (localName.equals("value")) {
       enumValue = new EnumValue(atts.getValue("name"), atts.getValue("code"));
       enumType.addValue(enumValue);
     }
@@ -30,8 +30,7 @@ public class EnumContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     if (localName.equals("enum")) {
       enumType = null;
-    }
-    else if (localName.equals("value")) {
+    } else if (localName.equals("value")) {
       enumValue = null;
     }
   }

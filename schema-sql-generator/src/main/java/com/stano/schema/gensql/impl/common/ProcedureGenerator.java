@@ -6,24 +6,24 @@ import org.slf4j.LoggerFactory;
 
 public abstract class ProcedureGenerator extends BaseGenerator {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureGenerator.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProcedureGenerator.class);
 
-   protected ProcedureGenerator(SQLGenerator sqlGenerator) {
+  protected ProcedureGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   public void outputProcedures() {
+  public void outputProcedures() {
 
-      schema.getProcedures()
-            .stream()
-            .filter(procedure -> procedure.getDatabaseType() == databaseType)
-            .forEach(procedure -> {
-               LOGGER.debug("Generating SQL for procedure " + procedure.getName());
+    schema.getProcedures().stream()
+        .filter(procedure -> procedure.getDatabaseType() == databaseType)
+        .forEach(
+            procedure -> {
+              LOGGER.debug("Generating SQL for procedure " + procedure.getName());
 
-               outputProcedure(procedure);
+              outputProcedure(procedure);
             });
-   }
+  }
 
-   protected abstract void outputProcedure(Procedure procedure);
+  protected abstract void outputProcedure(Procedure procedure);
 }

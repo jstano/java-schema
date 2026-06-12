@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 public class PostgreSQLRelationGenerator extends RelationGenerator {
 
-   protected PostgreSQLRelationGenerator(SQLGenerator sqlGenerator) {
+  protected PostgreSQLRelationGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

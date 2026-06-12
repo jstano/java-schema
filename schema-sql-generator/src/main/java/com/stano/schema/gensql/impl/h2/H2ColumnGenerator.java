@@ -8,50 +8,50 @@ import com.stano.schema.model.Table;
 
 class H2ColumnGenerator extends ColumnGenerator {
 
-   private final ColumnTypeGenerator columnTypeGenerator;
+  private final ColumnTypeGenerator columnTypeGenerator;
 
-   H2ColumnGenerator(SQLGenerator sqlGenerator) {
+  H2ColumnGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
+    super(sqlGenerator);
 
-      this.columnTypeGenerator = new H2ColumnTypeGenerator(sqlGenerator);
-   }
+    this.columnTypeGenerator = new H2ColumnTypeGenerator(sqlGenerator);
+  }
 
-   @Override
-   protected ColumnTypeGenerator getColumnTypeGenerator() {
+  @Override
+  protected ColumnTypeGenerator getColumnTypeGenerator() {
 
-      return columnTypeGenerator;
-   }
+    return columnTypeGenerator;
+  }
 
-   @Override
-   protected String getColumnOptions(Table table, Column column) {
+  @Override
+  protected String getColumnOptions(Table table, Column column) {
 
-      StringBuilder columnOptions = new StringBuilder();
+    StringBuilder columnOptions = new StringBuilder();
 
-      String defaultValue = getDefaultValue(table, column);
+    String defaultValue = getDefaultValue(table, column);
 
-      if (defaultValue != null) {
-         if (columnOptions.length() > 0) {
-            columnOptions.append(' ');
-         }
-
-         columnOptions.append(createDefaultConstraint(table, column, defaultValue));
+    if (defaultValue != null) {
+      if (columnOptions.length() > 0) {
+        columnOptions.append(' ');
       }
 
-      if (column.isRequired()) {
-         if (columnOptions.length() > 0) {
-            columnOptions.append(' ');
-         }
+      columnOptions.append(createDefaultConstraint(table, column, defaultValue));
+    }
 
-         columnOptions.append("not null");
+    if (column.isRequired()) {
+      if (columnOptions.length() > 0) {
+        columnOptions.append(' ');
       }
 
-      return columnOptions.toString().trim();
-   }
+      columnOptions.append("not null");
+    }
 
-   @Override
-   protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
+    return columnOptions.toString().trim();
+  }
 
-      return String.format("default %s", defaultValue);
-   }
+  @Override
+  protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
+
+    return String.format("default %s", defaultValue);
+  }
 }

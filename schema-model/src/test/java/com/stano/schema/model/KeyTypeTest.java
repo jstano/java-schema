@@ -1,18 +1,17 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 class KeyTypeTest {
   @Test
@@ -35,10 +34,9 @@ class KeyTypeTest {
 
   static Stream<Arguments> valueOfProvider() {
     return Stream.of(
-      Arguments.of("PRIMARY", KeyType.PRIMARY),
-      Arguments.of("UNIQUE", KeyType.UNIQUE),
-      Arguments.of("INDEX", KeyType.INDEX)
-    );
+        Arguments.of("PRIMARY", KeyType.PRIMARY),
+        Arguments.of("UNIQUE", KeyType.UNIQUE),
+        Arguments.of("INDEX", KeyType.INDEX));
   }
 
   @Test
@@ -49,15 +47,19 @@ class KeyTypeTest {
   }
 
   @Test
-  @DisplayName("integration: Keys created with each KeyType reflect their type and Table.getPrimaryKey uses PRIMARY")
+  @DisplayName(
+      "integration: Keys created with each KeyType reflect their type and Table.getPrimaryKey uses"
+          + " PRIMARY")
   void testTablePrimaryKey() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table table = new Table(schema, "public", "customer", null, LockEscalation.AUTO, false);
 
-    table.getColumns().addAll(java.util.Arrays.asList(
-      new Column("id", ColumnType.SEQUENCE, 0, true),
-      new Column("code", ColumnType.VARCHAR, 50, false)
-    ));
+    table
+        .getColumns()
+        .addAll(
+            java.util.Arrays.asList(
+                new Column("id", ColumnType.SEQUENCE, 0, true),
+                new Column("code", ColumnType.VARCHAR, 50, false)));
 
     Key idx = new Key(KeyType.INDEX, java.util.Arrays.asList(new KeyColumn("code")));
     Key uq = new Key(KeyType.UNIQUE, java.util.Arrays.asList(new KeyColumn("code")));

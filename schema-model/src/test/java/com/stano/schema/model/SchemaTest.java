@@ -1,15 +1,18 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("Schema")
 class SchemaTest {
@@ -36,7 +39,9 @@ class SchemaTest {
   }
 
   @Test
-  @DisplayName("addTable populates tables and case-insensitive map; getTables unmodifiable; getTable throws when missing")
+  @DisplayName(
+      "addTable populates tables and case-insensitive map; getTables unmodifiable; getTable throws"
+          + " when missing")
   void addTablePopulatesTables() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table tUsers = new Table(schema, "public", "Users", null, LockEscalation.AUTO, false);
@@ -45,11 +50,13 @@ class SchemaTest {
     schema.addTable(tUsers);
     schema.addTable(tOrders);
 
-    assertEquals(schema.getTables().stream().map(Table::getName).toList(), List.of("Users", "orders"));
+    assertEquals(
+        schema.getTables().stream().map(Table::getName).toList(), List.of("Users", "orders"));
 
-    assertThrows(UnsupportedOperationException.class, () ->
-        schema.getTables().add(new Table(schema, "x", "y", null, LockEscalation.AUTO, false))
-    );
+    assertThrows(
+        UnsupportedOperationException.class,
+        () ->
+            schema.getTables().add(new Table(schema, "x", "y", null, LockEscalation.AUTO, false)));
 
     assertEquals(schema.getTable("users"), tUsers);
     assertEquals(schema.getTable("ORDERS"), tOrders);
@@ -61,7 +68,9 @@ class SchemaTest {
   }
 
   @Test
-  @DisplayName("addEnumType stores by name; getEnumType returns, getEnumTypes exposes values; throws when missing")
+  @DisplayName(
+      "addEnumType stores by name; getEnumType returns, getEnumTypes exposes values; throws when"
+          + " missing")
   void addEnumTypeStoresByName() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     EnumType etColor = new EnumType("Color");
@@ -93,15 +102,18 @@ class SchemaTest {
     schema.addTable(t1);
     schema.addTable(t2);
 
-    assertEquals(schema.getTables().stream().map(Table::getName).toList(), List.of("zeta", "alpha", "Beta"));
+    assertEquals(
+        schema.getTables().stream().map(Table::getName).toList(), List.of("zeta", "alpha", "Beta"));
 
     schema.sortTablesByName();
 
-    assertEquals(schema.getTables().stream().map(Table::getName).toList(), List.of("Beta", "alpha", "zeta"));
+    assertEquals(
+        schema.getTables().stream().map(Table::getName).toList(), List.of("Beta", "alpha", "zeta"));
   }
 
   @Test
-  @DisplayName("getViews returns unmodifiable list and preserves distinct-name order for simple case")
+  @DisplayName(
+      "getViews returns unmodifiable list and preserves distinct-name order for simple case")
   void getViewsReturnsUnmodifiableList() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     schema.addView(new View("public", "A", "ga", null));
@@ -114,9 +126,8 @@ class SchemaTest {
     assertEquals(pgViews.stream().map(View::getName).toList(), List.of("a", "B"));
     assertEquals(h2Views.stream().map(View::getName).toList(), List.of("A", "B"));
 
-    assertThrows(UnsupportedOperationException.class, () ->
-        pgViews.add(new View("public", "C", "x", null))
-    );
+    assertThrows(
+        UnsupportedOperationException.class, () -> pgViews.add(new View("public", "C", "x", null)));
   }
 
   @Test
@@ -137,14 +148,18 @@ class SchemaTest {
   }
 
   @Test
-  @DisplayName("buildReverseRelations adds reverse on parent with disableUsageChecking=false (in SchemaSpec)")
+  @DisplayName(
+      "buildReverseRelations adds reverse on parent with disableUsageChecking=false (in"
+          + " SchemaSpec)")
   void buildReverseRelationsAddsReverseOnParent() throws MalformedURLException {
     Schema schema = new Schema(new URL("https://example.com/schema.json"));
     Table parent = new Table(schema, "public", "users", null, LockEscalation.AUTO, false);
     Table child = new Table(schema, "public", "orders", null, LockEscalation.AUTO, false);
     parent.getColumns().add(new Column("id", ColumnType.SEQUENCE, 0, true));
     child.getColumns().add(new Column("user_id", ColumnType.INT, 0, false));
-    child.getRelations().add(new Relation("orders", "user_id", "users", "id", RelationType.CASCADE, true));
+    child
+        .getRelations()
+        .add(new Relation("orders", "user_id", "users", "id", RelationType.CASCADE, true));
     schema.addTable(parent);
     schema.addTable(child);
 
@@ -167,7 +182,9 @@ class SchemaTest {
     Table childReq = new Table(schema, "public", "child_req", null, LockEscalation.AUTO, false);
     parent.getColumns().add(new Column("id", ColumnType.SEQUENCE, 0, true));
     childReq.getColumns().add(new Column("parent_id", ColumnType.INT, 0, true));
-    childReq.getRelations().add(new Relation("child_req", "parent_id", "parent", "id", RelationType.SETNULL, false));
+    childReq
+        .getRelations()
+        .add(new Relation("child_req", "parent_id", "parent", "id", RelationType.SETNULL, false));
     schema.addTable(parent);
     schema.addTable(childReq);
 

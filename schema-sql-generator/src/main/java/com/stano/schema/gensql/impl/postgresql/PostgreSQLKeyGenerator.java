@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 public class PostgreSQLKeyGenerator extends KeyGenerator {
 
-   PostgreSQLKeyGenerator(SQLGenerator sqlGenerator) {
+  PostgreSQLKeyGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

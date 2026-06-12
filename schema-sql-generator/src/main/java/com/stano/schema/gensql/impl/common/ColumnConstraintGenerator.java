@@ -5,7 +5,6 @@ import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
 import com.stano.schema.model.EnumValue;
 import com.stano.schema.model.Table;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,10 @@ public class ColumnConstraintGenerator extends BaseGenerator {
   public List<String> getColumnCheckConstraints(Table table) {
     List<Column> columns = table.getColumnsWithCheckConstraints(booleanMode);
 
-    return columns.stream().map(column -> generateConstraint(table, column)).filter(c -> c != null).collect(Collectors.toList());
+    return columns.stream()
+        .map(column -> generateConstraint(table, column))
+        .filter(c -> c != null)
+        .collect(Collectors.toList());
   }
 
   protected String getCheckConstraintSQL(Column column) {
@@ -47,9 +49,8 @@ public class ColumnConstraintGenerator extends BaseGenerator {
     if (checkSql == null) {
       return null;
     }
-    return String.format("   constraint %s %s",
-                         getConstraintName(table.getName(), column.getName()),
-                         checkSql);
+    return String.format(
+        "   constraint %s %s", getConstraintName(table.getName(), column.getName()), checkSql);
   }
 
   private String getConstraintName(String tableName, String columnName) {
@@ -85,9 +86,10 @@ public class ColumnConstraintGenerator extends BaseGenerator {
   private String buildEnumCheckConstraintSql(Column column) {
     List<EnumValue> enumValues = schema.getEnumType(column.getEnumType()).getValues();
 
-    return String.format("check(%s in (%s))",
-                         column.getName(),
-                         enumValues.stream().map(it -> "'" + it.getCode() + "'").collect(Collectors.joining(",")));
+    return String.format(
+        "check(%s in (%s))",
+        column.getName(),
+        enumValues.stream().map(it -> "'" + it.getCode() + "'").collect(Collectors.joining(",")));
   }
 
   private String buildMinMaxConstraintSql(Column column) {

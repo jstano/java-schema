@@ -1,11 +1,8 @@
 package com.stano.schema.installer.flyway;
 
-import com.stano.schema.model.DatabaseType;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.stano.schema.model.DatabaseType;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,8 +10,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("FlywayMigrationExecutor")
 class FlywayMigrationExecutorTest {
@@ -24,7 +23,8 @@ class FlywayMigrationExecutorTest {
 
   @BeforeEach
   void setUp() throws SQLException {
-    conn = DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
+    conn =
+        DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
     executor = new FlywayMigrationExecutor();
   }
 
@@ -49,9 +49,7 @@ class FlywayMigrationExecutorTest {
       throw new RuntimeException(e);
     }
 
-    assertDoesNotThrow(() ->
-        executor.executeSqlFile(DatabaseType.H2, tempFile, conn)
-    );
+    assertDoesNotThrow(() -> executor.executeSqlFile(DatabaseType.H2, tempFile, conn));
 
     tempFile.delete();
   }
@@ -66,9 +64,7 @@ class FlywayMigrationExecutorTest {
       throw new RuntimeException(e);
     }
 
-    assertDoesNotThrow(() ->
-        executor.executeSqlFile(DatabaseType.H2, tempFile, conn)
-    );
+    assertDoesNotThrow(() -> executor.executeSqlFile(DatabaseType.H2, tempFile, conn));
 
     tempFile.delete();
   }

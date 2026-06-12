@@ -1,23 +1,25 @@
 package com.stano.schema.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("OtherSql")
 class OtherSqlTest {
 
   @ParameterizedTest
   @MethodSource("provideOtherSqlTestCases")
-  @DisplayName("constructor should set fields and getters should return them for various combinations")
+  @DisplayName(
+      "constructor should set fields and getters should return them for various combinations")
   void constructorShouldSetFields(DatabaseType dbType, OtherSqlOrder ord, String sql) {
     OtherSql other = new OtherSql(dbType, ord, sql);
 
@@ -28,10 +30,11 @@ class OtherSqlTest {
 
   private static Stream<Object[]> provideOtherSqlTestCases() {
     return Stream.of(
-        new Object[]{DatabaseType.POSTGRES, OtherSqlOrder.TOP, "CREATE EXTENSION IF NOT EXISTS uuid-ossp;"},
-        new Object[]{DatabaseType.SQL_SERVER, OtherSqlOrder.BOTTOM, "PRINT 'Done';"},
-        new Object[]{DatabaseType.H2, OtherSqlOrder.BOTTOM, "-- noop"}
-    );
+        new Object[] {
+          DatabaseType.POSTGRES, OtherSqlOrder.TOP, "CREATE EXTENSION IF NOT EXISTS uuid-ossp;"
+        },
+        new Object[] {DatabaseType.SQL_SERVER, OtherSqlOrder.BOTTOM, "PRINT 'Done';"},
+        new Object[] {DatabaseType.H2, OtherSqlOrder.BOTTOM, "-- noop"});
   }
 
   @Test
@@ -56,8 +59,8 @@ class OtherSqlTest {
 
     assertEquals(schema.getOtherSql().stream().map(OtherSql::getSql).toList(), List.of("A;", "B;"));
 
-    assertThrows(UnsupportedOperationException.class, () ->
-        schema.getOtherSql().add(new OtherSql(DatabaseType.H2, OtherSqlOrder.TOP, "C;"))
-    );
+    assertThrows(
+        UnsupportedOperationException.class,
+        () -> schema.getOtherSql().add(new OtherSql(DatabaseType.H2, OtherSqlOrder.TOP, "C;")));
   }
 }

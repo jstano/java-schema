@@ -1,5 +1,6 @@
 package com.stano.buildlogic
 
+import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -15,11 +16,13 @@ import org.gradle.kotlin.dsl.withType
 import org.gradle.testing.jacoco.tasks.JacocoReport
 
 class JavaLibraryConventionPlugin : Plugin<Project> {
-  override fun apply(project: Project) = with(project) {
+  override fun apply(project: Project) {
+    with(project) {
     plugins.apply("java-library")
     plugins.apply("jacoco")
     plugins.apply("maven-publish")
     plugins.apply("signing")
+    plugins.apply("com.diffplug.spotless")
 
     configurations.all {
       exclude(group = "commons-logging", module = "commons-logging")
@@ -62,6 +65,23 @@ class JavaLibraryConventionPlugin : Plugin<Project> {
         html.required.set(true)
         xml.required.set(true)
       }
+    }
+
+    extensions.configure<SpotlessExtension> {
+      java {
+        googleJavaFormat("1.35.0")
+          .reflowLongStrings()
+          .formatJavadoc(true)
+        endWithNewline()
+        importOrder()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+      }
+    }
+
+    tasks.named("check") {
+      dependsOn("spotlessCheck")
+    }
     }
   }
 

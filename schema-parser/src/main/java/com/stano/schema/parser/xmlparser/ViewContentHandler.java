@@ -15,10 +15,14 @@ public class ViewContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("view")) {
       name = atts.getValue("name");
-      databaseType = atts.getValue("databaseType") == null ? null : DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
+      databaseType =
+          atts.getValue("databaseType") == null
+              ? null
+              : DatabaseType.fromString(atts.getValue("databaseType").toUpperCase());
 
       initContentStorage();
     }

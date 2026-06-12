@@ -2,12 +2,11 @@ package com.stano.schema.gensql.impl.common;
 
 import com.stano.schema.model.InitialData;
 import com.stano.schema.model.Table;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class TableGenerator extends BaseGenerator {
   private static final Logger LOGGER = LoggerFactory.getLogger(TableGenerator.class);
@@ -47,12 +46,14 @@ public abstract class TableGenerator extends BaseGenerator {
   }
 
   protected void outputTableDefinition(Table table) {
-    List<String> tableDefinitions = Stream.of(getColumnGenerator().getColumnDefinitions(table),
-                                              getKeyGenerator().getKeyConstraints(table),
-                                              getColumnConstraintGenerator().getColumnCheckConstraints(table),
-                                              getTableConstraintGenerator().getTableCheckConstraints(table))
-                                          .flatMap(Collection::stream)
-                                          .toList();
+    List<String> tableDefinitions =
+        Stream.of(
+                getColumnGenerator().getColumnDefinitions(table),
+                getKeyGenerator().getKeyConstraints(table),
+                getColumnConstraintGenerator().getColumnCheckConstraints(table),
+                getTableConstraintGenerator().getTableCheckConstraints(table))
+            .flatMap(Collection::stream)
+            .toList();
 
     for (int i = 0; i < tableDefinitions.size(); i++) {
       String sql = tableDefinitions.get(i);
@@ -77,15 +78,16 @@ public abstract class TableGenerator extends BaseGenerator {
   }
 
   protected void outputInitialData(Table table) {
-    List<InitialData> initialDataList = table.getInitialData()
-                                             .stream()
-                                             .filter(it -> it.getDatabaseType() == null || it.getDatabaseType() == databaseType)
-                                             .toList();
+    List<InitialData> initialDataList =
+        table.getInitialData().stream()
+            .filter(it -> it.getDatabaseType() == null || it.getDatabaseType() == databaseType)
+            .toList();
 
     if (!initialDataList.isEmpty()) {
-      initialDataList.forEach(initialData -> {
-        sqlWriter.println(initialData.getSql() + statementSeparator);
-      });
+      initialDataList.forEach(
+          initialData -> {
+            sqlWriter.println(initialData.getSql() + statementSeparator);
+          });
 
       sqlWriter.println();
     }

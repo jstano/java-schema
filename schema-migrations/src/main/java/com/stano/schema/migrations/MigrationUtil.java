@@ -18,12 +18,10 @@ public final class MigrationUtil {
       }
 
       return identifier;
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }
 
-  private MigrationUtil() {
-  }
+  private MigrationUtil() {}
 }

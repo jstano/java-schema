@@ -1,7 +1,6 @@
 package com.stano.schema.migrations;
 
 import com.stano.jdbcutils.utils.ExecuteWithStatement;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -40,13 +39,11 @@ public class DropColumnConstraintsMigration implements ExecuteWithStatement<Void
 
             if (constraintType.equalsIgnoreCase(checkConstraintText)) {
               constraints.add(constraintName);
-            }
-            else if (constraintType.equalsIgnoreCase(defaultConstraintText)) {
+            } else if (constraintType.equalsIgnoreCase(defaultConstraintText)) {
               constraints.add(constraintName);
             }
           }
-        }
-        finally {
+        } finally {
           rs.close();
         }
       }
@@ -56,8 +53,7 @@ public class DropColumnConstraintsMigration implements ExecuteWithStatement<Void
       }
 
       return null;
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new MigrationException(x);
     }
   }

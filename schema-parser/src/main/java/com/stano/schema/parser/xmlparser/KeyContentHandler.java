@@ -5,11 +5,10 @@ import com.stano.schema.model.KeyColumn;
 import com.stano.schema.model.KeyType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class KeyContentHandler extends AbstractContentHandler {
   private final Table table;
@@ -30,7 +29,8 @@ public class KeyContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("primary") || localName.equals("unique") || localName.equals("index")) {
       keyType = KeyType.valueOf(localName.toUpperCase());
       cluster = Boolean.parseBoolean(atts.getValue("cluster"));
@@ -38,8 +38,7 @@ public class KeyContentHandler extends AbstractContentHandler {
       unique = Boolean.parseBoolean(atts.getValue("unique"));
       include = atts.getValue("include");
       columns.clear();
-    }
-    else if (localName.equals("column")) {
+    } else if (localName.equals("column")) {
       columns.add(new KeyColumn(atts.getValue("name")));
     }
   }
@@ -48,8 +47,10 @@ public class KeyContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
       case "keys" -> tableContentHandler.contentHandler = null;
-      case "primary", "unique" -> table.getKeys().add(new Key(keyType, columns, cluster, compress, true, include));
-      case "index" -> table.getIndexes().add(new Key(keyType, columns, false, compress, unique, include));
+      case "primary", "unique" ->
+          table.getKeys().add(new Key(keyType, columns, cluster, compress, true, include));
+      case "index" ->
+          table.getIndexes().add(new Key(keyType, columns, false, compress, unique, include));
     }
   }
 }

@@ -112,10 +112,9 @@ public abstract class ColumnTypeGenerator extends BaseGenerator {
       return getArraySql(column);
     }
 
-    return String.format("ERROR: Invalid type '%s' for table '%s' and column '%s'",
-                         columnType,
-                         getFullyQualifiedTableName(table),
-                         column.getName());
+    return String.format(
+        "ERROR: Invalid type '%s' for table '%s' and column '%s'",
+        columnType, getFullyQualifiedTableName(table), column.getName());
   }
 
   protected abstract String getSequenceSql();

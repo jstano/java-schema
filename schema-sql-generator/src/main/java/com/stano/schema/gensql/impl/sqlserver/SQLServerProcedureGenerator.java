@@ -6,15 +6,15 @@ import com.stano.schema.model.Procedure;
 
 class SQLServerProcedureGenerator extends ProcedureGenerator {
 
-   SQLServerProcedureGenerator(SQLGenerator sqlGenerator) {
+  SQLServerProcedureGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected void outputProcedure(Procedure procedure) {
+  @Override
+  protected void outputProcedure(Procedure procedure) {
 
-      sqlWriter.println(procedure.getSql() + statementSeparator);
-      sqlWriter.println();
-   }
+    sqlWriter.println(procedure.getSql() + statementSeparator);
+    sqlWriter.println();
+  }
 }

@@ -1,15 +1,17 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.HashSet;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BooleanModeTest {
   @Test
@@ -19,7 +21,7 @@ class BooleanModeTest {
     for (int i = 0; i < BooleanMode.values().length; i++) {
       names[i] = BooleanMode.values()[i].name();
     }
-    assertArrayEquals(new String[]{"NATIVE", "YES_NO", "YN"}, names);
+    assertArrayEquals(new String[] {"NATIVE", "YES_NO", "YN"}, names);
   }
 
   @ParameterizedTest
@@ -32,10 +34,9 @@ class BooleanModeTest {
 
   static Stream<Arguments> valueOfProvider() {
     return Stream.of(
-      Arguments.of("NATIVE", BooleanMode.NATIVE),
-      Arguments.of("YES_NO", BooleanMode.YES_NO),
-      Arguments.of("YN", BooleanMode.YN)
-    );
+        Arguments.of("NATIVE", BooleanMode.NATIVE),
+        Arguments.of("YES_NO", BooleanMode.YES_NO),
+        Arguments.of("YN", BooleanMode.YN));
   }
 
   @Test
@@ -56,24 +57,13 @@ class BooleanModeTest {
   }
 
   @Test
-  @DisplayName("Column.needsCheckConstraints true when explicit constraints regardless of BooleanMode")
+  @DisplayName(
+      "Column.needsCheckConstraints true when explicit constraints regardless of BooleanMode")
   void testColumnNeedsCheckConstraintsWithExplicitConstraints() {
     Column colWithCheck = new Column("x", ColumnType.INT, 0, false, "x > 0");
 
-    Column colWithAll = new Column(
-      "y",
-      ColumnType.DECIMAL,
-      10,
-      2,
-      false,
-      null,
-      null,
-      null,
-      "0",
-      "100",
-      null,
-      null
-    );
+    Column colWithAll =
+        new Column("y", ColumnType.DECIMAL, 10, 2, false, null, null, null, "0", "100", null, null);
 
     assertTrue(colWithCheck.needsCheckConstraints(BooleanMode.NATIVE));
     assertTrue(colWithCheck.needsCheckConstraints(BooleanMode.YES_NO));

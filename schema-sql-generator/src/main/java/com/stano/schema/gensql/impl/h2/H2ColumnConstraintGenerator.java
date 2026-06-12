@@ -7,16 +7,16 @@ import com.stano.schema.model.ColumnType;
 
 class H2ColumnConstraintGenerator extends ColumnConstraintGenerator {
 
-   H2ColumnConstraintGenerator(SQLGenerator sqlGenerator) {
+  H2ColumnConstraintGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 
-   @Override
-   protected String getCheckConstraintSQL(Column column) {
-      if (column.getType() == ColumnType.ENUM) {
-         return null;
-      }
-      return super.getCheckConstraintSQL(column);
-   }
+  @Override
+  protected String getCheckConstraintSQL(Column column) {
+    if (column.getType() == ColumnType.ENUM) {
+      return null;
+    }
+    return super.getCheckConstraintSQL(column);
+  }
 }

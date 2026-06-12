@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 class SQLServerColumnConstraintGenerator extends ColumnConstraintGenerator {
 
-   SQLServerColumnConstraintGenerator(SQLGenerator sqlGenerator) {
+  SQLServerColumnConstraintGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

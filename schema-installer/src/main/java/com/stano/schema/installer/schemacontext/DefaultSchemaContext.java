@@ -6,7 +6,6 @@ import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
 import com.stano.schema.model.Version;
 import com.stano.schema.parser.SchemaParser;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -62,6 +61,5 @@ public abstract class DefaultSchemaContext implements SchemaContext {
   }
 
   @Override
-  public void schemaInstalled(Connection connection) throws SQLException {
-  }
+  public void schemaInstalled(Connection connection) throws SQLException {}
 }

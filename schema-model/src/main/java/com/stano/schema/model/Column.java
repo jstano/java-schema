@@ -14,10 +14,7 @@ public class Column {
   private final String enumType;
   private final ColumnType elementType;
 
-  public Column(String name,
-                ColumnType type,
-                int length,
-                boolean required) {
+  public Column(String name, ColumnType type, int length, boolean required) {
     this.name = name;
     this.type = type;
     this.length = length;
@@ -32,11 +29,8 @@ public class Column {
     this.elementType = null;
   }
 
-  public Column(String name,
-                ColumnType type,
-                int length,
-                boolean required,
-                String checkConstraint) {
+  public Column(
+      String name, ColumnType type, int length, boolean required, String checkConstraint) {
     this.name = name;
     this.type = type;
     this.length = length;
@@ -51,18 +45,19 @@ public class Column {
     this.elementType = null;
   }
 
-  public Column(String name,
-                ColumnType type,
-                int length,
-                int scale,
-                boolean required,
-                String checkConstraint,
-                String defaultConstraint,
-                String generated,
-                String minValue,
-                String maxValue,
-                String enumType,
-                ColumnType elementType) {
+  public Column(
+      String name,
+      ColumnType type,
+      int length,
+      int scale,
+      boolean required,
+      String checkConstraint,
+      String defaultConstraint,
+      String generated,
+      String minValue,
+      String maxValue,
+      String enumType,
+      ColumnType elementType) {
     this.name = name;
     this.type = type;
     this.length = length;
@@ -126,7 +121,11 @@ public class Column {
   }
 
   public boolean needsCheckConstraints(BooleanMode booleanMode) {
-    return checkConstraint != null || minValue != null || maxValue != null || enumType != null || (type == ColumnType.BOOLEAN && booleanMode != BooleanMode.NATIVE);
+    return checkConstraint != null
+        || minValue != null
+        || maxValue != null
+        || enumType != null
+        || (type == ColumnType.BOOLEAN && booleanMode != BooleanMode.NATIVE);
   }
 
   public boolean hasMinOrMaxValue() {

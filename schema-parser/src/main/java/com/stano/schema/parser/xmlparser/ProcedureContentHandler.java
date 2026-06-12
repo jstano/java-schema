@@ -3,11 +3,10 @@ package com.stano.schema.parser.xmlparser;
 import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.Procedure;
 import com.stano.schema.model.Schema;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 public class ProcedureContentHandler extends AbstractContentHandler {
   private String name;
@@ -19,7 +18,8 @@ public class ProcedureContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     switch (localName) {
       case "procedure" -> {
         name = atts.getValue("name");
@@ -35,9 +35,16 @@ public class ProcedureContentHandler extends AbstractContentHandler {
   @Override
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
-      case "procedure" -> vendorSqlList.forEach(vendorSql -> {
-        schema.addProcedure(new Procedure(getCurrentSchemaName(), name, vendorSql.getDatabaseType(), vendorSql.getSql()));
-      });
+      case "procedure" ->
+          vendorSqlList.forEach(
+              vendorSql -> {
+                schema.addProcedure(
+                    new Procedure(
+                        getCurrentSchemaName(),
+                        name,
+                        vendorSql.getDatabaseType(),
+                        vendorSql.getSql()));
+              });
       case "sql" -> vendorSqlList.add(new VendorSql(databaseType, getContent()));
     }
   }

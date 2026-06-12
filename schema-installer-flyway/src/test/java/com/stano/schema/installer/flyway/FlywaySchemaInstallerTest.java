@@ -1,7 +1,16 @@
 package com.stano.schema.installer.flyway;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.mockito.Mockito.verify;
+
 import com.stano.schema.installer.SchemaInstaller;
 import com.stano.schema.model.DatabaseType;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,16 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 @DisplayName("FlywaySchemaInstaller")
 class FlywaySchemaInstallerTest {
@@ -27,12 +26,12 @@ class FlywaySchemaInstallerTest {
   private Connection conn;
   private FlywaySchemaInstaller installer;
 
-  @Mock
-  private FlywayMigrationExecutor mockExecutor;
+  @Mock private FlywayMigrationExecutor mockExecutor;
 
   @BeforeEach
   void setUp() throws SQLException {
-    conn = DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
+    conn =
+        DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
     installer = new FlywaySchemaInstaller();
   }
 
@@ -67,13 +66,15 @@ class FlywaySchemaInstallerTest {
   }
 
   @Test
-  @DisplayName("executePostCreateScript delegates to FlywayMigrationExecutor with derived DatabaseType")
+  @DisplayName(
+      "executePostCreateScript delegates to FlywayMigrationExecutor with derived DatabaseType")
   void executePostCreateScriptDelegatesToFlywayMigrationExecutorWithDerivedDatabaseType() {
     installer.setFlywayMigrationExecutor(mockExecutor);
 
     installer.executePostCreateScript(conn, "com/example/post-create.sql");
 
-    verify(mockExecutor).executeClasspathSqlLocation(DatabaseType.H2, "com/example/post-create.sql", conn);
+    verify(mockExecutor)
+        .executeClasspathSqlLocation(DatabaseType.H2, "com/example/post-create.sql", conn);
   }
 
   @Test

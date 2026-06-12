@@ -1,11 +1,10 @@
 package com.stano.schema.installer.liquibase;
 
-import liquibase.database.core.H2Database;
-import liquibase.database.jvm.JdbcConnection;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,8 +12,12 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
+import liquibase.database.core.H2Database;
+import liquibase.database.jvm.JdbcConnection;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("DatabaseUpgradeLog")
 class DatabaseUpgradeLogTest {
@@ -25,7 +28,8 @@ class DatabaseUpgradeLogTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    conn = DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
+    conn =
+        DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
     h2db = new H2Database();
     h2db.setConnection(new JdbcConnection(conn));
     log = new DatabaseUpgradeLog();
@@ -102,17 +106,16 @@ class DatabaseUpgradeLogTest {
 
   private boolean tableExists(String tableName) {
     try (Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery("select * from " + tableName + " limit 1")) {
+        ResultSet rs = stmt.executeQuery("select * from " + tableName + " limit 1")) {
       return true;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       return false;
     }
   }
 
   private Map<String, Object> getLogRow(int id) {
     try (Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery("select * from databaseupgradelog where ID = " + id)) {
+        ResultSet rs = stmt.executeQuery("select * from databaseupgradelog where ID = " + id)) {
       if (rs.next()) {
         Map<String, Object> row = new HashMap<>();
         row.put("ChangeLogName", rs.getString("ChangeLogName"));
@@ -121,8 +124,7 @@ class DatabaseUpgradeLogTest {
         row.put("Error", rs.getString("Error"));
         return row;
       }
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
     return null;

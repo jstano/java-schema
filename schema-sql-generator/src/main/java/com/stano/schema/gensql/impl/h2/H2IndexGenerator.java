@@ -5,8 +5,8 @@ import com.stano.schema.gensql.impl.common.SQLGenerator;
 
 class H2IndexGenerator extends IndexGenerator {
 
-   H2IndexGenerator(SQLGenerator sqlGenerator) {
+  H2IndexGenerator(SQLGenerator sqlGenerator) {
 
-      super(sqlGenerator);
-   }
+    super(sqlGenerator);
+  }
 }

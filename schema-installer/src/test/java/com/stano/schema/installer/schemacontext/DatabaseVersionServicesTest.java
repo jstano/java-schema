@@ -1,18 +1,17 @@
 package com.stano.schema.installer.schemacontext;
 
-import com.stano.schema.model.Version;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.stano.schema.model.Version;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 @DisplayName("DatabaseVersionServices")
 class DatabaseVersionServicesTest {
@@ -22,7 +21,8 @@ class DatabaseVersionServicesTest {
 
   @BeforeEach
   void setUp() throws Exception {
-    conn = DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
+    conn =
+        DriverManager.getConnection("jdbc:h2:mem:test_" + System.nanoTime() + ";MODE=PostgreSQL");
     services = new DatabaseVersionServices();
   }
 
@@ -63,7 +63,7 @@ class DatabaseVersionServicesTest {
     services.getVersion(conn);
 
     try (Statement stmt = conn.createStatement();
-         ResultSet rs = stmt.executeQuery("select version from databaseversion")) {
+        ResultSet rs = stmt.executeQuery("select version from databaseversion")) {
       assertNotNull(rs);
     }
   }

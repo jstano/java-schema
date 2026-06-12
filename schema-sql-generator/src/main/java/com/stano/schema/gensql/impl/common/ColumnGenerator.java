@@ -4,10 +4,9 @@ import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.Column;
 import com.stano.schema.model.ColumnType;
 import com.stano.schema.model.Table;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 public abstract class ColumnGenerator extends BaseGenerator {
   private static final String DF_PREFIX = "df_";
@@ -17,10 +16,9 @@ public abstract class ColumnGenerator extends BaseGenerator {
   }
 
   public List<String> getColumnDefinitions(Table table) {
-    return table.getColumns()
-                .stream()
-                .map(column -> getColumnSql(table, column))
-                .collect(Collectors.toList());
+    return table.getColumns().stream()
+        .map(column -> getColumnSql(table, column))
+        .collect(Collectors.toList());
   }
 
   protected abstract ColumnTypeGenerator getColumnTypeGenerator();
@@ -29,10 +27,15 @@ public abstract class ColumnGenerator extends BaseGenerator {
     String columnOptions = getColumnOptions(table, column);
 
     if (StringUtils.isNotBlank(columnOptions)) {
-      return String.format("   %s %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column), columnOptions);
+      return String.format(
+          "   %s %s %s",
+          column.getName(),
+          getColumnTypeGenerator().getColumnTypeSql(table, column),
+          columnOptions);
     }
 
-    return String.format("   %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column));
+    return String.format(
+        "   %s %s", column.getName(), getColumnTypeGenerator().getColumnTypeSql(table, column));
   }
 
   protected String getColumnOptions(Table table, Column column) {
@@ -71,22 +74,21 @@ public abstract class ColumnGenerator extends BaseGenerator {
       if (defaultValue != null) {
         if (defaultValue.equalsIgnoreCase("null")) {
           defaultValue = null;
-        }
-        else {
+        } else {
           defaultValue = convertBooleanDefaultConstraint(Boolean.parseBoolean(defaultValue));
         }
-      }
-      else {
+      } else {
         defaultValue = convertBooleanDefaultConstraint(false);
       }
-    }
-    else if (column.getType() == ColumnType.UUID) {
+    } else if (column.getType() == ColumnType.UUID) {
       List<String> primaryKeyColumns = table.getPrimaryKeyColumns();
 
-      if (column.isRequired() && primaryKeyColumns.size() == 1 && primaryKeyColumns.contains(column.getName()) && table.getColumnRelation(column) == null) {
+      if (column.isRequired()
+          && primaryKeyColumns.size() == 1
+          && primaryKeyColumns.contains(column.getName())
+          && table.getColumnRelation(column) == null) {
         return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
-      }
-      else if (defaultValue != null && defaultValue.equalsIgnoreCase("generate_uuid()")) {
+      } else if (defaultValue != null && defaultValue.equalsIgnoreCase("generate_uuid()")) {
         return getColumnTypeGenerator().getUUIDDefaultValueSql(table.getSchema());
       }
     }
@@ -95,9 +97,9 @@ public abstract class ColumnGenerator extends BaseGenerator {
   }
 
   protected String createDefaultConstraint(Table table, Column column, String defaultValue) {
-    return String.format("constraint %s default %s",
-                         buildDefaultConstraintName(table.getName(), column.getName()),
-                         defaultValue);
+    return String.format(
+        "constraint %s default %s",
+        buildDefaultConstraintName(table.getName(), column.getName()), defaultValue);
   }
 
   protected String convertBooleanDefaultConstraint(boolean defaultValue) {

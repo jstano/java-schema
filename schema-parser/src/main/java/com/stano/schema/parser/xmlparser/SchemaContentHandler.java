@@ -1,13 +1,12 @@
 package com.stano.schema.parser.xmlparser;
 
 import com.stano.schema.model.Schema;
+import java.net.URL;
+import java.util.Stack;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-
-import java.net.URL;
-import java.util.Stack;
 
 public class SchemaContentHandler extends AbstractContentHandler {
   private final URL schemaURL;
@@ -43,7 +42,8 @@ public class SchemaContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     ContentHandler currentContentHandler = getCurrentContentHandler();
 
     if (currentContentHandler != null) {

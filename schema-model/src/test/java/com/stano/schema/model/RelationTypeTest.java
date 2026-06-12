@@ -1,15 +1,16 @@
 package com.stano.schema.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.HashSet;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.HashSet;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class RelationTypeTest {
   @Test
@@ -33,11 +34,10 @@ class RelationTypeTest {
 
   static Stream<Arguments> valueOfProvider() {
     return Stream.of(
-      Arguments.of("CASCADE", RelationType.CASCADE),
-      Arguments.of("ENFORCE", RelationType.ENFORCE),
-      Arguments.of("SETNULL", RelationType.SETNULL),
-      Arguments.of("DONOTHING", RelationType.DONOTHING)
-    );
+        Arguments.of("CASCADE", RelationType.CASCADE),
+        Arguments.of("ENFORCE", RelationType.ENFORCE),
+        Arguments.of("SETNULL", RelationType.SETNULL),
+        Arguments.of("DONOTHING", RelationType.DONOTHING));
   }
 
   @Test

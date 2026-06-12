@@ -3,11 +3,10 @@ package com.stano.schema.gensql.impl.common;
 import com.stano.schema.model.DatabaseType;
 import com.stano.schema.model.ForeignKeyMode;
 import com.stano.schema.model.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.PrintWriter;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SQLGenerator {
   private static final Logger logger = LoggerFactory.getLogger(SQLGenerator.class);
@@ -33,7 +32,8 @@ public abstract class SQLGenerator {
 
   public void generate() {
     if (logger.isDebugEnabled()) {
-      logger.debug(String.format("Generating SQL for '%s'", schema.getSchemaURL().toExternalForm()));
+      logger.debug(
+          String.format("Generating SQL for '%s'", schema.getSchemaURL().toExternalForm()));
     }
 
     if (schemaIsValid()) {
@@ -66,11 +66,9 @@ public abstract class SQLGenerator {
 
         if (sqlGeneratorOptions.getOutputMode() == OutputMode.INDEXES_ONLY) {
           outputIndexes();
-        }
-        else if (sqlGeneratorOptions.getOutputMode() == OutputMode.TRIGGERS_ONLY) {
+        } else if (sqlGeneratorOptions.getOutputMode() == OutputMode.TRIGGERS_ONLY) {
           outputTriggers();
-        }
-        else {
+        } else {
           outputOtherSqlTop();
           outputTables();
 
@@ -84,18 +82,15 @@ public abstract class SQLGenerator {
           outputProcedures();
           outputOtherSqlBottom();
         }
-      }
-      finally {
+      } finally {
         sqlWriter.close();
       }
-    }
-    finally {
+    } finally {
       System.setProperty("line.separator", currentLineSeparator);
     }
   }
 
-  protected void outputHeader() {
-  }
+  protected void outputHeader() {}
 
   protected abstract void outputTables();
 

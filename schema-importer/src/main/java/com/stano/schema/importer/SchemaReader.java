@@ -10,8 +10,6 @@ import com.stano.schema.model.Relation;
 import com.stano.schema.model.RelationType;
 import com.stano.schema.model.Schema;
 import com.stano.schema.model.Table;
-import org.apache.commons.text.StringEscapeUtils;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -22,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class SchemaReader {
   public Schema readSchema(Connection connection) {
@@ -37,8 +36,7 @@ public class SchemaReader {
       populateImportedKeys(schema, metaData);
 
       return schema;
-    }
-    catch (SQLException x) {
+    } catch (SQLException x) {
       throw new RuntimeException(x);
     }
   }
@@ -66,23 +64,32 @@ public class SchemaReader {
         String autoIncrement = resultSet.getString("IS_AUTOINCREMENT");
         String generatedColumn = resultSet.getString("IS_GENERATEDCOLUMN");
 
-        schema.getOptionalTable(tableName).ifPresent(table -> {
-          ColumnType columnType = getColumnType(dataType, typeName, autoIncrement.equals("YES"), columnSize);
+        schema
+            .getOptionalTable(tableName)
+            .ifPresent(
+                table -> {
+                  ColumnType columnType =
+                      getColumnType(dataType, typeName, autoIncrement.equals("YES"), columnSize);
 
-          table.getColumns()
-               .add(new Column(columnName,
-                               columnType,
-                               getColumnSize(columnType, columnSize),
-                               getDecimalDigits(columnType, decimalDigits),
-                               nullable.equals("NO"),
-                               null,
-                               generatedColumn.equals("YES") ? null : columnDef,
-                               generatedColumn.equals("YES") ? "generated always as " + columnDef + " stored" : null,
-                               null,
-                               null,
-                               null,
-                               getElementType(dataType, typeName, columnSize)));
-        });
+                  table
+                      .getColumns()
+                      .add(
+                          new Column(
+                              columnName,
+                              columnType,
+                              getColumnSize(columnType, columnSize),
+                              getDecimalDigits(columnType, decimalDigits),
+                              nullable.equals("NO"),
+                              null,
+                              generatedColumn.equals("YES") ? null : columnDef,
+                              generatedColumn.equals("YES")
+                                  ? "generated always as " + columnDef + " stored"
+                                  : null,
+                              null,
+                              null,
+                              null,
+                              getElementType(dataType, typeName, columnSize)));
+                });
       }
     }
   }
@@ -97,26 +104,39 @@ public class SchemaReader {
         int keySequence = resultSet.getInt("KEY_SEQ");
 
         primaryKeyData.putIfAbsent(tableName, new ArrayList<>());
-        primaryKeyData.get(tableName).add(new PrimaryKeyData(tableName, columnName, null, keySequence));
+        primaryKeyData
+            .get(tableName)
+            .add(new PrimaryKeyData(tableName, columnName, null, keySequence));
       }
     }
 
     for (String tableName : primaryKeyData.keySet()) {
-      schema.getOptionalTable(tableName).ifPresent(table -> {
-        table.getKeys().add(new Key(KeyType.PRIMARY,
-                                    primaryKeyData.get(tableName)
-                                                  .stream()
-                                                  .sorted()
-                                                  .map(it -> new KeyColumn(it.columnName()))
-                                                  .toList()));
-      });
+      schema
+          .getOptionalTable(tableName)
+          .ifPresent(
+              table -> {
+                table
+                    .getKeys()
+                    .add(
+                        new Key(
+                            KeyType.PRIMARY,
+                            primaryKeyData.get(tableName).stream()
+                                .sorted()
+                                .map(it -> new KeyColumn(it.columnName()))
+                                .toList()));
+              });
     }
   }
 
   private void populateConstraints(Schema schema, Connection connection) throws SQLException {
     try (Statement statement = connection.createStatement()) {
-      try (ResultSet rs = statement.executeQuery(
-        "SELECT conrelid::regclass AS tablename, conname, contype, pg_get_constraintdef(oid) AS definition FROM pg_constraint;")) { //WHERE conrelid = 'classificationrulecriteriaconfig'::regclass
+      try (ResultSet rs =
+          statement.executeQuery(
+              "SELECT conrelid::regclass AS tablename, conname, contype, pg_get_constraintdef(oid)"
+                  + " AS definition"
+                  + " FROM"
+                  + " pg_constraint;")) { // WHERE conrelid =
+        // 'classificationrulecriteriaconfig'::regclass
         while (rs.next()) {
           String tableName = rs.getString("tablename");
           String constraintName = rs.getString("conname");
@@ -124,13 +144,14 @@ public class SchemaReader {
           String definition = rs.getString("definition");
 
           if (constraintType.equals("p")) {
-          }
-          else if (constraintType.equals("u")) {
-          }
-          else if (constraintType.equals("x") || constraintType.equals("c")) {
-            schema.getOptionalTable(tableName).ifPresent(table -> {
-              table.getConstraints().add(new Constraint(constraintName, definition, null));
-            });
+          } else if (constraintType.equals("u")) {
+          } else if (constraintType.equals("x") || constraintType.equals("c")) {
+            schema
+                .getOptionalTable(tableName)
+                .ifPresent(
+                    table -> {
+                      table.getConstraints().add(new Constraint(constraintName, definition, null));
+                    });
           }
         }
       }
@@ -152,27 +173,38 @@ public class SchemaReader {
         keys.get(indexName + ":::" + nonUnique).add(new KeyDataColumn(columnName, ordinalPosition));
       }
 
-      keys.forEach((indexName, columns) -> {
-        if (indexName.contains(":::true")) {
-          table.getKeys().add(new Key(KeyType.INDEX, columns.stream()
-                                                            .sorted()
-                                                            .map(it -> escapeColumnName(it.columnName()))
-                                                            .map(KeyColumn::new)
-                                                            .toList()));
-        }
-        else {
-          if (showIncludeKey(table, indexName, columns)) {
-            table.getKeys().add(new Key(KeyType.UNIQUE, columns.stream()
-                                                               .sorted()
-                                                               .map(it -> escapeColumnName(it.columnName()))
-                                                               .map(KeyColumn::new)
-                                                               .toList()));
-          }
-        }
-      });
+      keys.forEach(
+          (indexName, columns) -> {
+            if (indexName.contains(":::true")) {
+              table
+                  .getKeys()
+                  .add(
+                      new Key(
+                          KeyType.INDEX,
+                          columns.stream()
+                              .sorted()
+                              .map(it -> escapeColumnName(it.columnName()))
+                              .map(KeyColumn::new)
+                              .toList()));
+            } else {
+              if (showIncludeKey(table, indexName, columns)) {
+                table
+                    .getKeys()
+                    .add(
+                        new Key(
+                            KeyType.UNIQUE,
+                            columns.stream()
+                                .sorted()
+                                .map(it -> escapeColumnName(it.columnName()))
+                                .map(KeyColumn::new)
+                                .toList()));
+              }
+            }
+          });
 
       if (table.getPrimaryKey() == null) {
-        var uniqueKeys = table.getKeys().stream().filter(it -> it.getType() == KeyType.UNIQUE).toList();
+        var uniqueKeys =
+            table.getKeys().stream().filter(it -> it.getType() == KeyType.UNIQUE).toList();
 
         if (uniqueKeys.size() == 1) {
           table.getKeys().removeIf(it -> it.getType() == KeyType.UNIQUE);
@@ -192,8 +224,10 @@ public class SchemaReader {
     }
 
     if (table.getPrimaryKey() != null) {
-      List<String> pkColumnNames = table.getPrimaryKey().getColumns().stream().map(KeyColumn::getName).toList();
-      List<String> keyColumnNames = columns.stream().sorted().map(KeyDataColumn::columnName).toList();
+      List<String> pkColumnNames =
+          table.getPrimaryKey().getColumns().stream().map(KeyColumn::getName).toList();
+      List<String> keyColumnNames =
+          columns.stream().sorted().map(KeyDataColumn::columnName).toList();
 
       return !pkColumnNames.equals(keyColumnNames);
     }
@@ -212,36 +246,53 @@ public class SchemaReader {
           String fkTableName = resultSet.getString("FKTABLE_NAME");
           String fkColumnName = resultSet.getString("FKCOLUMN_NAME");
           int keySeq = resultSet.getInt("KEY_SEQ");
-          String updateRule = resultSet.getString("UPDATE_RULE"); // importedNoAction,importedKeyCascade,importedKeySetNull,importedKeySetDefault,importedKeyRestrict
-          String deleteRule = resultSet.getString("DELETE_RULE"); // importedNoAction,importedKeyCascade,importedKeySetNull,importedKeySetDefault,importedKeyRestrict
+          String updateRule =
+              resultSet.getString(
+                  "UPDATE_RULE"); // importedNoAction,importedKeyCascade,importedKeySetNull,importedKeySetDefault,importedKeyRestrict
+          String deleteRule =
+              resultSet.getString(
+                  "DELETE_RULE"); // importedNoAction,importedKeyCascade,importedKeySetNull,importedKeySetDefault,importedKeyRestrict
 
-          foreignKeys.add(new ForeignKeyData(pkTableName, pkColumnName, fkTableName, fkColumnName, keySeq, updateRule, deleteRule));
+          foreignKeys.add(
+              new ForeignKeyData(
+                  pkTableName,
+                  pkColumnName,
+                  fkTableName,
+                  fkColumnName,
+                  keySeq,
+                  updateRule,
+                  deleteRule));
         }
       }
 
       for (var foreignKey : foreignKeys) {
         var updateRule = foreignKey.updateRule();
-        var relationType = switch (updateRule) {
-          case "importedNoAction" -> RelationType.DONOTHING;
-          case "importedKeyCascade" -> RelationType.CASCADE;
-          case "importedKeyRestrict" -> RelationType.ENFORCE;
-          case "importedKeySetNull" -> RelationType.SETNULL;
-          case "importedKeySetDefault" -> RelationType.SETNULL;
-          default -> RelationType.DONOTHING;
-        };
+        var relationType =
+            switch (updateRule) {
+              case "importedNoAction" -> RelationType.DONOTHING;
+              case "importedKeyCascade" -> RelationType.CASCADE;
+              case "importedKeyRestrict" -> RelationType.ENFORCE;
+              case "importedKeySetNull" -> RelationType.SETNULL;
+              case "importedKeySetDefault" -> RelationType.SETNULL;
+              default -> RelationType.DONOTHING;
+            };
 
-        table.getRelations()
-             .add(new Relation(foreignKey.fkTableName(),
-                               foreignKey.fkColumnName(),
-                               foreignKey.pkTableName(),
-                               foreignKey.pkColumnName(),
-                               relationType,
-                               false));
+        table
+            .getRelations()
+            .add(
+                new Relation(
+                    foreignKey.fkTableName(),
+                    foreignKey.fkColumnName(),
+                    foreignKey.pkTableName(),
+                    foreignKey.pkColumnName(),
+                    relationType,
+                    false));
       }
     }
   }
 
-  private ColumnType getColumnType(int dataType, String typeName, boolean autoIncrement, int columnSize) {
+  private ColumnType getColumnType(
+      int dataType, String typeName, boolean autoIncrement, int columnSize) {
     if (dataType == Types.INTEGER) {
       if (autoIncrement) {
         return ColumnType.SEQUENCE;
@@ -283,7 +334,9 @@ public class SchemaReader {
     if (dataType == Types.LONGVARCHAR || dataType == Types.LONGNVARCHAR) {
       return ColumnType.TEXT;
     }
-    if (dataType == Types.BINARY || dataType == Types.VARBINARY || dataType == Types.LONGVARBINARY) {
+    if (dataType == Types.BINARY
+        || dataType == Types.VARBINARY
+        || dataType == Types.LONGVARBINARY) {
       return ColumnType.BINARY;
     }
     if (dataType == Types.DATE) {
@@ -329,7 +382,9 @@ public class SchemaReader {
   }
 
   private int getColumnSize(ColumnType columnType, int columnSize) {
-    if (columnType == ColumnType.VARCHAR || columnType == ColumnType.CHAR || columnType == ColumnType.DECIMAL) {
+    if (columnType == ColumnType.VARCHAR
+        || columnType == ColumnType.CHAR
+        || columnType == ColumnType.DECIMAL) {
       return columnSize;
     }
 

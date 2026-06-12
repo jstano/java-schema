@@ -25,7 +25,8 @@ public class TableColumnContentHandler extends AbstractContentHandler {
   private String minValue;
   private String maxValue;
 
-  protected TableColumnContentHandler(Schema schema, Table table, TableContentHandler tableContentHandler) {
+  protected TableColumnContentHandler(
+      Schema schema, Table table, TableContentHandler tableContentHandler) {
     super(null, schema);
 
     this.table = table;
@@ -33,7 +34,8 @@ public class TableColumnContentHandler extends AbstractContentHandler {
   }
 
   @Override
-  public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String namespaceURI, String localName, String qName, Attributes atts)
+      throws SAXException {
     if (localName.equals("column")) {
       name = atts.getValue("name");
       type = ColumnType.getColumnType(atts.getValue("type"));
@@ -43,11 +45,13 @@ public class TableColumnContentHandler extends AbstractContentHandler {
       defaultConstraint = atts.getValue("default");
       generated = atts.getValue("generated");
       enumType = atts.getValue("enumType");
-      elementType = atts.getValue("elementType") != null ? ColumnType.getColumnType(atts.getValue("elementType")) : null;
+      elementType =
+          atts.getValue("elementType") != null
+              ? ColumnType.getColumnType(atts.getValue("elementType"))
+              : null;
       minValue = atts.getValue("minValue");
       maxValue = atts.getValue("maxValue");
-    }
-    else if (localName.equals("check")) {
+    } else if (localName.equals("check")) {
       initContentStorage();
     }
   }
@@ -56,18 +60,23 @@ public class TableColumnContentHandler extends AbstractContentHandler {
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
     switch (localName) {
       case "columns" -> tableContentHandler.contentHandler = null;
-      case "column" -> table.getColumns().add(new Column(name,
-                                                         type,
-                                                         length == null ? 0 : Integer.parseInt(length),
-                                                         scale == null ? 0 : Integer.parseInt(scale),
-                                                         required,
-                                                         checkConstraint,
-                                                         defaultConstraint,
-                                                         generated,
-                                                         minValue,
-                                                         maxValue,
-                                                         enumType,
-                                                         elementType));
+      case "column" ->
+          table
+              .getColumns()
+              .add(
+                  new Column(
+                      name,
+                      type,
+                      length == null ? 0 : Integer.parseInt(length),
+                      scale == null ? 0 : Integer.parseInt(scale),
+                      required,
+                      checkConstraint,
+                      defaultConstraint,
+                      generated,
+                      minValue,
+                      maxValue,
+                      enumType,
+                      elementType));
       case "check" -> {
         String content = getContent();
 
