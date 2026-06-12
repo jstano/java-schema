@@ -16,9 +16,8 @@ dependencies {
   api(project(":schema-migrations"))
   api(project(":schema-model"))
 
-  implementation("com.stano:java-utils")
-  implementation("com.stano:jdbc-utils")
   implementation("org.flywaydb:flyway-core")
 
   testImplementation(project(":test-platform-dependencies"))
+  testRuntimeOnly("com.h2database:h2")
 }

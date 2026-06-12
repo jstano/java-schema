@@ -1,14 +1,12 @@
 package com.stano.schema.installer.flyway;
 
-import com.stano.exceptions.ExceptionUtils;
-import com.stano.jdbcutils.datasource.ConnectionDataSource;
-import com.stano.jdbcutils.datasource.DelegatingConnection;
-import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.DatabaseType;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -60,10 +58,10 @@ public class FlywayMigrationExecutor {
   }
 
   public void executeMigrationScripts(
-      DatabaseType databaseType, ResourceLocator locator, Connection connection) {
+      DatabaseType databaseType, String locator, Connection connection) {
     executeFlyway(
         databaseType,
-        "classpath:" + locator.getResourcePath(),
+        "classpath:" + locator,
         connection,
         "migration",
         "flyway_schema_history_migration");
@@ -80,7 +78,7 @@ public class FlywayMigrationExecutor {
     try {
       Flyway flyway =
           Flyway.configure()
-              .dataSource(new ConnectionDataSource(new DelegatingConnection(connection)))
+              .dataSource(new NonClosingConnectionDataSource(connection))
               .locations(location)
               .table(historyTable)
               .validateOnMigrate(false)
@@ -91,7 +89,7 @@ public class FlywayMigrationExecutor {
 
       flywayDatabaseUpgradeLog.finish(connection, logId, null);
     } catch (Exception x) {
-      flywayDatabaseUpgradeLog.finish(connection, logId, ExceptionUtils.getStackTrace(x));
+      flywayDatabaseUpgradeLog.finish(connection, logId, getStackTrace(x));
       throw new FlywayRuntimeException(x);
     }
   }
@@ -113,6 +111,12 @@ public class FlywayMigrationExecutor {
     } catch (IOException x) {
       throw new FlywayRuntimeException(x);
     }
+  }
+
+  private static String getStackTrace(Throwable x) {
+    StringWriter sw = new StringWriter();
+    x.printStackTrace(new PrintWriter(sw));
+    return sw.toString();
   }
 
   private void deleteDirectory(File directory) {

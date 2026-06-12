@@ -1,11 +1,10 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ItemExistsMigration implements ExecuteWithStatement<Boolean> {
+public class ItemExistsMigration implements StatementAction<Boolean> {
   private final String name;
   private final String type;
 
@@ -15,7 +14,7 @@ public class ItemExistsMigration implements ExecuteWithStatement<Boolean> {
   }
 
   @Override
-  public Boolean executeWithStatement(Statement statement) {
+  public Boolean execute(Statement statement) {
     try (ResultSet rs =
         statement.executeQuery(
             String.format(

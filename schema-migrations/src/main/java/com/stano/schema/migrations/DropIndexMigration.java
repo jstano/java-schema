@@ -1,9 +1,8 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.Statement;
 
-public class DropIndexMigration implements ExecuteWithStatement<Void> {
+public class DropIndexMigration implements StatementAction<Void> {
   private final String tableName;
   private final String indexName;
 
@@ -13,7 +12,7 @@ public class DropIndexMigration implements ExecuteWithStatement<Void> {
   }
 
   @Override
-  public Void executeWithStatement(Statement statement) {
+  public Void execute(Statement statement) {
     if (indexExists(statement)) {
       dropIndex(statement);
     }
@@ -22,11 +21,11 @@ public class DropIndexMigration implements ExecuteWithStatement<Void> {
   }
 
   private Boolean indexExists(Statement statement) {
-    return new IndexExistsMigration(indexName).executeWithStatement(statement);
+    return new IndexExistsMigration(indexName).execute(statement);
   }
 
   private Object dropIndex(Statement statement) {
     return new ExecuteSQLMigration(String.format("drop index %s.%s", tableName, indexName))
-        .executeWithStatement(statement);
+        .execute(statement);
   }
 }

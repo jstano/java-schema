@@ -1,6 +1,5 @@
 package com.stano.schema.installer.schemacontext;
 
-import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.migrations.MigrationServices;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
@@ -10,11 +9,11 @@ import java.sql.SQLException;
 
 public class DefaultSchemaContext implements SchemaContext {
   private final URL schemaUrl;
-  private final ResourceLocator migrationScriptLocator;
+  private final String migrationScriptLocator;
 
   protected MigrationServices migrationServices = new MigrationServices();
 
-  public DefaultSchemaContext(URL schemaUrl, ResourceLocator migrationScriptLocator) {
+  public DefaultSchemaContext(URL schemaUrl, String migrationScriptLocator) {
     this.schemaUrl = schemaUrl;
     this.migrationScriptLocator = migrationScriptLocator;
   }
@@ -25,12 +24,12 @@ public class DefaultSchemaContext implements SchemaContext {
   }
 
   @Override
-  public ResourceLocator getMigrationScriptLocator(Connection connection) {
+  public String getMigrationScriptLocator(Connection connection) {
     return migrationScriptLocator;
   }
 
   @Override
-  public ResourceLocator getPostCreateScriptLocator(Connection connection) {
+  public String getPostCreateScriptLocator(Connection connection) {
     return null;
   }
 

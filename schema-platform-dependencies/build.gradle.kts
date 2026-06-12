@@ -12,8 +12,7 @@ dependencies {
   constraints {
     api("ch.qos.logback:logback-classic:1.5.34")
     api("ch.qos.logback:logback-core:1.5.34")
-    api("com.stano:java-utils:1.0.0")
-    api("com.stano:jdbc-utils:1.0.1")
+    api("com.h2database:h2:2.1.214")
     api("commons-cli:commons-cli:1.11.0")
     api("commons-io:commons-io:2.22.0")
     api("net.bytebuddy:byte-buddy:1.18.10")

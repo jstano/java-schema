@@ -1,7 +1,8 @@
 package com.stano.schema.installer.liquibase;
 
-import com.stano.exceptions.ExceptionUtils;
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import liquibase.Contexts;
@@ -46,12 +47,17 @@ public class LiquibaseChangeLogExecutor {
       runWithChecksumRetry(liquibase, connection);
       databaseUpgradeLog.finish(database, connection, databaseChangeLogId, null);
     } catch (LiquibaseException x) {
-      databaseUpgradeLog.finish(
-          database, connection, databaseChangeLogId, ExceptionUtils.getStackTrace(x));
+      databaseUpgradeLog.finish(database, connection, databaseChangeLogId, getStackTrace(x));
       throw new LiquibaseRuntimeException(x);
     } finally {
       liquibaseFactory.getExecutorService().clearExecutor("jdbc", database);
     }
+  }
+
+  private static String getStackTrace(Throwable x) {
+    StringWriter sw = new StringWriter();
+    x.printStackTrace(new PrintWriter(sw));
+    return sw.toString();
   }
 
   private void runWithChecksumRetry(Liquibase liquibase, Connection connection)

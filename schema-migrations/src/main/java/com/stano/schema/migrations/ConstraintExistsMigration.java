@@ -1,11 +1,10 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ConstraintExistsMigration implements ExecuteWithStatement<Boolean> {
+public class ConstraintExistsMigration implements StatementAction<Boolean> {
   private final String constraintName;
 
   public ConstraintExistsMigration(String constraintName) {
@@ -13,7 +12,7 @@ public class ConstraintExistsMigration implements ExecuteWithStatement<Boolean> 
   }
 
   @Override
-  public Boolean executeWithStatement(Statement statement) {
+  public Boolean execute(Statement statement) {
     // SELECT * FROM pg_constraint
 
     try (ResultSet rs =

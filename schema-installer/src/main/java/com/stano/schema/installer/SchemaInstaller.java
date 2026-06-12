@@ -1,9 +1,5 @@
 package com.stano.schema.installer;
 
-import com.stano.files.FileServices;
-import com.stano.jdbcutils.datasource.DriverType;
-import com.stano.resourcelocator.ResourceLocator;
-import com.stano.resourcelocator.ResourceLocatorService;
 import com.stano.schema.gensql.GenSQL;
 import com.stano.schema.gensql.impl.common.OutputMode;
 import com.stano.schema.installer.schemacontext.SchemaContext;
@@ -24,12 +20,23 @@ import java.sql.SQLException;
 import javax.sql.DataSource;
 
 public abstract class SchemaInstaller {
+  protected static DatabaseType detectDatabaseType(Connection connection) {
+    try {
+      String url = connection.getMetaData().getURL().toLowerCase();
+      if (url.startsWith("jdbc:postgresql")) return DatabaseType.POSTGRES;
+      if (url.startsWith("jdbc:sqlserver")) return DatabaseType.SQL_SERVER;
+      if (url.startsWith("jdbc:h2")) return DatabaseType.H2;
+      throw new IllegalArgumentException("Unsupported JDBC URL: " + url);
+    } catch (SQLException x) {
+      throw new SchemaMigrationException(x);
+    }
+  }
+
   private static final String TEMP_SQL_FILE_PREFIX = "_temp_sql_";
   private static final String TEMP_SQL_FILE_EXTENSION = ".sql";
 
   private GenSQL genSQL = new GenSQL();
   private SchemaParser schemaParser = new SchemaParser();
-  private FileServices fileServices = new FileServices();
 
   public void installSchema(DataSource dataSource, SchemaContext schemaContext) {
     try (Connection connection = dataSource.getConnection()) {
@@ -45,11 +52,12 @@ public abstract class SchemaInstaller {
         return;
       }
 
-      DatabaseType databaseType =
-          DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+      DatabaseType databaseType = detectDatabaseType(connection);
       Schema schema = schemaParser.parseSchema(schemaContext.getSchemaUrl());
 
-      File tempSqlFile = createTempSqlFile(databaseType);
+      File tempSqlFile =
+          File.createTempFile(
+              TEMP_SQL_FILE_PREFIX, databaseType.name().toLowerCase() + TEMP_SQL_FILE_EXTENSION);
       generateSqlToTempSqlFile(databaseType, schemaContext, schema, tempSqlFile);
 
       executeSqlFile(connection, databaseType, schemaContext, tempSqlFile);
@@ -71,13 +79,13 @@ public abstract class SchemaInstaller {
   }
 
   public void migrateSchema(Connection connection, SchemaContext schemaContext) {
-    ResourceLocator migrationScriptLocator = schemaContext.getMigrationScriptLocator(connection);
+    String migrationScriptLocator = schemaContext.getMigrationScriptLocator(connection);
 
     if (migrationScriptLocator == null) {
       return;
     }
 
-    DatabaseType databaseType = DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+    DatabaseType databaseType = detectDatabaseType(connection);
     executeMigrationScripts(connection, databaseType, migrationScriptLocator);
   }
 
@@ -88,10 +96,11 @@ public abstract class SchemaInstaller {
           return;
         }
 
-        DatabaseType databaseType =
-            DatabaseType.valueOf(DriverType.fromConnection(connection).name());
+        DatabaseType databaseType = detectDatabaseType(connection);
 
-        File tempSqlFile = createTempSqlFile(databaseType);
+        File tempSqlFile =
+            File.createTempFile(
+                TEMP_SQL_FILE_PREFIX, databaseType.name().toLowerCase() + TEMP_SQL_FILE_EXTENSION);
         generateSqlToTempSqlFile(schemaContext.getSchemaUrl().openStream(), tempSqlFile);
 
         executeSqlFile(connection, databaseType, schemaContext, tempSqlFile);
@@ -104,7 +113,7 @@ public abstract class SchemaInstaller {
   }
 
   protected void executeMigrationScripts(
-      Connection connection, DatabaseType databaseType, ResourceLocator locator) {}
+      Connection connection, DatabaseType databaseType, String locator) {}
 
   protected abstract void executeSqlFile(
       Connection connection, DatabaseType databaseType, SchemaContext schemaContext, File sqlFile)
@@ -112,11 +121,6 @@ public abstract class SchemaInstaller {
 
   protected abstract void executePostCreateScript(
       Connection connection, String postCreateResourceName);
-
-  private File createTempSqlFile(DatabaseType databaseType) throws IOException {
-    return fileServices.createTempFile(
-        TEMP_SQL_FILE_PREFIX, databaseType.name().toLowerCase() + TEMP_SQL_FILE_EXTENSION);
-  }
 
   private void generateSqlToTempSqlFile(
       DatabaseType databaseType, SchemaContext schemaContext, Schema schema, File tempSqlFile)
@@ -135,7 +139,7 @@ public abstract class SchemaInstaller {
     genSQL.generateSQL(
         databaseType,
         schema,
-        new PrintWriter(fileServices.createFileWriter(tempSqlFile)),
+        new PrintWriter(new FileWriter(tempSqlFile)),
         foreignKeyMode,
         booleanMode,
         OutputMode.ALL,
@@ -155,17 +159,12 @@ public abstract class SchemaInstaller {
   }
 
   private void runPostCreateScript(SchemaContext schemaContext, Connection connection) {
-    ResourceLocator postCreateScriptLocator = schemaContext.getPostCreateScriptLocator(connection);
+    String postCreateScriptLocator = schemaContext.getPostCreateScriptLocator(connection);
 
     if (postCreateScriptLocator == null) {
       return;
     }
 
-    new ResourceLocatorService()
-        .getResourceNames(postCreateScriptLocator).stream()
-            .findFirst()
-            .ifPresent(
-                postCreateResourceName ->
-                    executePostCreateScript(connection, postCreateResourceName));
+    executePostCreateScript(connection, postCreateScriptLocator);
   }
 }

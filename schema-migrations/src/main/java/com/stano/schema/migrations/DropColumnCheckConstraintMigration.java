@@ -1,11 +1,10 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class DropColumnCheckConstraintMigration implements ExecuteWithStatement<Object> {
+public class DropColumnCheckConstraintMigration implements StatementAction<Object> {
   private final String table;
   private final String column;
 
@@ -15,7 +14,7 @@ public class DropColumnCheckConstraintMigration implements ExecuteWithStatement<
   }
 
   @Override
-  public Object executeWithStatement(Statement statement) {
+  public Object execute(Statement statement) {
     try {
       statement.execute(String.format("exec sp_helpconstraint %s", table));
 

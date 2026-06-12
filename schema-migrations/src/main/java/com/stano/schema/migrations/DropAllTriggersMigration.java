@@ -1,15 +1,14 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DropAllTriggersMigration implements ExecuteWithStatement<Void> {
+public class DropAllTriggersMigration implements StatementAction<Void> {
   @Override
-  public Void executeWithStatement(Statement statement) {
+  public Void execute(Statement statement) {
     try {
       for (String triggerName : loadTriggerNames(statement)) {
         statement.executeUpdate(String.format("drop trigger %s", triggerName));

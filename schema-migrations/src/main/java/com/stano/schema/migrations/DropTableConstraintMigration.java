@@ -1,9 +1,8 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.Statement;
 
-public class DropTableConstraintMigration implements ExecuteWithStatement<Void> {
+public class DropTableConstraintMigration implements StatementAction<Void> {
   private final String tableName;
   private final String constraintName;
 
@@ -13,7 +12,7 @@ public class DropTableConstraintMigration implements ExecuteWithStatement<Void> 
   }
 
   @Override
-  public Void executeWithStatement(Statement statement) {
+  public Void execute(Statement statement) {
     if (constraintExists(statement, constraintName)) {
       dropConstraint(statement, tableName, constraintName);
     }
@@ -22,12 +21,12 @@ public class DropTableConstraintMigration implements ExecuteWithStatement<Void> 
   }
 
   private boolean constraintExists(Statement statement, String constraintName) {
-    return new ConstraintExistsMigration(constraintName).executeWithStatement(statement);
+    return new ConstraintExistsMigration(constraintName).execute(statement);
   }
 
   private void dropConstraint(Statement statement, String tableName, String constraintName) {
     new ExecuteSQLMigration(
             String.format("alter table %s drop constraint %s", tableName, constraintName))
-        .executeWithStatement(statement);
+        .execute(statement);
   }
 }

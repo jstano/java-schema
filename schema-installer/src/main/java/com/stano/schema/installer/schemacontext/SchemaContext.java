@@ -1,7 +1,5 @@
 package com.stano.schema.installer.schemacontext;
 
-import com.stano.jdbcutils.datasource.DataSourceProperties;
-import com.stano.resourcelocator.ResourceLocator;
 import com.stano.schema.model.BooleanMode;
 import com.stano.schema.model.ForeignKeyMode;
 import java.net.URL;
@@ -11,9 +9,9 @@ import java.sql.SQLException;
 public interface SchemaContext {
   URL getSchemaUrl();
 
-  ResourceLocator getMigrationScriptLocator(Connection connection);
+  String getMigrationScriptLocator(Connection connection);
 
-  ResourceLocator getPostCreateScriptLocator(Connection connection);
+  String getPostCreateScriptLocator(Connection connection);
 
   BooleanMode getBooleanMode();
 
@@ -28,13 +26,10 @@ public interface SchemaContext {
     return "GO";
   }
 
-  default String getMigrateParams(DataSourceProperties dataSourceProperties) {
+  default String getMigrateParams(DataSourceInfo dataSourceInfo) {
 
     return String.format(
         "--migrate=%s,%s,%s,%s",
-        dataSourceProperties.getUrl(),
-        dataSourceProperties.getUsername(),
-        "xxxxxx",
-        dataSourceProperties.getDriverType().toString().toLowerCase());
+        dataSourceInfo.url(), dataSourceInfo.username(), "xxxxxx", dataSourceInfo.driverType());
   }
 }

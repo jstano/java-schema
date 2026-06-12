@@ -12,8 +12,6 @@ configurePublishing(
 
 dependencies {
   api(platform(project(":schema-platform-dependencies")))
-  api("com.stano:java-utils")
-  api("com.stano:jdbc-utils")
 
   api(project(":schema-migrations"))
   api(project(":schema-model"))
@@ -21,4 +19,5 @@ dependencies {
   api(project(":schema-sql-generator"))
 
   testImplementation(project(":test-platform-dependencies"))
+  testRuntimeOnly("com.h2database:h2")
 }

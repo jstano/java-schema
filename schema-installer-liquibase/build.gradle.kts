@@ -18,9 +18,8 @@ dependencies {
   api(project(":schema-parser"))
   api(project(":schema-sql-generator"))
 
-  implementation("com.stano:java-utils")
-  implementation("com.stano:jdbc-utils")
   implementation("org.liquibase:liquibase-core")
 
   testImplementation(project(":test-platform-dependencies"))
+  testRuntimeOnly("com.h2database:h2")
 }

@@ -1,7 +1,5 @@
 package com.stano.schema.installer.liquibase;
 
-import com.stano.resourcelocator.ResourceLocator;
-import com.stano.resourcelocator.ResourceLocatorService;
 import com.stano.schema.installer.SchemaInstaller;
 import com.stano.schema.installer.schemacontext.SchemaContext;
 import com.stano.schema.model.DatabaseType;
@@ -32,13 +30,8 @@ public class LiquibaseSchemaInstaller extends SchemaInstaller {
 
   @Override
   protected void executeMigrationScripts(
-      Connection connection, DatabaseType databaseType, ResourceLocator locator) {
-    new ResourceLocatorService()
-        .getResourceNames(locator).stream()
-            .findFirst()
-            .ifPresent(
-                changelogUrl ->
-                    liquibaseChangeLogExecutor.executeChangeLog(changelogUrl, connection));
+      Connection connection, DatabaseType databaseType, String locator) {
+    liquibaseChangeLogExecutor.executeChangeLog(locator, connection);
   }
 
   private File createTempChangeLogFile(

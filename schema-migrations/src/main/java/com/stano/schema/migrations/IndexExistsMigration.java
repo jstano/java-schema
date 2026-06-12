@@ -1,11 +1,10 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class IndexExistsMigration implements ExecuteWithStatement<Boolean> {
+public class IndexExistsMigration implements StatementAction<Boolean> {
   private final String indexName;
 
   public IndexExistsMigration(String indexName) {
@@ -13,7 +12,7 @@ public class IndexExistsMigration implements ExecuteWithStatement<Boolean> {
   }
 
   @Override
-  public Boolean executeWithStatement(Statement statement) {
+  public Boolean execute(Statement statement) {
     try (ResultSet rs =
         statement.executeQuery(
             String.format("select name from dbo.sysindexes where name = '%s'", indexName))) {

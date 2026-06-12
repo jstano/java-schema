@@ -1,10 +1,9 @@
 package com.stano.schema.migrations;
 
-import com.stano.jdbcutils.utils.ExecuteWithStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class ExecuteSQLMigration implements ExecuteWithStatement<Void> {
+public class ExecuteSQLMigration implements StatementAction<Void> {
   private final String sql;
 
   public ExecuteSQLMigration(String sql) {
@@ -12,7 +11,7 @@ public class ExecuteSQLMigration implements ExecuteWithStatement<Void> {
   }
 
   @Override
-  public Void executeWithStatement(Statement statement) {
+  public Void execute(Statement statement) {
     try {
       statement.executeUpdate(sql);
 

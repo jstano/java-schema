@@ -1,7 +1,5 @@
 package com.stano.schema.installer.flyway;
 
-import com.stano.jdbcutils.utils.SqlUtils;
-import com.stano.jdbcutils.utils.TransactionalExecutor;
 import com.stano.schema.migrations.MigrationServices;
 import com.stano.schema.model.DatabaseType;
 import java.sql.Connection;
@@ -13,51 +11,90 @@ public class FlywayDatabaseUpgradeLog {
   private MigrationServices migrationServices = new MigrationServices();
 
   public int start(DatabaseType databaseType, Connection connection, String changeLogResource) {
-    return TransactionalExecutor.withConnection(connection)
-        .execute(
-            () -> {
-              ensureDatabaseUpgradeLogTableExists(databaseType, connection);
+    boolean autoCommit;
+    try {
+      autoCommit = connection.getAutoCommit();
+    } catch (SQLException x) {
+      throw new FlywayRuntimeException(x);
+    }
 
-              try (Statement statement = connection.createStatement()) {
-                statement.executeUpdate(
-                    String.format(
-                        "insert into databaseupgradelog (StartDateTime,ChangeLogName) values"
-                            + " (CURRENT_TIMESTAMP,%s)", // NON-NLS
-                        SqlUtils.quoteSqlString(
-                            changeLogResource.substring(changeLogResource.lastIndexOf("/") + 1))),
-                    Statement.RETURN_GENERATED_KEYS);
+    try {
+      connection.setAutoCommit(false);
 
-                try (ResultSet rs = statement.getGeneratedKeys()) {
-                  if (rs.next()) {
-                    return rs.getInt(1);
-                  }
-                }
-              }
+      ensureDatabaseUpgradeLogTableExists(databaseType, connection);
 
-              return 0;
-            });
+      int id;
+      try (Statement statement = connection.createStatement()) {
+        statement.executeUpdate(
+            String.format(
+                "insert into databaseupgradelog (StartDateTime,ChangeLogName) values"
+                    + " (CURRENT_TIMESTAMP,%s)", // NON-NLS
+                quoteSql(changeLogResource.substring(changeLogResource.lastIndexOf("/") + 1))),
+            Statement.RETURN_GENERATED_KEYS);
+
+        try (ResultSet rs = statement.getGeneratedKeys()) {
+          id = rs.next() ? rs.getInt(1) : 0;
+        }
+      }
+
+      connection.commit();
+      return id;
+    } catch (Throwable x) {
+      try {
+        connection.rollback();
+      } catch (SQLException rollbackEx) {
+        x.addSuppressed(rollbackEx);
+      }
+      throw x instanceof FlywayRuntimeException fre ? fre : new FlywayRuntimeException(x);
+    } finally {
+      try {
+        connection.setAutoCommit(autoCommit);
+      } catch (SQLException ignored) {
+      }
+    }
   }
 
   public void finish(Connection connection, int databaseChangeLogId, String error) {
-    TransactionalExecutor.withConnection(connection)
-        .execute(
-            () -> {
-              try (Statement statement = connection.createStatement()) {
-                if (error != null) {
-                  statement.executeUpdate(
-                      String.format(
-                          "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP, Error ="
-                              + " %s where ID = %d", // NON-NLS
-                          SqlUtils.quoteSqlString(error), databaseChangeLogId));
-                } else {
-                  statement.executeUpdate(
-                      String.format(
-                          "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP where ID ="
-                              + " %d", // NON-NLS
-                          databaseChangeLogId));
-                }
-              }
-            });
+    boolean autoCommit;
+    try {
+      autoCommit = connection.getAutoCommit();
+    } catch (SQLException x) {
+      throw new FlywayRuntimeException(x);
+    }
+
+    try {
+      connection.setAutoCommit(false);
+
+      try (Statement statement = connection.createStatement()) {
+        if (error != null) {
+          statement.executeUpdate(
+              String.format(
+                  "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP, Error ="
+                      + " %s where ID = %d", // NON-NLS
+                  quoteSql(error), databaseChangeLogId));
+        } else {
+          statement.executeUpdate(
+              String.format(
+                  "update databaseupgradelog set EndDateTime = CURRENT_TIMESTAMP where ID ="
+                      + " %d", // NON-NLS
+                  databaseChangeLogId));
+        }
+      }
+
+      connection.commit();
+    } catch (Throwable x) {
+      try {
+        connection.rollback();
+      } catch (SQLException rollbackEx) {
+        x.addSuppressed(rollbackEx);
+      }
+      throw x instanceof FlywayRuntimeException fre ? fre : new FlywayRuntimeException(x);
+    } finally {
+      try {
+        connection.setAutoCommit(autoCommit);
+      } catch (SQLException ignored) {
+      }
+    }
   }
 
   private void ensureDatabaseUpgradeLogTableExists(DatabaseType databaseType, Connection connection)
@@ -122,5 +159,9 @@ public class FlywayDatabaseUpgradeLog {
     try (Statement statement = connection.createStatement()) {
       statement.executeUpdate(sql);
     }
+  }
+
+  private static String quoteSql(String s) {
+    return "'" + s.replace("'", "''") + "'";
   }
 }
